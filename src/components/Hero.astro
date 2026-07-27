@@ -2,7 +2,6 @@
 // #inicio (docs/01-brief.md §3, docs/03-content.md §01).
 // El titular nunca comparte columna con la placa: ver docs/06-decisiones.md D12.
 import Cta from './Cta.astro';
-import Etiqueta from './Etiqueta.astro';
 import Placa from './Placa.astro';
 ---
 
@@ -28,11 +27,9 @@ import Placa from './Placa.astro';
           <Cta href="#proceso" variante="secundario">Cómo trabajamos</Cta>
         </div>
 
-        <div class="hero__microcopia">
-          <Etiqueta>Precio cerrado antes de empezar</Etiqueta>
-          <Etiqueta>El código es tuyo</Etiqueta>
-          <Etiqueta>Sin permanencia</Etiqueta>
-        </div>
+        <p class="hero__microcopia">
+          PRECIO CERRADO ANTES DE EMPEZAR · EL CÓDIGO ES TUYO · SIN PERMANENCIA
+        </p>
       </div>
     </div>
   </div>
@@ -42,10 +39,16 @@ import Placa from './Placa.astro';
   /* Mobile-first: todo apilado, placa arriba (docs/02-design-system.md §8) */
   .hero__cuerpo {
     display: grid;
+    /* antetitulo/titulo primero: con la placa arriba, el mensaje quedaba
+       justo al filo del pliegue a 360x640 (h1Bottom 532px de 640, sin
+       margen real) y el CTA quedaba fuera de cualquier forma (707px) --
+       reordenar no arregla el CTA (la altura total no cambia), pero deja
+       todo el mensaje + la placa visibles sin scroll en vez de solo el
+       mensaje al limite. Ver docs/02-design-system.md §8. */
     grid-template-areas:
-      'placa'
       'antetitulo'
       'titulo'
+      'placa'
       'contenido';
     gap: var(--e4);
   }
@@ -117,10 +120,21 @@ import Placa from './Placa.astro';
     max-width: 62ch;
   }
 
-  .hero__botones,
-  .hero__microcopia {
+  .hero__botones {
     display: flex;
     flex-wrap: wrap;
     gap: var(--e2);
+  }
+
+  /* Linea corrida, no chips: docs/03-content.md §01 la escribe como una sola
+     linea con separadores "·", y Etiqueta (docs/02 §5) es para datos de
+     paquete ("3 SEMANAS"), no para esto. */
+  .hero__microcopia {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--humo);
   }
 </style>
