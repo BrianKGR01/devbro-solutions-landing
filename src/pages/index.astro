@@ -91,15 +91,6 @@ const escala = [
       <div class="vitrina-placa">
         <Placa />
       </div>
-
-      <h2>Placa — comparación de tamaño (solo para decidir, no es el valor final)</h2>
-      <p>
-        Misma placa, con <code>--placa-ancho</code> topado en 400px en vez de 300px. El override
-        vive solo acá, no en el componente ni en tokens.css.
-      </p>
-      <div class="vitrina-placa vitrina-placa--grande">
-        <Placa />
-      </div>
     </div>
   </section>
 </Base>
@@ -183,11 +174,5 @@ const escala = [
     justify-content: center;
     padding-block: var(--e6);
     overflow-x: clip;
-  }
-
-  /* Solo para la captura de comparacion (ver plan de Fase 2). No tocar
-     Placa.astro ni tokens.css para esto. */
-  .vitrina-placa--grande :global(.placa) {
-    --placa-ancho: clamp(220px, 78vw, 400px);
   }
 </style>
