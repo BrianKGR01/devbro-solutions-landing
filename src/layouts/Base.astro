@@ -1,0 +1,100 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/utilidades.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'DevBro Solutions — Tu idea, funcionando, en tres semanas',
+  description = 'Software factory en Santa Cruz de la Sierra. Construimos tu producto en producción en tres a seis semanas, con precio cerrado. El código es tuyo.',
+} = Astro.props;
+
+// Astro.site sale de PUBLIC_SITE_URL (astro.config.mjs). Si falta, se omiten
+// canonical y og:url en vez de inventar un dominio (docs/06-decisiones.md D3).
+const sitio = Astro.site;
+const canonical = sitio ? new URL(Astro.url.pathname, sitio).toString() : undefined;
+const imagenOg = sitio ? new URL('/og.png', sitio).toString() : '/og.png';
+
+const organizacionJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'DevBro Solutions',
+  description,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Santa Cruz de la Sierra',
+    addressCountry: 'BO',
+  },
+  ...(sitio ? { url: sitio.toString() } : {}),
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+
+    <!-- Las dos fuentes usadas en el hero: sin preload hay salto visible al cargar (docs/04-engineering.md §4) -->
+    <link rel="preload" href="/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DevBro Solutions" />
+    <meta property="og:locale" content="es_BO" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imagenOg} />
+    {canonical && <meta property="og:url" content={canonical} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imagenOg} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizacionJsonLd)} is:inline />
+  </head>
+  <body>
+    <a class="saltar-al-contenido" href="#contenido">Saltar al contenido</a>
+    <main id="contenido">
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style>
+  .saltar-al-contenido {
+    position: absolute;
+    top: -100%;
+    left: var(--e2);
+    z-index: 100;
+    padding: var(--e2) var(--e3);
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: var(--borde-fuerte);
+  }
+
+  .saltar-al-contenido:focus-visible {
+    top: var(--e2);
+    outline: 3px solid var(--laton);
+    outline-offset: 3px;
+  }
+</style>

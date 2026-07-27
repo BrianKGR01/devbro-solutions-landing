@@ -1,0 +1,26 @@
+---
+// Chip mono para datos puntuales: "3 SEMANAS", "USD 5.000" (docs/02-design-system.md §5).
+export interface Props {
+  as?: 'span' | 'li';
+}
+
+const { as: Elemento = 'span' } = Astro.props;
+---
+
+<Elemento class="etiqueta">
+  <slot />
+</Elemento>
+
+<style>
+  .etiqueta {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--humo);
+    background: transparent;
+    border: var(--borde);
+    padding: 4px 10px;
+  }
+</style>
