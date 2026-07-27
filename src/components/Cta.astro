@@ -1,0 +1,57 @@
+---
+// Boton primario "filo metalico" y secundario (docs/02-design-system.md §5).
+// El foco de teclado lo pone la regla global de base.css (docs/06-decisiones.md D4).
+export interface Props {
+  href?: string;
+  variante?: 'primario' | 'secundario';
+  tipo?: 'button' | 'submit';
+}
+
+const { href, variante = 'primario', tipo = 'button' } = Astro.props;
+const Elemento = href ? 'a' : 'button';
+---
+
+<Elemento class={`cta cta--${variante}`} href={href} type={href ? undefined : tipo}>
+  <slot />
+</Elemento>
+
+<style>
+  .cta {
+    display: inline-block;
+    padding: 18px 32px;
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: 0.95rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--papel);
+    cursor: pointer;
+    transition:
+      transform 120ms var(--salida),
+      box-shadow 120ms var(--salida);
+  }
+
+  .cta--primario {
+    background: var(--relleno-cta);
+    border: 2px solid transparent;
+    border-image: var(--metal) 1;
+    box-shadow: 5px 5px 0 var(--verde-noche);
+  }
+
+  .cta--secundario {
+    background: transparent;
+    border: 2px solid var(--humo);
+    box-shadow: 5px 5px 0 var(--verde-noche);
+  }
+
+  .cta:hover {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 var(--verde-noche);
+  }
+
+  .cta:active {
+    transform: translate(5px, 5px);
+    box-shadow: 0 0 0 var(--verde-noche);
+  }
+</style>
