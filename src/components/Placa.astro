@@ -49,8 +49,11 @@
   /* Mobile-first: -3deg de base, -6deg desde 640px (docs/02 §8) */
   .placa {
     --placa-rotacion: -3deg;
-    --placa-chaflan: 14px;
-    --placa-ancho: clamp(220px, 78vw, 300px);
+    /* 14px (el valor literal de docs/02 #6) se leia como esquina redondeada a la
+       escala real de render/captura -- subido para que el corte a 45 grados sea
+       inconfundible. Ver verificacion visual en el PR de esta fase. */
+    --placa-chaflan: 26px;
+    --placa-ancho: clamp(220px, 78vw, 400px);
 
     position: relative;
     width: var(--placa-ancho);
@@ -82,9 +85,9 @@
   }
 
   .placa__interior {
-    /* 14px - 3px*(2-raiz(2)) ~= 12.24px: mismo angulo de 45 grados tras
+    /* 26px - 3px*(2-raiz(2)) ~= 24.24px: mismo angulo de 45 grados tras
        el inset de 3px del marco (border-image no sigue el clip-path). */
-    --placa-chaflan-interior: 12.24px;
+    --placa-chaflan-interior: 24.24px;
     position: absolute;
     inset: 3px;
     background: var(--verde-noche);
