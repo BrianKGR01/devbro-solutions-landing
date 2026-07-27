@@ -61,6 +61,13 @@
     position: relative;
     width: var(--placa-ancho);
     aspect-ratio: 300 / 220;
+    /* El barrido especular en reposo (translateX 120%) queda invisible
+       (opacity 0) pero un transform no deja de contribuir al scrollWidth
+       del documento aunque no se vea -- sin esto, la placa mete overflow
+       horizontal real en cualquier pagina que la use sin un wrapper propio
+       con overflow-x:clip (como el Hero). El clip-path ya lo recorta
+       visualmente; esto lo saca tambien del calculo de overflow. */
+    overflow: hidden;
 
     background: var(--metal);
     /* Chaflan de 14px a 45 grados en las 4 esquinas. No border-radius (docs/06-decisiones.md D2) */
