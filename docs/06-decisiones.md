@@ -164,3 +164,25 @@ Ninguno bloquea el desarrollo. Se implementan como placeholder visible y como va
 Se eligió `2.25rem` en vez de `2.5rem`: el margen de `2.5rem` es del mismo orden que el que causó el bug del grabado de la placa en la Fase 2 (Fase 2, PR #2) — no vale la pena repetir ese riesgo por 0,25rem de diferencia. Con el titular real completo ("Tu idea, funcionando, en tres semanas.") en una columna de 320px, `2.25rem` envuelve en 4 líneas sin desbordar ninguna ("Tu idea," / "funcionando," / "en tres" / "semanas."), lo cual es normal y esperable para un titular hero en el ancho mínimo soportado.
 
 `tokens.css` actualizado: `--t-display-xl: clamp(2.25rem, 9vw, 6.5rem);`. El máximo (`6.5rem`) queda pendiente de la resolución del conflicto de ancho en escritorio (ver plan de Fase 3 — Hero, punto 1), que se decide junto con el layout de columnas del Hero, no acá.
+
+---
+
+## D12 · El titular del hero no comparte columna con la placa
+
+**Duda:** `docs/02-design-system.md` §8 especificaba "Hero en dos columnas (texto izquierda, placa derecha)" desde escritorio. Con la placa aprobada en 400px (≈428px de caja delimitadora rotada a -6°) y el titular real ("Tu idea, funcionando, en tres semanas."), ninguna combinación de reparto de columnas, sangrado de la placa fuera del padding, o reducción del tamaño del titular llegaba a un resultado aceptable: o el titular quedaba del mismo tamaño que `--t-display-l` (rompiendo la jerarquía tipográfica), o desbordaba, o exigía un sangrado de la placa mucho más agresivo del razonable (~300px más allá del contenedor).
+
+**Resolución:** el supuesto de "dos columnas" era el problema, no la placa ni el titular. Se cambia la estructura: el titular ocupa siempre el **ancho completo** del contenedor (nunca comparte fila con la placa), y la placa se reubica junto al bloque de párrafo + botones + microcopia — un contenido mucho más angosto que nunca compite por el ancho del titular.
+
+Se evaluaron dos formas de ubicar la placa junto al titular de ancho completo:
+- **Encastrada en el hueco que deja el borde derecho irregular del titular** (las líneas cortas como "Tu idea," dejan espacio libre a la derecha). Descartada con números: a `6rem` (96px), la línea más larga ("en tres semanas.") deja solo 108,59px libres en su propia línea — la placa (428px) no entra ni cerca, y esa es sistemáticamente la línea más larga con contenido real.
+- **Al costado del bloque de párrafo + botones + microcopia.** Elegida: ese bloque es texto chico (18px) sin riesgo de desborde por palabra suelta, y deja una columna cómoda (445px en el breakpoint más angosto donde aplica).
+
+**Breakpoint:** se reutiliza el quiebre de escritorio ya existente (1024px) para el cambio de posición de la placa, en vez de introducir uno nuevo.
+
+**Tipografía, medida y verificada (Playwright + Range API, no estimada):**
+- A 1440px (columna completa 1072px): `--t-display-xl` en `6rem` (96px) da 10,13% de margen contra la línea más ancha; en `5,5rem` (88px), 17,62%.
+- El coeficiente fluido del `clamp()` estaba mal calibrado: `9vw` llegaba a su tope justo cuando la columna todavía no había crecido lo suficiente (margen de **-0,32%** en el viewport de transición, ~1067px — desbordaba). `8.2vw` da 8,59% en su propio punto de transición (~1171px) y no baja de 8,57% en todo el rango barrido (1000-1440px).
+
+`tokens.css`: `--t-display-xl: clamp(2.25rem, 8.2vw, 6rem);` — reemplaza el máximo pendiente de D11.
+
+**Altura del hero:** la restricción "entra sin scroll en 1440×900" (`docs/01-brief.md`) se relaja deliberadamente para este rediseño — con el titular a 96px en 3 líneas, el hero mide ~957px reales, unos ~57px de scroll a 900px de viewport. Aceptado explícitamente: el tamaño del titular y la jerarquía tipográfica valen más que evitar ese scroll mínimo.

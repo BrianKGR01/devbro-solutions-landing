@@ -296,8 +296,10 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 | Nombre | Ancho | Cambios principales |
 |---|---|---|
 | Móvil | < 640px | Todo a una columna. Placa arriba del titular, centrada, rotación reducida a `-3deg`. Menú colapsa a solo el CTA |
-| Tableta | 640-1023px | Grillas de 3 columnas pasan a 2. Hero sigue en una columna |
-| Escritorio | ≥ 1024px | Hero en dos columnas (texto izquierda, placa derecha). Grillas completas |
+| Tableta | 640-1023px | Grillas de 3 columnas pasan a 2. Hero sigue en una columna (placa arriba, `-6deg` desde 640px) |
+| Escritorio | ≥ 1024px | El titular del hero sigue a ancho completo (no comparte fila con la placa — ver Fase 3). La placa pasa a compartir fila con el bloque párrafo + botones + microcopia, no con el titular. Grillas completas |
+
+**Nota sobre el hero (decidido en Fase 3, ver `docs/06-decisiones.md` D12):** el titular (`--t-display-xl`) nunca comparte columna con la placa — la placa mide 428px de ancho rotada y ninguna combinación razonable de columna + tamaño de fuente entra sin sacrificar la jerarquía tipográfica o el tamaño del titular. El titular ocupa siempre el ancho completo del contenedor; la placa se reubica junto al bloque de párrafo/botones/microcopia a partir del breakpoint de escritorio (1024px), y arriba del titular, centrada, en los breakpoints menores.
 
 **Regla base:** mobile-first. Escribí el CSS para 360px y ampliá con `min-width`.
 

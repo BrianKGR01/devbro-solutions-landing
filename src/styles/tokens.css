@@ -57,7 +57,7 @@
   --entrada: cubic-bezier(0.7, 0, 0.84, 0);
 
   /* ---- Escala tipográfica (docs/02-design-system.md §3) ---- */
-  --t-display-xl: clamp(2.25rem, 9vw, 6.5rem); /* hero. Minimo bajado por D11 (ver docs/06-decisiones.md) */
+  --t-display-xl: clamp(2.25rem, 8.2vw, 6rem); /* hero. Min por D11, tope y coeficiente por Fase 3 (ver docs/06-decisiones.md) */
   --t-display-l:  clamp(2.1rem, 5vw, 3.6rem); /* títulos de sección */
   --t-titulo:     1.5rem;
   --t-cuerpo-l:   1.125rem;
