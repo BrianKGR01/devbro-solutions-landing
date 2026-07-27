@@ -1,3 +1,28 @@
+/* ---- Tipografías autohospedadas (docs/04-engineering.md §4) ---- */
+/* Los tres archivos son binarios variables servidos por Google Fonts:
+   se declara el rango de wght/wdth real en vez de instancias estáticas. */
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-var.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Tight';
+  src: url('/fonts/inter-tight-var.woff2') format('woff2-variations');
+  font-weight: 400 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains-mono-var.woff2') format('woff2-variations');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
 /* ---- Reset ---- */
 *,
 *::before,
