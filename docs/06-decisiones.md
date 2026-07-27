@@ -146,3 +146,11 @@ Se implementa con los `{{PENDIENTE}}` visibles y el marco de imagen dimensionado
 | Dominio de producción | `{{PENDIENTE}}` — ver D3 |
 
 Ninguno bloquea el desarrollo. Se implementan como placeholder visible y como variable de entorno donde corresponda.
+
+---
+
+## D11 · Riesgo de desborde en el titular del hero a 360px
+
+**Duda:** el `overflow-wrap: break-word` global agregado en la Fase 1 evita el desborde partiendo palabras largas dentro de la palabra misma. Pero `--t-display-xl` tiene un mínimo de `3rem` (`clamp(3rem, 9vw, 6.5rem)`), y a 360px de ancho la palabra "funcionando," del titular real del hero ("Tu idea, funcionando, en tres semanas") podría no entrar completa en una sola línea dentro del ancho disponible del contenedor, forzando un corte de palabra visualmente feo en vez de un salto de línea limpio.
+
+**Resolución:** pendiente de verificar en la Fase 3, cuando se construya `Hero.astro` con el texto real. Si el corte de palabra ocurre, bajar el mínimo de `--t-display-xl` a `2.5rem` en `tokens.css` (o revisar el `letter-spacing`/padding lateral del hero a 360px) antes de dar la sección por terminada. No se resuelve ahora porque `Placa.astro` (Fase 2) no usa `--t-display-xl` y no hay titular real todavía contra el cual probarlo.

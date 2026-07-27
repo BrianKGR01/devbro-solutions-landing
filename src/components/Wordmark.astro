@@ -1,0 +1,53 @@
+---
+// Wordmark tipografico (docs/01-brief.md §6). Componente reutilizable, no imagen.
+export interface Props {
+  reducido?: boolean;
+}
+
+const { reducido = false } = Astro.props;
+---
+
+<span class="wordmark">
+  <span class="wordmark__devbro">DEVBRO</span>
+  {
+    !reducido && (
+      <>
+        <span class="wordmark__separador" aria-hidden="true" />
+        <span class="wordmark__solutions">SOLUTIONS</span>
+      </>
+    )
+  }
+</span>
+
+<style>
+  .wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    line-height: 1;
+  }
+
+  .wordmark__devbro {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 900, 'wdth' 118;
+    letter-spacing: -0.02em;
+    color: var(--papel);
+    text-transform: uppercase;
+  }
+
+  .wordmark__separador {
+    align-self: center;
+    width: 2px;
+    height: 0.72em;
+    margin-inline: 10px;
+    background-color: var(--laton);
+  }
+
+  .wordmark__solutions {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 0.62em;
+    letter-spacing: 0.18em;
+    color: var(--humo);
+    text-transform: uppercase;
+  }
+</style>
