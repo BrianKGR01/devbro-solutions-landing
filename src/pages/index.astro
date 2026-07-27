@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import Wordmark from '../components/Wordmark.astro';
 import Cta from '../components/Cta.astro';
 import Etiqueta from '../components/Etiqueta.astro';
+import Placa from '../components/Placa.astro';
 
 const paleta = [
   '--tinta',
@@ -85,6 +86,20 @@ const escala = [
         <Etiqueta>USD 5.000</Etiqueta>
         <Etiqueta>Código fuente incluido</Etiqueta>
       </div>
+
+      <h2>Placa troquelada</h2>
+      <div class="vitrina-placa">
+        <Placa />
+      </div>
+
+      <h2>Placa — comparación de tamaño (solo para decidir, no es el valor final)</h2>
+      <p>
+        Misma placa, con <code>--placa-ancho</code> topado en 400px en vez de 300px. El override
+        vive solo acá, no en el componente ni en tokens.css.
+      </p>
+      <div class="vitrina-placa vitrina-placa--grande">
+        <Placa />
+      </div>
     </div>
   </section>
 </Base>
@@ -161,5 +176,18 @@ const escala = [
     flex-wrap: wrap;
     gap: var(--e3);
     align-items: center;
+  }
+
+  .vitrina-placa {
+    display: flex;
+    justify-content: center;
+    padding-block: var(--e6);
+    overflow-x: clip;
+  }
+
+  /* Solo para la captura de comparacion (ver plan de Fase 2). No tocar
+     Placa.astro ni tokens.css para esto. */
+  .vitrina-placa--grande :global(.placa) {
+    --placa-ancho: clamp(220px, 78vw, 400px);
   }
 </style>
