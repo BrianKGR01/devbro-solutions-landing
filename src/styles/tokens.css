@@ -1,0 +1,58 @@
+:root {
+  /* ---- Base ---- */
+  --tinta:        #080B09;   /* fondo principal. Negro con base verde */
+  --tinta-2:      #0F1512;   /* superficies elevadas */
+  --tinta-3:      #18201C;   /* tarjetas */
+  --papel:        #EDEFEA;   /* fondo de secciones invertidas */
+  --humo:         #8A968F;   /* texto secundario sobre oscuro */
+  --humo-papel:   #56605A;   /* texto secundario sobre papel */
+
+  /* ---- Verde metálico ---- */
+  --verde-noche:  #0C2A1E;   /* superficies teñidas, sombras sólidas */
+  --verde-base:   #145239;   /* relleno de botones */
+  --verde:        #1D7A52;   /* bordes, íconos, títulos grandes */
+  --verde-luz:    #4FA57C;   /* TEXTO de acento sobre oscuro */
+  --verde-filo:   #86C9A4;   /* filo especular. Uso puntual */
+
+  /* ---- Acento secundario ---- */
+  --laton:        #B8A26A;   /* numerales y filetes. Nada más */
+
+  /* ---- Degradado metálico ---- */
+  --metal: linear-gradient(135deg,
+    #0C2A1E  0%,
+    #145239 22%,
+    #2E8F62 44%,
+    #86C9A4 51%,
+    #2E8F62 58%,
+    #145239 80%,
+    #0C2A1E 100%);
+
+  /* ---- Relleno de botón primario ---- */
+  --relleno-cta: linear-gradient(180deg, #145239 0%, #0C2A1E 100%);
+
+  /* ---- Retícula de fondo ---- */
+  --reticula: rgba(237, 239, 234, 0.035);
+
+  /* ---- Bordes ---- */
+  --borde:        2px solid rgba(237, 239, 234, 0.10);
+  --borde-fuerte: 2px solid var(--verde);
+  --borde-papel:  2px solid rgba(8, 11, 9, 0.14);
+
+  /* ---- Espaciado (escala de 8) ---- */
+  --e1: 8px;   --e2: 16px;  --e3: 24px;  --e4: 32px;
+  --e5: 48px;  --e6: 64px;  --e7: 96px;  --e8: 128px;
+  --e9: 160px;
+
+  /* ---- Contenedor ---- */
+  --ancho-max: 1200px;
+  --pad-lateral: clamp(20px, 5vw, 64px);
+
+  /* ---- Tipografías ---- */
+  --display: 'Archivo', system-ui, sans-serif;
+  --cuerpo:  'Inter Tight', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---- Movimiento ---- */
+  --salida: cubic-bezier(0.16, 1, 0.3, 1);
+  --entrada: cubic-bezier(0.7, 0, 0.84, 0);
+}
