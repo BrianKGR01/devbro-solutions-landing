@@ -119,6 +119,19 @@
     letter-spacing: 0.16em;
     color: var(--humo);
     text-align: center;
+    white-space: nowrap; /* un grabado en metal es una sola linea, sin excepciones */
+  }
+
+  /* Por debajo de 640px el marco de 6px le deja menos ancho al interior;
+     a 0.62rem el texto mide ~242px de un disponible de ~247px (margen <5px).
+     Medido con Range().getBoundingClientRect(), no con scrollWidth -- ese
+     ancho estaba estirado por el flex column y no reflejaba el texto real.
+     0.5rem por si solo ya deja ~52px de margen (21%): no hizo falta tocar
+     el letter-spacing. */
+  @media (max-width: 639px) {
+    .placa__grabado {
+      font-size: 0.5rem;
+    }
   }
 
   .placa__cifra {
