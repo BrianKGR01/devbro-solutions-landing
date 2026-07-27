@@ -1,0 +1,126 @@
+---
+// #inicio (docs/01-brief.md §3, docs/03-content.md §01).
+// El titular nunca comparte columna con la placa: ver docs/06-decisiones.md D12.
+import Cta from './Cta.astro';
+import Etiqueta from './Etiqueta.astro';
+import Placa from './Placa.astro';
+---
+
+<section id="inicio" class="hero seccion">
+  <div class="contenedor">
+    <div class="hero__cuerpo">
+      <div class="hero__placa">
+        <Placa />
+      </div>
+
+      <p class="hero__antetitulo">SOFTWARE FACTORY · SANTA CRUZ DE LA SIERRA</p>
+
+      <h1 class="hero__titulo">Tu idea,<br />funcionando,<br />en tres semanas.</h1>
+
+      <div class="hero__contenido">
+        <p class="hero__parrafo">
+          Construimos el producto que tu idea necesita para salir al mercado. Sin ocho meses de
+          espera. Sin quedarte con un sistema que se cae a los cien usuarios.
+        </p>
+
+        <div class="hero__botones">
+          <Cta href="#contacto">Agendar diagnóstico</Cta>
+          <Cta href="#proceso" variante="secundario">Cómo trabajamos</Cta>
+        </div>
+
+        <div class="hero__microcopia">
+          <Etiqueta>Precio cerrado antes de empezar</Etiqueta>
+          <Etiqueta>El código es tuyo</Etiqueta>
+          <Etiqueta>Sin permanencia</Etiqueta>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Mobile-first: todo apilado, placa arriba (docs/02-design-system.md §8) */
+  .hero__cuerpo {
+    display: grid;
+    grid-template-areas:
+      'placa'
+      'antetitulo'
+      'titulo'
+      'contenido';
+    gap: var(--e4);
+  }
+
+  @media (min-width: 1024px) {
+    .hero__cuerpo {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        'antetitulo antetitulo'
+        'titulo titulo'
+        'contenido placa';
+      column-gap: var(--e5);
+    }
+  }
+
+  .hero__placa {
+    grid-area: placa;
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero__placa {
+      align-self: center;
+    }
+  }
+
+  /* min-width:0 en antetitulo y titulo: sin esto, el min-width:auto implicito
+     de un item que abarca ambas columnas fuerza la columna "auto" de la placa
+     a crecer para darle lugar al contenido minimo del texto -- eso causaba
+     el desborde horizontal medido en 1023/1440/1920px. */
+  .hero__antetitulo {
+    grid-area: antetitulo;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--humo);
+    min-width: 0;
+  }
+
+  .hero__titulo {
+    grid-area: titulo;
+    font-family: var(--display);
+    font-variation-settings: 'wght' 900, 'wdth' 118;
+    font-size: var(--t-display-xl);
+    letter-spacing: -0.03em;
+    line-height: 0.88;
+    color: var(--papel);
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+
+  .hero__contenido {
+    grid-area: contenido;
+    display: flex;
+    flex-direction: column;
+    gap: var(--e3);
+    align-self: start;
+    min-width: 0;
+  }
+
+  .hero__parrafo {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--papel);
+    max-width: 62ch;
+  }
+
+  .hero__botones,
+  .hero__microcopia {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e2);
+  }
+</style>
