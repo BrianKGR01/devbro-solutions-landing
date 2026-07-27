@@ -153,4 +153,14 @@ Ninguno bloquea el desarrollo. Se implementan como placeholder visible y como va
 
 **Duda:** el `overflow-wrap: break-word` global agregado en la Fase 1 evita el desborde partiendo palabras largas dentro de la palabra misma. Pero `--t-display-xl` tiene un mínimo de `3rem` (`clamp(3rem, 9vw, 6.5rem)`), y a 360px de ancho la palabra "funcionando," del titular real del hero ("Tu idea, funcionando, en tres semanas") podría no entrar completa en una sola línea dentro del ancho disponible del contenedor, forzando un corte de palabra visualmente feo en vez de un salto de línea limpio.
 
-**Resolución:** pendiente de verificar en la Fase 3, cuando se construya `Hero.astro` con el texto real. Si el corte de palabra ocurre, bajar el mínimo de `--t-display-xl` a `2.5rem` en `tokens.css` (o revisar el `letter-spacing`/padding lateral del hero a 360px) antes de dar la sección por terminada. No se resuelve ahora porque `Placa.astro` (Fase 2) no usa `--t-display-xl` y no hay titular real todavía contra el cual probarlo.
+**Resolución:** confirmado con medición real (Playwright + Range API, fuente Archivo cargada, no estimado). A 360px, contenedor de 320px de ancho disponible:
+
+| `--t-display-xl` | Palabra más ancha ("funcionando,") | Desborda |
+|---|---|---|
+| `3rem` (48px, valor original) | 368.94px | **Sí** — confirma la duda |
+| `2.5rem` (40px, propuesta inicial) | 307.45px | No, pero con solo ~12.5px de margen (~4%) |
+| `2.25rem` (36px, valor elegido) | 276.7px | No, con ~43px de margen (~13.5%) |
+
+Se eligió `2.25rem` en vez de `2.5rem`: el margen de `2.5rem` es del mismo orden que el que causó el bug del grabado de la placa en la Fase 2 (Fase 2, PR #2) — no vale la pena repetir ese riesgo por 0,25rem de diferencia. Con el titular real completo ("Tu idea, funcionando, en tres semanas.") en una columna de 320px, `2.25rem` envuelve en 4 líneas sin desbordar ninguna ("Tu idea," / "funcionando," / "en tres" / "semanas."), lo cual es normal y esperable para un titular hero en el ancho mínimo soportado.
+
+`tokens.css` actualizado: `--t-display-xl: clamp(2.25rem, 9vw, 6.5rem);`. El máximo (`6.5rem`) queda pendiente de la resolución del conflicto de ancho en escritorio (ver plan de Fase 3 — Hero, punto 1), que se decide junto con el layout de columnas del Hero, no acá.
