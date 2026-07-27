@@ -55,4 +55,13 @@
   /* ---- Movimiento ---- */
   --salida: cubic-bezier(0.16, 1, 0.3, 1);
   --entrada: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* ---- Escala tipográfica (docs/02-design-system.md §3) ---- */
+  --t-display-xl: clamp(3rem, 9vw, 6.5rem);   /* hero */
+  --t-display-l:  clamp(2.1rem, 5vw, 3.6rem); /* títulos de sección */
+  --t-titulo:     1.5rem;
+  --t-cuerpo-l:   1.125rem;
+  --t-cuerpo:     1rem;
+  --t-etiqueta:   0.75rem;
+  --t-dato:       clamp(2rem, 4vw, 3.5rem);
 }
