@@ -186,3 +186,30 @@ Se evaluaron dos formas de ubicar la placa junto al titular de ancho completo:
 `tokens.css`: `--t-display-xl: clamp(2.25rem, 8.2vw, 6rem);` — reemplaza el máximo pendiente de D11.
 
 **Altura del hero:** la restricción "entra sin scroll en 1440×900" (`docs/01-brief.md`) se relaja deliberadamente para este rediseño — con el titular a 96px en 3 líneas, el hero mide ~957px reales, unos ~57px de scroll a 900px de viewport. Aceptado explícitamente: el tamaño del titular y la jerarquía tipográfica valen más que evitar ese scroll mínimo.
+
+---
+
+## D13 · La placa va después del titular en móvil, no antes
+
+**Duda:** `docs/02-design-system.md` §8 (redacción original) ponía la placa arriba del titular en móvil. Con la placa ya construida (Fase 2) y el hero real (Fase 3, D12), hacía falta confirmar si eso dejaba el mensaje y el CTA visibles en el primer pantallazo de un celular real.
+
+**Resolución:** medido a 360×640 (Playwright, `getBoundingClientRect()`, no estimado):
+
+| Elemento | Con la placa primero (orden original) |
+|---|---|
+| Borde inferior del titular (`h1`) | 532px — dentro del pliegue (640px), pero sin margen real |
+| CTA primario (borde superior) | 707px — **fuera del pliegue** |
+
+El CTA queda fuera del pliegue **en cualquier orden**: los 4 bloques (placa, antetítulo, titular, contenido) están en una sola columna con el mismo gap uniforme entre todos, así que la altura total —y por lo tanto la posición final del CTA— no cambia según el orden en que aparezcan. Confirmado reordenando en vivo (inyectando el CSS del nuevo orden) y volviendo a medir: el CTA se mantuvo exacto en 707-772px.
+
+Lo que **sí** cambia con el orden es qué entra en el primer pantallazo. Reordenando a antetítulo → titular → placa → contenido:
+
+| Elemento | Con el titular primero (orden nuevo) |
+|---|---|
+| Titular (`h1`) | 168-294px |
+| Placa | 326-532px — **completa, dentro del pliegue** |
+| CTA primario | 707-772px — sigue fuera, sin cambios |
+
+Con el orden nuevo, el mensaje completo **y** la placa entera entran en el primer pantallazo sin scroll, en vez de solo el titular al límite. El CTA sigue pidiendo scroll, pero eso es esperable en cualquier hero mobile — para evitarlo por completo habría que achicar la placa a ~17% de su tamaño actual (destruyéndola como elemento firma) a cambio de ahorrar un scroll mínimo. No vale la pena.
+
+**Se elige el reordenamiento.** `Hero.astro` actualizado: `grid-template-areas` para <1024px pasa de `placa/antetitulo/titulo/contenido` a `antetitulo/titulo/placa/contenido`. `docs/02-design-system.md` §8 y `docs/01-brief.md` §3 sincronizados.

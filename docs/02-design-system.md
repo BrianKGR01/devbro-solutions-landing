@@ -295,11 +295,13 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 
 | Nombre | Ancho | Cambios principales |
 |---|---|---|
-| Móvil | < 640px | Todo a una columna. Placa arriba del titular, centrada, rotación reducida a `-3deg`. Menú colapsa a solo el CTA |
-| Tableta | 640-1023px | Grillas de 3 columnas pasan a 2. Hero sigue en una columna (placa arriba, `-6deg` desde 640px) |
+| Móvil | < 640px | Todo a una columna: antetítulo → titular → placa → párrafo/botones/microcopia. Placa centrada, rotación reducida a `-3deg`. Menú colapsa a solo el CTA |
+| Tableta | 640-1023px | Grillas de 3 columnas pasan a 2. Hero sigue en una columna, mismo orden que móvil (placa centrada, `-6deg` desde 640px) |
 | Escritorio | ≥ 1024px | El titular del hero sigue a ancho completo (no comparte fila con la placa — ver Fase 3). La placa pasa a compartir fila con el bloque párrafo + botones + microcopia, no con el titular. Grillas completas |
 
-**Nota sobre el hero (decidido en Fase 3, ver `docs/06-decisiones.md` D12):** el titular (`--t-display-xl`) nunca comparte columna con la placa — la placa mide 428px de ancho rotada y ninguna combinación razonable de columna + tamaño de fuente entra sin sacrificar la jerarquía tipográfica o el tamaño del titular. El titular ocupa siempre el ancho completo del contenedor; la placa se reubica junto al bloque de párrafo/botones/microcopia a partir del breakpoint de escritorio (1024px), y arriba del titular, centrada, en los breakpoints menores.
+**Nota sobre el hero (decidido en Fase 3, ver `docs/06-decisiones.md` D12):** el titular (`--t-display-xl`) nunca comparte columna con la placa — la placa mide 428px de ancho rotada y ninguna combinación razonable de columna + tamaño de fuente entra sin sacrificar la jerarquía tipográfica o el tamaño del titular. El titular ocupa siempre el ancho completo del contenedor; la placa se reubica junto al bloque de párrafo/botones/microcopia a partir del breakpoint de escritorio (1024px).
+
+**Orden en móvil/tableta (D13, ver `docs/06-decisiones.md`):** la placa va **después** del titular, no antes. Medido a 360×640 (el "pliegue" de una pantalla de celular típica): con la placa primero, el titular quedaba al filo del pliegue (borde inferior a 532px de 640, sin margen real) y el CTA primario siempre queda fuera (707px) sin importar el orden — la altura total no cambia por reordenar. Con antetítulo → titular → placa, el mensaje completo **y** la placa entran enteros en el primer pantallazo sin scroll; el CTA sigue pidiendo scroll, pero eso es normal en cualquier hero mobile y no vale la pena achicar la placa (habría que bajarla a ~17% de su tamaño actual para evitarlo, lo que la destruye como elemento firma) para evitarlo.
 
 **Regla base:** mobile-first. Escribí el CSS para 360px y ampliá con `min-width`.
 

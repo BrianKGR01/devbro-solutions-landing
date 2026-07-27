@@ -43,7 +43,7 @@ Once bloques, en este orden exacto. No agregues, no reordenes.
 
 Las dos secciones en papel (03 y 07) son deliberadas: rompen la monotonía del oscuro y funcionan como respiro visual. No las conviertas a oscuro.
 
-**Estructura interna del hero (01):** el titular ocupa siempre el ancho completo del bloque, nunca una columna compartida con la placa — la placa (428px rotada) y un titular con jerarquía real no entran juntos en columna sin sacrificar uno de los dos. Desde el breakpoint de escritorio (1024px) la placa se ubica junto al párrafo + botones + microcopia; por debajo, arriba del titular, centrada. Detalle completo y números en `docs/06-decisiones.md` D12 y `docs/02-design-system.md` §8.
+**Estructura interna del hero (01):** el titular ocupa siempre el ancho completo del bloque, nunca una columna compartida con la placa — la placa (428px rotada) y un titular con jerarquía real no entran juntos en columna sin sacrificar uno de los dos. Desde el breakpoint de escritorio (1024px) la placa se ubica junto al párrafo + botones + microcopia; por debajo, **después** del titular (no antes — medido a 360×640, ver D13), centrada. Detalle completo y números en `docs/06-decisiones.md` D12 y D13, y `docs/02-design-system.md` §8.
 
 ---
 
