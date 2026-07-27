@@ -85,10 +85,12 @@ h5,
 h6 {
   font-family: var(--display);
   line-height: 1;
+  overflow-wrap: break-word;
 }
 
 p {
   max-width: 62ch;
+  overflow-wrap: break-word;
 }
 
 /* ---- Retícula de fondo (docs/02-design-system.md §4) ---- */
