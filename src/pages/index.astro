@@ -6,6 +6,7 @@ import Wordmark from '../components/Wordmark.astro';
 import Cta from '../components/Cta.astro';
 import Etiqueta from '../components/Etiqueta.astro';
 import Placa from '../components/Placa.astro';
+import Hero from '../components/Hero.astro';
 
 const paleta = [
   '--tinta',
@@ -30,9 +31,11 @@ const escala = [
 ---
 
 <Base title="Página de prueba — Fase 1 · DevBro Solutions">
+  <Hero />
+
   <section class="prueba seccion">
     <div class="contenedor">
-      <h1>Página de prueba — Fase 1: Cimientos</h1>
+      <h2>Página de prueba — Fase 1: Cimientos</h2>
       <p>
         Página temporal para verificar la paleta, la escala tipográfica y los tres componentes
         atómicos antes de construir las secciones reales.
