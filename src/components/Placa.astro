@@ -17,6 +17,34 @@
   <span class="placa__remache placa__remache--inf-der"></span>
 </div>
 
+<script is:inline>
+  (function () {
+    var placa = document.currentScript.previousElementSibling;
+    if (!placa) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return; // el CSS por defecto ya es el estado final: nada que tocar, cero parpadeo
+    }
+
+    var numeral = placa.querySelector('.placa__numeral');
+    numeral.textContent = '24';
+    placa.classList.add('is-animando');
+
+    // Pasos de la cuenta 24->16->11->07->03, arrancando en 440ms (docs/02-design-system.md §6)
+    var pasos = ['16', '11', '07', '03'];
+    var duraciones = [140, 120, 100, 90];
+    var momento = 440;
+    for (var i = 0; i < pasos.length; i++) {
+      momento += duraciones[i];
+      (function (valor, cuando) {
+        setTimeout(function () {
+          numeral.textContent = valor;
+        }, cuando);
+      })(pasos[i], momento);
+    }
+  })();
+</script>
+
 <style>
   /* Mobile-first: -3deg de base, -6deg desde 640px (docs/02 §8) */
   .placa {
@@ -146,5 +174,118 @@
   .placa__remache--inf-der {
     bottom: calc(var(--e2) - 3px);
     right: calc(var(--e2) - 3px);
+  }
+
+  /* Barrido especular: pseudo-elemento propio, sin animar por defecto (docs/02 §6).
+     El clip-path de .placa ya recorta este pseudo-elemento tambien. */
+  .placa::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 42%, var(--verde-filo) 50%, transparent 58%);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+
+  /* La animacion completa solo se activa si el script agrega esta clase (y por lo
+     tanto ya descarto prefers-reduced-motion en JS). El @media es una segunda capa
+     de defensa: si algo llegara a agregar la clase igual, el SO manda. */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Linea de tiempo unica de 1110ms para rotacion+entrada+impacto+vibracion.
+       Ver docs/06-decisiones.md: se prefirio a 3 animaciones con animation-delay
+       para no depender del orden de composicion entre ellas. */
+    @keyframes placa-secuencia {
+      0% {
+        animation-timing-function: var(--entrada);
+        opacity: 0;
+        transform: rotate(var(--placa-rotacion)) translateY(-40px) scale(1) translateX(0);
+      }
+      28.83% {
+        /* 320ms: fin de la entrada */
+        animation-timing-function: var(--salida);
+        opacity: 1;
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      }
+      34.23% {
+        /* 380ms: pico del impacto */
+        animation-timing-function: var(--salida);
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1.015) translateX(0);
+      }
+      39.64% {
+        /* 440ms: fin del impacto */
+        animation-timing-function: linear;
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      }
+      89.19% {
+        /* 990ms: inicio de la vibracion */
+        animation-timing-function: linear;
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      }
+      90.54% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(2px);
+      } /* 1005ms */
+      91.89% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1020ms */
+      93.24% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(-2px);
+      } /* 1035ms */
+      94.59% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1050ms */
+      95.95% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(2px);
+      } /* 1065ms */
+      97.3% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1080ms */
+      98.65% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(-2px);
+      } /* 1095ms */
+      100% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1110ms */
+    }
+
+    @keyframes placa-semanas {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes placa-brillo {
+      0% {
+        transform: translateX(-120%);
+        opacity: 0;
+      }
+      15%,
+      85% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+    }
+
+    .placa.is-animando {
+      animation: placa-secuencia 1110ms forwards;
+    }
+
+    /* both (no forwards): sin esto, durante el delay se ve el CSS por defecto
+       (SEMANAS ya visible) y recien al terminar el delay salta a opacity:0 antes
+       de hacer fade otra vez -- visible, desaparece de golpe, reaparece. */
+    .placa.is-animando .placa__semanas {
+      animation: placa-semanas 200ms var(--salida) 1200ms both;
+    }
+
+    .placa.is-animando::after {
+      animation: placa-brillo 400ms linear 1050ms both;
+    }
   }
 </style>
