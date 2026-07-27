@@ -54,6 +54,9 @@
        inconfundible. Ver verificacion visual en el PR de esta fase. */
     --placa-chaflan: 26px;
     --placa-ancho: clamp(220px, 78vw, 400px);
+    /* Remaches a 16px (--e2) quedaban a 1.24px del corte del chaflan de 26px --
+       practicamente tangentes. A 22px del centro quedan a ~9.73px de la diagonal. */
+    --placa-remache-inset: 22px;
 
     position: relative;
     width: var(--placa-ancho);
@@ -85,11 +88,13 @@
   }
 
   .placa__interior {
-    /* 26px - 3px*(2-raiz(2)) ~= 24.24px: mismo angulo de 45 grados tras
-       el inset de 3px del marco (border-image no sigue el clip-path). */
-    --placa-chaflan-interior: 24.24px;
+    /* 26px - 6px*(2-raiz(2)) ~= 22.49px: mismo angulo de 45 grados tras
+       el inset de 6px del marco (border-image no sigue el clip-path).
+       Marco subido de 3 a 6px: a 400px de ancho, 3px se leia como contorno,
+       no como canto mecanizado. */
+    --placa-chaflan-interior: 22.49px;
     position: absolute;
-    inset: 3px;
+    inset: 6px;
     background: var(--verde-noche);
     clip-path: polygon(
       var(--placa-chaflan-interior) 0,
@@ -161,22 +166,23 @@
     background: var(--verde-noche); /* punto interior mas oscuro: reusa token existente */
   }
 
-  /* 16px (--e2) desde la esquina hasta el CENTRO del remache: inset = 16px - 3px de radio */
+  /* --placa-remache-inset desde la esquina hasta el CENTRO del remache: se resta
+     3px de radio porque top/left/etc. posicionan la esquina de la caja, no el centro */
   .placa__remache--sup-izq {
-    top: calc(var(--e2) - 3px);
-    left: calc(var(--e2) - 3px);
+    top: calc(var(--placa-remache-inset) - 3px);
+    left: calc(var(--placa-remache-inset) - 3px);
   }
   .placa__remache--sup-der {
-    top: calc(var(--e2) - 3px);
-    right: calc(var(--e2) - 3px);
+    top: calc(var(--placa-remache-inset) - 3px);
+    right: calc(var(--placa-remache-inset) - 3px);
   }
   .placa__remache--inf-izq {
-    bottom: calc(var(--e2) - 3px);
-    left: calc(var(--e2) - 3px);
+    bottom: calc(var(--placa-remache-inset) - 3px);
+    left: calc(var(--placa-remache-inset) - 3px);
   }
   .placa__remache--inf-der {
-    bottom: calc(var(--e2) - 3px);
-    right: calc(var(--e2) - 3px);
+    bottom: calc(var(--placa-remache-inset) - 3px);
+    right: calc(var(--placa-remache-inset) - 3px);
   }
 
   /* Barrido especular: pseudo-elemento propio, sin animar por defecto (docs/02 §6).
