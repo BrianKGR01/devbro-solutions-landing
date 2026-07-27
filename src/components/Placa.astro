@@ -1,0 +1,313 @@
+---
+// Elemento firma (docs/02-design-system.md §6). Decorativa: aria-hidden,
+// la info real ("en tres semanas") vive en el H1 del Hero (Fase 3).
+---
+
+<div class="placa" aria-hidden="true">
+  <div class="placa__interior">
+    <p class="placa__grabado">DEVBRO SOLUTIONS · ORDEN Nº 0001</p>
+    <div class="placa__cifra">
+      <p class="placa__numeral">03</p>
+      <p class="placa__semanas">SEMANAS</p>
+    </div>
+  </div>
+  <span class="placa__remache placa__remache--sup-izq"></span>
+  <span class="placa__remache placa__remache--sup-der"></span>
+  <span class="placa__remache placa__remache--inf-izq"></span>
+  <span class="placa__remache placa__remache--inf-der"></span>
+</div>
+
+<script is:inline>
+  (function () {
+    var placa = document.currentScript.previousElementSibling;
+    if (!placa) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return; // el CSS por defecto ya es el estado final: nada que tocar, cero parpadeo
+    }
+
+    var numeral = placa.querySelector('.placa__numeral');
+    numeral.textContent = '24';
+    placa.classList.add('is-animando');
+
+    // Pasos de la cuenta 24->16->11->07->03, arrancando en 440ms (docs/02-design-system.md §6)
+    var pasos = ['16', '11', '07', '03'];
+    var duraciones = [140, 120, 100, 90];
+    var momento = 440;
+    for (var i = 0; i < pasos.length; i++) {
+      momento += duraciones[i];
+      (function (valor, cuando) {
+        setTimeout(function () {
+          numeral.textContent = valor;
+        }, cuando);
+      })(pasos[i], momento);
+    }
+  })();
+</script>
+
+<style>
+  /* Mobile-first: -3deg de base, -6deg desde 640px (docs/02 §8) */
+  .placa {
+    --placa-rotacion: -3deg;
+    /* 14px (el valor literal de docs/02 #6) se leia como esquina redondeada a la
+       escala real de render/captura -- subido para que el corte a 45 grados sea
+       inconfundible. Ver verificacion visual en el PR de esta fase. */
+    --placa-chaflan: 26px;
+    --placa-ancho: clamp(220px, 78vw, 400px);
+    /* Remaches a 16px (--e2) quedaban a 1.24px del corte del chaflan de 26px --
+       practicamente tangentes. A 22px del centro quedan a ~9.73px de la diagonal. */
+    --placa-remache-inset: 22px;
+
+    position: relative;
+    width: var(--placa-ancho);
+    aspect-ratio: 300 / 220;
+
+    background: var(--metal);
+    /* Chaflan de 14px a 45 grados en las 4 esquinas. No border-radius (docs/06-decisiones.md D2) */
+    clip-path: polygon(
+      var(--placa-chaflan) 0,
+      calc(100% - var(--placa-chaflan)) 0,
+      100% var(--placa-chaflan),
+      100% calc(100% - var(--placa-chaflan)),
+      calc(100% - var(--placa-chaflan)) 100%,
+      var(--placa-chaflan) 100%,
+      0 calc(100% - var(--placa-chaflan)),
+      0 var(--placa-chaflan)
+    );
+
+    /* Estado por defecto = estado FINAL de la animacion (numeral 03, SEMANAS visible,
+       sin transform). Sin JS y con prefers-reduced-motion esto es lo unico que se ve. */
+    opacity: 1;
+    transform: rotate(var(--placa-rotacion));
+  }
+
+  @media (min-width: 640px) {
+    .placa {
+      --placa-rotacion: -6deg;
+    }
+  }
+
+  .placa__interior {
+    /* 26px - 6px*(2-raiz(2)) ~= 22.49px: mismo angulo de 45 grados tras
+       el inset de 6px del marco (border-image no sigue el clip-path).
+       Marco subido de 3 a 6px: a 400px de ancho, 3px se leia como contorno,
+       no como canto mecanizado. */
+    --placa-chaflan-interior: 22.49px;
+    position: absolute;
+    inset: 6px;
+    background: var(--verde-noche);
+    clip-path: polygon(
+      var(--placa-chaflan-interior) 0,
+      calc(100% - var(--placa-chaflan-interior)) 0,
+      100% var(--placa-chaflan-interior),
+      100% calc(100% - var(--placa-chaflan-interior)),
+      calc(100% - var(--placa-chaflan-interior)) 100%,
+      var(--placa-chaflan-interior) 100%,
+      0 calc(100% - var(--placa-chaflan-interior)),
+      0 var(--placa-chaflan-interior)
+    );
+    display: flex;
+    flex-direction: column;
+    padding: var(--e2);
+  }
+
+  .placa__grabado {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 0.62rem;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    color: var(--humo);
+    text-align: center;
+    white-space: nowrap; /* un grabado en metal es una sola linea, sin excepciones */
+  }
+
+  /* Por debajo de 640px el marco de 6px le deja menos ancho al interior;
+     a 0.62rem el texto mide ~242px de un disponible de ~247px (margen <5px).
+     Medido con Range().getBoundingClientRect(), no con scrollWidth -- ese
+     ancho estaba estirado por el flex column y no reflejaba el texto real.
+     0.5rem por si solo ya deja ~52px de margen (21%): no hizo falta tocar
+     el letter-spacing. */
+  @media (max-width: 639px) {
+    .placa__grabado {
+      font-size: 0.5rem;
+    }
+  }
+
+  .placa__cifra {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--e1);
+  }
+
+  .placa__numeral {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(4.5rem, 10vw, 7rem);
+    line-height: 1; /* sin esto hereda 1.65 de body y desborda la placa */
+    font-variant-numeric: tabular-nums;
+    color: var(--verde-filo);
+  }
+
+  .placa__semanas {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    line-height: 1.2;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--humo);
+    opacity: 1;
+  }
+
+  .placa__remache {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    clip-path: circle(50%); /* circulo: nunca border-radius (D2 sin excepciones) */
+    background: var(--laton);
+  }
+
+  .placa__remache::after {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    clip-path: circle(50%);
+    background: var(--verde-noche); /* punto interior mas oscuro: reusa token existente */
+  }
+
+  /* --placa-remache-inset desde la esquina hasta el CENTRO del remache: se resta
+     3px de radio porque top/left/etc. posicionan la esquina de la caja, no el centro */
+  .placa__remache--sup-izq {
+    top: calc(var(--placa-remache-inset) - 3px);
+    left: calc(var(--placa-remache-inset) - 3px);
+  }
+  .placa__remache--sup-der {
+    top: calc(var(--placa-remache-inset) - 3px);
+    right: calc(var(--placa-remache-inset) - 3px);
+  }
+  .placa__remache--inf-izq {
+    bottom: calc(var(--placa-remache-inset) - 3px);
+    left: calc(var(--placa-remache-inset) - 3px);
+  }
+  .placa__remache--inf-der {
+    bottom: calc(var(--placa-remache-inset) - 3px);
+    right: calc(var(--placa-remache-inset) - 3px);
+  }
+
+  /* Barrido especular: pseudo-elemento propio, sin animar por defecto (docs/02 §6).
+     El clip-path de .placa ya recorta este pseudo-elemento tambien. */
+  .placa::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 42%, var(--verde-filo) 50%, transparent 58%);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+
+  /* La animacion completa solo se activa si el script agrega esta clase (y por lo
+     tanto ya descarto prefers-reduced-motion en JS). El @media es una segunda capa
+     de defensa: si algo llegara a agregar la clase igual, el SO manda. */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Linea de tiempo unica de 1110ms para rotacion+entrada+impacto+vibracion.
+       Ver docs/06-decisiones.md: se prefirio a 3 animaciones con animation-delay
+       para no depender del orden de composicion entre ellas. */
+    @keyframes placa-secuencia {
+      0% {
+        animation-timing-function: var(--entrada);
+        opacity: 0;
+        transform: rotate(var(--placa-rotacion)) translateY(-40px) scale(1) translateX(0);
+      }
+      28.83% {
+        /* 320ms: fin de la entrada */
+        animation-timing-function: var(--salida);
+        opacity: 1;
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      }
+      34.23% {
+        /* 380ms: pico del impacto */
+        animation-timing-function: var(--salida);
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1.015) translateX(0);
+      }
+      39.64% {
+        /* 440ms: fin del impacto */
+        animation-timing-function: linear;
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      }
+      89.19% {
+        /* 990ms: inicio de la vibracion */
+        animation-timing-function: linear;
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      }
+      90.54% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(2px);
+      } /* 1005ms */
+      91.89% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1020ms */
+      93.24% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(-2px);
+      } /* 1035ms */
+      94.59% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1050ms */
+      95.95% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(2px);
+      } /* 1065ms */
+      97.3% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1080ms */
+      98.65% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(-2px);
+      } /* 1095ms */
+      100% {
+        transform: rotate(var(--placa-rotacion)) translateY(0) scale(1) translateX(0);
+      } /* 1110ms */
+    }
+
+    @keyframes placa-semanas {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes placa-brillo {
+      0% {
+        transform: translateX(-120%);
+        opacity: 0;
+      }
+      15%,
+      85% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+    }
+
+    .placa.is-animando {
+      animation: placa-secuencia 1110ms forwards;
+    }
+
+    /* both (no forwards): sin esto, durante el delay se ve el CSS por defecto
+       (SEMANAS ya visible) y recien al terminar el delay salta a opacity:0 antes
+       de hacer fade otra vez -- visible, desaparece de golpe, reaparece. */
+    .placa.is-animando .placa__semanas {
+      animation: placa-semanas 200ms var(--salida) 1200ms both;
+    }
+
+    .placa.is-animando::after {
+      animation: placa-brillo 400ms linear 1050ms both;
+    }
+  }
+</style>

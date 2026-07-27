@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import Wordmark from '../components/Wordmark.astro';
 import Cta from '../components/Cta.astro';
 import Etiqueta from '../components/Etiqueta.astro';
+import Placa from '../components/Placa.astro';
 
 const paleta = [
   '--tinta',
@@ -85,6 +86,11 @@ const escala = [
         <Etiqueta>USD 5.000</Etiqueta>
         <Etiqueta>Código fuente incluido</Etiqueta>
       </div>
+
+      <h2>Placa troquelada</h2>
+      <div class="vitrina-placa">
+        <Placa />
+      </div>
     </div>
   </section>
 </Base>
@@ -161,5 +167,12 @@ const escala = [
     flex-wrap: wrap;
     gap: var(--e3);
     align-items: center;
+  }
+
+  .vitrina-placa {
+    display: flex;
+    justify-content: center;
+    padding-block: var(--e6);
+    overflow-x: clip;
   }
 </style>
