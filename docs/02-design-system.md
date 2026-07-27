@@ -239,11 +239,11 @@ Cuadrado de 56px, esquina inferior derecha, `bottom: 24px; right: 24px`. Fondo `
 Lo único que la página tiene que hacer memorable. Va en el hero.
 
 ### Estructura visual
-- Rectángulo de ~300×220px (escala con `clamp`), rotado `-6deg`
-- **Esquinas achaflanadas** vía `clip-path` (corte de 14px a 45° en las cuatro esquinas) — no `border-radius`
-- Borde de 3px con `--metal`
+- Rectángulo con relación de aspecto 300:220, ancho `clamp(220px, 78vw, 400px)` (hasta ~400×293px), rotado `-6deg`
+- **Esquinas achaflanadas** vía `clip-path` (corte de 26px a 45° en las cuatro esquinas) — no `border-radius`. A 14px (valor original) el corte se leía como esquina redondeada a la escala real de render/captura, no como corte recto
+- Marco de 6px con `--metal`, logrado con dos capas de `clip-path` (exterior + interior) — `border-image` no sigue los cortes del chaflán. Chaflán del interior: 26px − 6px·(2−√2) ≈ 22,49px, para que el marco se mantenga en 6px también en la diagonal, no solo en los lados rectos
 - Fondo `--verde-noche`
-- Cuatro remaches: círculos de 6px en `--laton` con un punto interior más oscuro, a 16px de cada esquina
+- Cuatro remaches: círculos de 6px en `--laton` con un punto interior más oscuro, a 22px de cada esquina (medidos al centro del remache). A 16px quedaban a ~1,2px del corte del chaflán — prácticamente tangentes
 - Arriba, grabado: `DEVBRO SOLUTIONS · ORDEN Nº 0001` — JetBrains Mono 700, 0.62rem, `letter-spacing: 0.16em`, color `--humo`
 - Centro: numeral enorme, JetBrains Mono 700, `clamp(4.5rem, 10vw, 7rem)`, `tabular-nums`, color `--verde-filo`
 - Debajo del numeral: `SEMANAS` — mono, `letter-spacing: 0.3em`, color `--humo`
