@@ -1,0 +1,150 @@
+---
+// Elemento firma (docs/02-design-system.md §6). Decorativa: aria-hidden,
+// la info real ("en tres semanas") vive en el H1 del Hero (Fase 3).
+---
+
+<div class="placa" aria-hidden="true">
+  <div class="placa__interior">
+    <p class="placa__grabado">DEVBRO SOLUTIONS · ORDEN Nº 0001</p>
+    <div class="placa__cifra">
+      <p class="placa__numeral">03</p>
+      <p class="placa__semanas">SEMANAS</p>
+    </div>
+  </div>
+  <span class="placa__remache placa__remache--sup-izq"></span>
+  <span class="placa__remache placa__remache--sup-der"></span>
+  <span class="placa__remache placa__remache--inf-izq"></span>
+  <span class="placa__remache placa__remache--inf-der"></span>
+</div>
+
+<style>
+  /* Mobile-first: -3deg de base, -6deg desde 640px (docs/02 §8) */
+  .placa {
+    --placa-rotacion: -3deg;
+    --placa-chaflan: 14px;
+    --placa-ancho: clamp(220px, 78vw, 300px);
+
+    position: relative;
+    width: var(--placa-ancho);
+    aspect-ratio: 300 / 220;
+
+    background: var(--metal);
+    /* Chaflan de 14px a 45 grados en las 4 esquinas. No border-radius (docs/06-decisiones.md D2) */
+    clip-path: polygon(
+      var(--placa-chaflan) 0,
+      calc(100% - var(--placa-chaflan)) 0,
+      100% var(--placa-chaflan),
+      100% calc(100% - var(--placa-chaflan)),
+      calc(100% - var(--placa-chaflan)) 100%,
+      var(--placa-chaflan) 100%,
+      0 calc(100% - var(--placa-chaflan)),
+      0 var(--placa-chaflan)
+    );
+
+    /* Estado por defecto = estado FINAL de la animacion (numeral 03, SEMANAS visible,
+       sin transform). Sin JS y con prefers-reduced-motion esto es lo unico que se ve. */
+    opacity: 1;
+    transform: rotate(var(--placa-rotacion));
+  }
+
+  @media (min-width: 640px) {
+    .placa {
+      --placa-rotacion: -6deg;
+    }
+  }
+
+  .placa__interior {
+    /* 14px - 3px*(2-raiz(2)) ~= 12.24px: mismo angulo de 45 grados tras
+       el inset de 3px del marco (border-image no sigue el clip-path). */
+    --placa-chaflan-interior: 12.24px;
+    position: absolute;
+    inset: 3px;
+    background: var(--verde-noche);
+    clip-path: polygon(
+      var(--placa-chaflan-interior) 0,
+      calc(100% - var(--placa-chaflan-interior)) 0,
+      100% var(--placa-chaflan-interior),
+      100% calc(100% - var(--placa-chaflan-interior)),
+      calc(100% - var(--placa-chaflan-interior)) 100%,
+      var(--placa-chaflan-interior) 100%,
+      0 calc(100% - var(--placa-chaflan-interior)),
+      0 var(--placa-chaflan-interior)
+    );
+    display: flex;
+    flex-direction: column;
+    padding: var(--e2);
+  }
+
+  .placa__grabado {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 0.62rem;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+    color: var(--humo);
+    text-align: center;
+  }
+
+  .placa__cifra {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--e1);
+  }
+
+  .placa__numeral {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(4.5rem, 10vw, 7rem);
+    line-height: 1; /* sin esto hereda 1.65 de body y desborda la placa */
+    font-variant-numeric: tabular-nums;
+    color: var(--verde-filo);
+  }
+
+  .placa__semanas {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    line-height: 1.2;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--humo);
+    opacity: 1;
+  }
+
+  .placa__remache {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    clip-path: circle(50%); /* circulo: nunca border-radius (D2 sin excepciones) */
+    background: var(--laton);
+  }
+
+  .placa__remache::after {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    clip-path: circle(50%);
+    background: var(--verde-noche); /* punto interior mas oscuro: reusa token existente */
+  }
+
+  /* 16px (--e2) desde la esquina hasta el CENTRO del remache: inset = 16px - 3px de radio */
+  .placa__remache--sup-izq {
+    top: calc(var(--e2) - 3px);
+    left: calc(var(--e2) - 3px);
+  }
+  .placa__remache--sup-der {
+    top: calc(var(--e2) - 3px);
+    right: calc(var(--e2) - 3px);
+  }
+  .placa__remache--inf-izq {
+    bottom: calc(var(--e2) - 3px);
+    left: calc(var(--e2) - 3px);
+  }
+  .placa__remache--inf-der {
+    bottom: calc(var(--e2) - 3px);
+    right: calc(var(--e2) - 3px);
+  }
+</style>
