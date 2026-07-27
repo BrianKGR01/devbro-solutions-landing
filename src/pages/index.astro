@@ -1,17 +1,165 @@
 ---
+// Pagina de prueba de Fase 1 (docs/05-roadmap.md). Temporal: se reemplaza
+// por las secciones reales a partir de la Fase 3.
+import Base from '../layouts/Base.astro';
+import Wordmark from '../components/Wordmark.astro';
+import Cta from '../components/Cta.astro';
+import Etiqueta from '../components/Etiqueta.astro';
 
+const paleta = [
+  '--tinta',
+  '--tinta-2',
+  '--tinta-3',
+  '--papel',
+  '--humo',
+  '--humo-papel',
+  '--verde-noche',
+  '--verde-base',
+  '--verde',
+  '--verde-luz',
+  '--verde-filo',
+  '--laton',
+];
+
+const escala = [
+  { token: '--t-display-xl', variacion: "'wght' 900, 'wdth' 118", texto: 'Tu idea, funcionando' },
+  { token: '--t-display-l', variacion: "'wght' 800, 'wdth' 115", texto: 'Título de sección' },
+  { token: '--t-titulo', variacion: "'wght' 800, 'wdth' 112", texto: 'Título de ítem' },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Página de prueba — Fase 1 · DevBro Solutions">
+  <section class="prueba seccion">
+    <div class="contenedor">
+      <h1>Página de prueba — Fase 1: Cimientos</h1>
+      <p>
+        Página temporal para verificar la paleta, la escala tipográfica y los tres componentes
+        atómicos antes de construir las secciones reales.
+      </p>
+
+      <h2>Wordmark</h2>
+      <div class="bloque-oscuro">
+        <Wordmark />
+      </div>
+      <div class="bloque-oscuro">
+        <Wordmark reducido />
+      </div>
+
+      <h2>Paleta</h2>
+      <ul class="grilla-paleta">
+        {
+          paleta.map((token) => (
+            <li class="muestra">
+              <span class="muestra__color" style={`background-color: var(${token});`} />
+              <code>{token}</code>
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2>Escala tipográfica</h2>
+      {
+        escala.map((nivel) => (
+          <p
+            class="linea-escala"
+            style={`font-size: var(${nivel.token}); font-variation-settings: ${nivel.variacion};`}
+          >
+            {nivel.texto}
+          </p>
+        ))
+      }
+      <p class="linea-cuerpo">Cuerpo — Inter Tight 400. Texto de párrafo para verificar legibilidad y line-height.</p>
+      <p class="linea-etiqueta">Etiqueta — JetBrains Mono 700</p>
+      <p class="linea-dato">03</p>
+
+      <h2>Botones</h2>
+      <div class="fila">
+        <Cta>Agendar diagnóstico</Cta>
+        <Cta variante="secundario">Cómo trabajamos</Cta>
+        <Cta href="#">Como enlace</Cta>
+      </div>
+
+      <h2>Etiquetas</h2>
+      <div class="fila">
+        <Etiqueta>3 semanas</Etiqueta>
+        <Etiqueta>USD 5.000</Etiqueta>
+        <Etiqueta>Código fuente incluido</Etiqueta>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .prueba h2 {
+    margin-top: var(--e6);
+    margin-bottom: var(--e3);
+    font-size: var(--t-titulo);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+  }
+
+  .prueba p {
+    margin-top: var(--e2);
+  }
+
+  .bloque-oscuro {
+    padding: var(--e3);
+    background: var(--tinta-2);
+    margin-bottom: var(--e2);
+  }
+
+  .grilla-paleta {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--e2);
+  }
+
+  .muestra {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e1);
+  }
+
+  .muestra__color {
+    display: block;
+    height: 64px;
+    border: var(--borde);
+  }
+
+  .muestra code {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    color: var(--humo);
+  }
+
+  .linea-escala {
+    font-family: var(--display);
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+  }
+
+  .linea-cuerpo {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+  }
+
+  .linea-etiqueta {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .linea-dato {
+    font-family: var(--mono);
+    font-size: var(--t-dato);
+    font-variant-numeric: tabular-nums;
+    color: var(--verde-filo);
+  }
+
+  .fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e3);
+    align-items: center;
+  }
+</style>
