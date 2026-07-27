@@ -1,0 +1,87 @@
+/* ---- Reset ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img,
+picture,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+/* ---- Tipografía base ---- */
+body {
+  min-height: 100vh;
+  color: var(--papel);
+  font-family: var(--cuerpo);
+  font-size: var(--t-cuerpo);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--display);
+  line-height: 1;
+}
+
+p {
+  max-width: 62ch;
+}
+
+/* ---- Retícula de fondo (docs/02-design-system.md §4) ---- */
+body {
+  background-color: var(--tinta);
+  background-image:
+    linear-gradient(var(--reticula) 1px, transparent 1px),
+    linear-gradient(90deg, var(--reticula) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ---- Foco de teclado — regla global (docs/06-decisiones.md D4) ---- */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--laton);
+  outline-offset: 3px;
+}
+
+/* Sobre fondo papel el laton no alcanza contraste (2,1:1); el verde-base sí (5,6:1) */
+.seccion--papel :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline-color: var(--verde-base);
+}

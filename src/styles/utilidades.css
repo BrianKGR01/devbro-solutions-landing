@@ -1,0 +1,43 @@
+/* ---- Contenedor ---- */
+.contenedor {
+  width: 100%;
+  max-width: var(--ancho-max);
+  margin-inline: auto;
+  padding-inline: var(--pad-lateral);
+}
+
+/* ---- Sección ---- */
+.seccion {
+  padding-block: clamp(var(--e7), 12vh, var(--e9));
+}
+
+/* Sección invertida (docs/02-design-system.md §5): sin retícula, texto oscuro sobre papel */
+.seccion--papel {
+  background-color: var(--papel);
+  background-image: none;
+  color: var(--tinta);
+}
+
+.seccion--papel .texto-secundario {
+  color: var(--humo-papel);
+}
+
+/* ---- Grillas ---- */
+/* Mobile-first: 1 columna, 2 en tableta, 3 en escritorio (docs/02-design-system.md §8) */
+.grilla-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--e4);
+}
+
+@media (min-width: 640px) {
+  .grilla-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grilla-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
