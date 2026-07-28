@@ -54,10 +54,15 @@ Los íconos que hagan falta (WhatsApp, flecha, check, más/menos del acordeón) 
 ├── public/
 │   ├── fonts/               ← woff2 autohospedadas
 │   ├── favicon.svg
+│   ├── favicon.ico
+│   ├── apple-touch-icon.png
 │   └── og.png
 └── src/
     ├── pages/
     │   ├── index.astro
+    │   ├── og.astro         ← oculta, solo para generar public/og.png (D25)
+    │   ├── sitemap.xml.ts
+    │   ├── robots.txt.ts
     │   └── api/
     │       └── contacto.ts
     ├── layouts/
