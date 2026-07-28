@@ -152,7 +152,7 @@ font-variation-settings: 'wght' 900, 'wdth' 118;
 ## 4. Layout
 
 - Contenedor: `max-width: var(--ancho-max)`, centrado, `padding-inline: var(--pad-lateral)`
-- Padding vertical de sección: `clamp(var(--e7), 12vh, var(--e9))`
+- Padding vertical de sección: `clamp(var(--e7), 12vh, var(--e9))`. **Excepción bajo 640px (D15, ver `docs/06-decisiones.md`):** `padding-block: var(--e6)`. El clamp resuelve a su piso (`--e7` = 96px) en móvil, y dos secciones apiladas suman 192px de vacío entre ellas — casi un tercio de una pantalla de 640px de alto. Por debajo de 640px se usa el escalón `--e6` (64px) en su lugar
 - Retícula de fondo: líneas de 1px cada 80px en `--reticula`, fija al fondo. Sutil pero presente. Se oculta en secciones de papel
 
 ```css
@@ -305,11 +305,13 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 
 **Orden en móvil/tableta (D13, ver `docs/06-decisiones.md`):** la placa va **después** del titular, no antes. Medido a 360×640 (el "pliegue" de una pantalla de celular típica): con la placa primero, el titular quedaba al filo del pliegue (borde inferior a 532px de 640, sin margen real) y el CTA primario siempre queda fuera (707px) sin importar el orden — la altura total no cambia por reordenar. Con antetítulo → titular → placa, el mensaje completo **y** la placa entran enteros en el primer pantallazo sin scroll; el CTA sigue pidiendo scroll, pero eso es normal en cualquier hero mobile y no vale la pena achicar la placa (habría que bajarla a ~17% de su tamaño actual para evitarlo, lo que la destruye como elemento firma) para evitarlo.
 
-**Barra de navegación (D14, ver `docs/06-decisiones.md`):** la Barra tiene sus propios breakpoints de contenido, distintos de los de arriba — wordmark y CTA siempre visibles, solo los enlaces de nav colapsan:
-- `< 640px`: wordmark reducido (solo "DEVBRO") + CTA. Sin enlaces de nav
-- `640-1023px`: wordmark completo + CTA. Sin enlaces de nav — a este ancho el conjunto completo (wordmark + nav + CTA) no entra (medido: 973px de contenido, entra recién con margen desde ~1200px)
-- `1024-1199px`: nav visible, pero compacta — enlaces en JetBrains Mono, `--t-etiqueta`, gap `--e2`. Medido: 922px de contenido contra 1024px disponibles, 10% de margen
-- `≥ 1200px` (= `--ancho-max`): nav completa — enlaces en Inter Tight, `--t-cuerpo`, gap `--e4`. ~9,9% de margen
+**Barra de navegación (D14, corregido en D15, ver `docs/06-decisiones.md`):** la Barra tiene sus propios breakpoints de contenido, distintos de los de arriba — wordmark y CTA siempre visibles, solo los enlaces de nav colapsan. El CTA además alterna entre un tamaño "compacto" (`--t-etiqueta`, padding 8×14) y uno "cómodo" (0.8rem, padding 12×20) para garantizar una sola línea de texto en cualquier ancho:
+- `< 640px`: wordmark reducido (solo "DEVBRO") + CTA compacto. Sin enlaces de nav. Medido: 84px (wordmark) + 8px (gap `--e1`) + 210px (cta) = 302px contra 320px disponibles, ~5,6% de margen
+- `640-1023px`: wordmark completo + CTA cómodo. Sin enlaces de nav — a este ancho el conjunto completo con nav (wordmark + nav + CTA) no entra (medido: 973px de contenido, entra recién con margen desde ~1200px)
+- `1024-1199px`: nav visible, pero compacta — enlaces en JetBrains Mono, `--t-etiqueta`, gap `--e2`, Y el CTA vuelve a compacto (gap del contenedor `--e1`). Medido: 882px de contenido contra 1024px disponibles, ~4,3% de margen — el punto más ajustado de toda la barra
+- `≥ 1200px` (= `--ancho-max`): nav completa — enlaces en Inter Tight, `--t-cuerpo`, gap `--e4`, CTA cómodo. ~9,9% de margen
+
+**Alto real de la Barra y `scroll-margin-top` (D15, ver `docs/06-decisiones.md`):** la Barra es sticky, y su alto real alterna entre dos valores según la misma tabla de breakpoints de arriba (el tamaño del CTA la infla o la achica): **74px** en las zonas compactas (`< 640px` y `1024-1199px`) y **83px** en las cómodas (`640-1023px` y `≥ 1200px`). Este valor vive en `--barra-alto` (`tokens.css`), como variable responsive — nunca un número suelto, porque un número fijo se desincroniza en cuanto cambia el breakpoint. Todo destino de ancla (`.seccion`, y `#contenido` del skip link) usa `scroll-margin-top: calc(var(--barra-alto) + var(--e2))`, para que un salto de navegación nunca deje el título de la sección tapado detrás de la barra fija.
 
 **Regla base:** mobile-first. Escribí el CSS para 360px y ampliá con `min-width`.
 

@@ -9,6 +9,22 @@
 /* ---- Sección ---- */
 .seccion {
   padding-block: clamp(var(--e7), 12vh, var(--e9));
+  /* La barra es sticky: sin esto, un salto de ancla deja el titulo de la
+     seccion tapado detras de ella. --barra-alto ya es responsive (74/83px
+     segun breakpoint, ver tokens.css), asi que este calc lo hereda gratis.
+     docs/06-decisiones.md D15. */
+  scroll-margin-top: calc(var(--barra-alto) + var(--e2));
+}
+
+@media (max-width: 639px) {
+  .seccion {
+    /* A 360px el padding-block de dos secciones apiladas (96px + 96px)
+       deja 192px de vacio entre el hero y Problema -- casi un tercio de
+       una pantalla de 640px de alto sin contenido. Bajamos al escalon
+       --e6 solo por debajo de 640px; en pantallas mas altas el clamp ya
+       da mas aire porque hay mas vh para dar. docs/06-decisiones.md D15. */
+    padding-block: var(--e6);
+  }
 }
 
 /* Sección invertida (docs/02-design-system.md §5): sin retícula, texto oscuro sobre papel */

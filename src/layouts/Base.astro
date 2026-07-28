@@ -98,4 +98,11 @@ const organizacionJsonLd = {
     outline: 3px solid var(--laton);
     outline-offset: 3px;
   }
+
+  /* #contenido es destino de ancla (skip link) pero no lleva la clase
+     .seccion -- necesita el mismo scroll-margin-top a mano.
+     docs/06-decisiones.md D15. */
+  main#contenido {
+    scroll-margin-top: calc(var(--barra-alto) + var(--e2));
+  }
 </style>

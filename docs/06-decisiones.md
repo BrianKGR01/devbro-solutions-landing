@@ -227,3 +227,31 @@ Con el orden nuevo, el mensaje completo **y** la placa entera entran en el prime
 **Resolución 2:** medido (no estimado) si una versión compacta de la nav entra en ese rango: enlaces en JetBrains Mono `--t-etiqueta` con letter-spacing 0.08em, gap `--e2` (16px) en vez de `--e4` (32px). A 1024px (el caso más ajustado del rango, el margen solo mejora al crecer el viewport): 922px de contenido contra 1024px disponibles → **10% de margen.** Entra con margen real.
 
 **Se agregan tres estados para la nav de la Barra**, no dos: sin nav (`<1024px`) → nav compacta mono (`1024-1199px`) → nav completa Inter Tight (`≥1200px`). `docs/02-design-system.md` §8 actualizado con la tabla completa.
+
+**Corrección posterior (D15):** el número "922px de contenido, 10% de margen" de la Resolución 2 estaba contaminado — se midió con el CTA ya envuelto a 2 líneas (bug corregido recién en D15), no con su ancho natural de una línea. El número real, con el CTA arreglado, es 882px contra 1024px disponibles (~4,3% de margen). Sigue entrando, pero con bastante menos aire del que decía esta entrada. Ver D15 para el detalle.
+
+---
+
+## D15 · CTA de la Barra partido en 2 líneas, scroll-margin-top, y aire entre Hero y Problema
+
+**Duda 1:** a 360px, "Agendar diagnóstico" dentro de `.barra__cta` envolvía a 2 líneas. Un botón partido a la mitad dentro de una barra fija se ve sin terminar, e infla el alto de la barra de 83px a 104px — rompiendo la premisa de D14 de que la barra tiene una altura predecible.
+
+**Causa:** `Cta.astro` no tenía `white-space: nowrap` en `.cta`. Cualquier squeeze del contenedor flex (móvil angosto, o 1024px donde wordmark+nav+cta compiten por espacio) hacía que el texto envolviera en vez de forzar el ancho del botón.
+
+**Resolución 1:** dos capas de arreglo, no una sola:
+- `white-space: nowrap` en `.cta` (`Cta.astro`) — garantía dura, universal, para cualquier uso futuro del componente.
+- En `Barra.astro`, el CTA alterna entre dos tamaños según el mismo breakpoint que ya regía la nav: **compacto** (`--t-etiqueta`, padding 8×14) en las zonas donde compite por espacio (`<640px` y `1024-1199px`) y **cómodo** (0.8rem, padding 12×20) donde sobra aire (`640-1023px` y `≥1200px`). El gap del contenedor (`.barra__fila`) también baja a `--e1` en las zonas compactas.
+
+Verificado con la Range API (conteo real de líneas, no `scrollWidth`) en 360/640/1024/1199/1200/1440px: el CTA es una sola línea en los seis. Como efecto colateral, esto reveló que la medición de D14 (922px / 10%) estaba contaminada por el mismo bug — corregida arriba a 882px / 4,3%.
+
+**Duda 2:** la Barra es sticky. En Fase 4 aparecen los primeros destinos reales de su nav (`#experiencia`, `#proceso`, `#paquetes`, más `#preguntas` después) — sin compensación, cualquier salto de ancla deja el título de la sección tapado detrás de la barra fija.
+
+**Resolución 2:** `--barra-alto` (nueva variable en `tokens.css`) sigue exactamente los mismos cuatro breakpoints que ya definía D14 para la Barra, porque el alto real de la barra depende del mismo tamaño de CTA que alterna en esos breakpoints — medido (no estimado): **74px** en las zonas compactas (`<640px`, `1024-1199px`) y **83px** en las cómodas (`640-1023px`, `≥1200px`). Es una variable responsive, no un número suelto, para que nunca se desincronice si la Barra cambia de altura en el futuro.
+
+`scroll-margin-top: calc(var(--barra-alto) + var(--e2))` se aplica a `.seccion` (cubre toda sección actual y futura automáticamente, todas comparten esa clase) y a `#contenido` (`Base.astro`) por separado, porque el destino del skip link no lleva `.seccion`.
+
+**Duda 3:** medido el espacio vertical entre el Hero y Problema a 360px: 192px, exactamente el padding-block de ambas secciones apilado (96px + 96px = el piso del `clamp(var(--e7), 12vh, var(--e9))` en una pantalla mobile típica). En una pantalla de 640px de alto eso es casi un tercio de scroll vacío entre dos secciones que deberían leerse como continuas.
+
+**Resolución 3:** `@media (max-width: 639px) { .seccion { padding-block: var(--e6); } }` en `utilidades.css` — un escalón menos (64px en vez de 96px) solo por debajo de 640px. Encima de ese ancho el clamp ya tiene más `vh` disponible para dar más aire, así que no hace falta la excepción.
+
+`docs/02-design-system.md` §4 y §8 actualizados con las tres resoluciones.
