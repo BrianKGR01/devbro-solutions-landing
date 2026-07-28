@@ -391,3 +391,60 @@ Probados también `--e5` (48px → 122px) y `--e3` (24px → 98px). `--e3` deja 
 **Resolución 3:** aplicado. Medido a 360px: **2 líneas**, igual que el copy anterior — no empeora nada, no hace falta acortarlo.
 
 **Bug encontrado al medirlo:** con el copy nuevo el antetítulo pasaba a 2 líneas **también a 1440px**, dejando "TÉCNICO" solo en la segunda. Causa: `base.css` aplica `max-width: 62ch` a todo `<p>` — una regla de cuerpo de texto — que a `--t-etiqueta` (12px) resuelve a 446px, y el texto pide ~449px. El antetítulo es una etiqueta de una línea, no cuerpo: se le pone `max-width: none` y el contenedor sigue limitando el ancho. Desde 639px hacia arriba vuelve a ser 1 línea.
+
+---
+
+## D22 · Fase 6 — titular del hero (sin cambio), Caso compactado, aparición al hacer scroll
+
+**Duda 1:** a 360px el titular corta en 4 líneas ("Tu idea, / funcionando, / en tres / semanas."). ¿Subir el mínimo de `--t-display-xl` de 2,25rem a 2,5rem sigue entrando sin desbordar ni partir palabras?
+
+**Medido** (Range API, agrupando por fila, no por `getClientRects()` crudo — un `<br>` produce rects espurios que inflan el conteo):
+
+| Mínimo | Tamaño real | Filas | Margen (ancho de la fila más ancha vs contenedor) |
+|---|---|---|---|
+| 2,25rem (actual) | 36px | 4 | 13,5% |
+| 2,4rem | 38px | 4 | 7,8% |
+| 2,5rem (pedido) | 40px | 4 | **3,9%** |
+
+Ninguna combinación corta palabras (verificado visualmente) — el salto de línea siempre cae en un espacio. Pero a 2,5rem el margen es 3,9%, por debajo del piso de 8% acordado.
+
+**Resolución: no se cambia `--t-display-xl`.** Queda en `clamp(2,25rem, 8,2vw, 6rem)`. Se sigue partiendo en 4 líneas a 360px, pero eso ya era así antes de esta fase y no estaba en el pedido de esta ronda — solo se pidió medir el mínimo más grande.
+
+**Duda 2:** la sección Caso quedó muy alta y vacía en escritorio tras la versión anonimizada (D20): tres filas de ficha y un `{{PENDIENTE}}`, sin imagen — a 1440px la mitad derecha de la pantalla quedaba completamente vacía.
+
+**Resolución:** "El problema" y "Tiempo + Estado" pasan de tres filas apiladas a dos bloques lado a lado (`grid-template-columns: 1.4fr 1fr` desde 640px, misma tarjeta `--tinta-3`/`--borde` que el resto del sitio). "Tiempo" deja de ser una fila de texto y se convierte en un numeral enorme ("3") con `--t-dato` — el token de la escala tipográfica definido exactamente para esto (`docs/02-design-system.md` §3: "JetBrains Mono 700, `tabular-nums`") y que hasta esta sección no se usaba en ningún componente del sitio. Color `--verde-luz` (acento de texto verificado, 6,6:1), no `--verde-filo`: ese token es "uso puntual" (el numeral de la Placa) y no correspondía repetirlo. "Estado" se mantiene como texto simple, con un punto cuadrado de 8px en `--verde-luz` a modo de indicador — mismo lenguaje que las viñetas de `Paquetes.astro`.
+
+Verificado en 360/640/1024/1440px: sin overflow, ambas tarjetas de igual alto (`align-items: stretch`, comportamiento por defecto de grid). `docs/03-content.md` §08 actualizado con la nota de layout.
+
+**Duda 3:** implementar "aparición al hacer scroll" (docs/02-design-system.md §7): `opacity 0→1` + `translateY(8px→0)`, 400ms, `--salida`, una sola vez, escalonado máximo de 60ms entre hermanos.
+
+**Resolución:** mecanismo compartido, no repetido por componente — clase `.revelar` (`utilidades.css`) + un único `IntersectionObserver` en `Base.astro` que se ejecuta una vez para toda la página. El escalonado se calcula en JS agrupando por `el.parentElement` (un `Map` cuenta cuántos `.revelar` ya vio ese padre y asigna `index * 60ms` a `transition-delay`) — así agregar o quitar un ítem de una lista no rompe el orden de los demás, y no hace falta escribir el delay a mano en cada componente.
+
+Aplicado al `<h2>` de cada sección y a los ítems repetidos (fichas de Problema/Experiencia, etapas de Proceso, tarjetas de Paquetes, ítems de Preguntas), a los bloques de Tesis/Límites/Caso como una sola unidad, y al encabezado y al `<form>` de Contacto. **No aplicado al Hero**: ya es visible sin scroll (es lo primero que se ve, sin necesidad de bajar), animarlo se leería como parpadeo de carga, no como aparición.
+
+Verificado con Playwright: estado inicial `opacity:0` con los delays correctos; tras `scrollIntoViewIfNeeded()` y esperar la transición, `opacity:1` y clase `revelar--visible` agregada; volver a scrollear arriba no lo vuelve a ocultar (el observer se desconecta tras el primer disparo, `unobserve`); con `prefers-reduced-motion: reduce` todo aparece `opacity:1` de inmediato, sin observer. Sin glitches visuales en los elementos con posicionamiento interno complejo (nodos de la línea de tiempo de Proceso, tarjeta destacada de Paquetes).
+
+---
+
+## D23 · Fase 6 — auditorías de cierre (sin hallazgos que corregir en el código)
+
+Cuatro auditorías pedidas para el cierre de fase. Las cuatro dieron limpio — se documentan igual, porque "no encontré nada" solo vale si se puede mostrar que se buscó de verdad.
+
+**Cadenas prohibidas y emojis (D8).** Grep de las 11 cadenas de D8 más un regex de rangos Unicode de emoji, sobre todo `src/`. Cero coincidencias reales: los únicos matches de las cadenas prohibidas están en comentarios que documentan la regla ("Sin S.A. en ningún lado") o en `docs/estructura/` (fuera de alcance de build, per `CLAUDE.md`). Cero emojis en `src/` — confirmado con un segundo regex más estricto para descartar falsos positivos de flechas (`→`, `←`) que sí aparecen, mucho, en la prosa de `docs/`.
+
+**Hexadecimales fuera de `tokens.css`.** Grep de `#[0-9a-fA-F]{3,8}` sobre `src/`. Todas las coincidencias están dentro de `tokens.css` (incluyendo el degradado `--metal` y `--relleno-cta`, que son declaraciones de gradiente con varios stops, no un solo valor). Cero hex en componentes.
+
+**Recorrido solo con teclado.** Tab completo de arriba a abajo en 1440px (34 paradas reales) y en 375px con el panel del menú (15 paradas + apertura/cierre). Orden lógico, foco visible (`outline: 3px solid`) en cada parada, honeypot (`nombre_empresa`) nunca alcanzado, acordeón operable, trampa de foco del panel confirmada en las dos direcciones (Tab desde el último enlace vuelve al botón; Shift+Tab desde el primero también). Sin hallazgos — nada que corregir.
+
+**Lighthouse, las 4 categorías**, contra el build de producción real servido en estático (no `astro dev`, que no minifica ni sirve el `dist/` real; ni `astro preview`, que dejó de funcionar con el adaptador de Vercel en cuanto existe una ruta server-side — D19):
+
+| Categoría | Escritorio | Móvil (throttling por defecto) |
+|---|---|---|
+| Performance | **100** | 93 |
+| Accessibility | **100** | 100 |
+| Best Practices | **100** | 100 |
+| SEO | **100** | 100 |
+
+Métricas de escritorio (el target de `docs/04-engineering.md` §7 es explícitamente "escritorio"): LCP 0,6s (meta <1,8s), CLS 0,002 (meta <0,05), TBT 0ms. JS total enviado: 7,9 KB (meta <15 KB) — todo inline, ningún archivo `.js` separado (`network-requests` de Lighthouse reporta 0 bytes de tipo Script porque no hay ninguno externo; medido a mano contando el contenido de cada `<script>` del HTML compilado). En móvil (sin target explícito en los docs) el LCP sube a 2,3s por el throttling agresivo de 4G simulado — el elemento LCP es el párrafo del hero (texto, no imagen; el sitio no tiene ninguna imagen de hero). No se optimiza más: no hay un target movil que incumplir, y forzar una mejora ahí competiría contra decisiones ya tomadas (fuentes reales, sin recortar el CSS del sitio).
+
+**Sincronización de documentación vs. código real.** Ver el mensaje donde se listaron los 4 hallazgos antes de corregirlos — resumen: el bloque de tokens de §2 le faltaban ~30 líneas reales (escala tipográfica + `--barra-alto`), el valor de `--t-display-xl` en §3 estaba desactualizado desde Fase 3, el snippet de `.cta` en §5 no reflejaba el `white-space:nowrap` ni el split real en `.cta--primario`/`.cta--secundario`, y la regla de "`--metal` solo en tres lugares" nombraba un uso que nunca se construyó ("reglas divisorias") sin contar el que sí existe (botón de WhatsApp). Los cuatro corregidos. De paso: `--laton` se agregó a la tabla de contraste verificado (7,9:1, restringido por regla de uso, no por contraste) y se documentó por qué `--verde-noche` no está en esa tabla (D17).

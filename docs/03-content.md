@@ -209,6 +209,8 @@ Hacemos una sola cosa: el producto. Bien, rápido, y tuyo al terminar.
 
 > **Nota de implementación (versión anonimizada, ver `docs/06-decisiones.md` D20):** el bloque se sostiene con el titular y tres datos. **Sin captura de pantalla y sin marco de imagen** — el marco vacío ocupaba una pantalla entera de nada. **Sin el bloque "Lo que construimos"** — sin nombre de cliente ni captura, describir el sistema en detalle no agrega prueba. Queda un solo `{{PENDIENTE}}`, corto, visible: el rubro. El cliente ya autorizó aparecer como caso de éxito, pero esta versión no depende de eso para publicarse.
 
+> **Nota de layout (D22):** en escritorio, "El problema" y "Tiempo + Estado" se presentan como dos bloques lado a lado, no como una lista de tres filas — "Tiempo" se convierte en un numeral grande ("3") con "Semanas de construcción" debajo, usando `--t-dato` (token ya definido en el sistema para datos destacados, sin usar hasta esta sección). Le da peso real al bloque sin depender de una imagen.
+
 ---
 
 ## 09 · Preguntas — `#preguntas`

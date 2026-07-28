@@ -76,13 +76,13 @@ const paquetes = [
 
 <section id="paquetes" class="seccion">
   <div class="contenedor">
-    <h2 class="paquetes__titulo">Tres formas de empezar.</h2>
+    <h2 class="paquetes__titulo revelar">Tres formas de empezar.</h2>
 
     <ul class="paquetes__grilla">
       {
         paquetes.map((paquete) => (
           <li
-            class={`paquetes__tarjeta ${paquete.destacado ? 'paquetes__tarjeta--destacada' : ''} paquetes__tarjeta--${paquete.id}`}
+            class={`paquetes__tarjeta revelar ${paquete.destacado ? 'paquetes__tarjeta--destacada' : ''} paquetes__tarjeta--${paquete.id}`}
           >
             <h3 class="paquetes__nombre">{paquete.nombre}</h3>
             <Etiqueta>{paquete.etiqueta}</Etiqueta>

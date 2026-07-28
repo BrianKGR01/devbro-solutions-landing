@@ -1,34 +1,36 @@
 ---
-// #caso (docs/03-content.md §08, docs/06-decisiones.md D9 y D20).
-// Version anonimizada: sin marco de imagen y sin el bloque "Lo que
-// construimos" -- el caso se sostiene con el titular y tres datos. Queda
-// un solo {{PENDIENTE}} (el rubro), visible a proposito via .pendiente
-// (utilidades.css): no se inventa contenido.
-// Las tres filas son un <dl>: son pares etiqueta/valor de una ficha de
-// orden, no parrafos sueltos.
+// #caso (docs/03-content.md §08, docs/06-decisiones.md D9, D20, D22).
+// Version anonimizada (D20): sin marco de imagen y sin el bloque "Lo que
+// construimos". Compactada en D22: "Tiempo" pasa de fila de ficha a un
+// numeral enorme con --t-dato -- token de la escala tipografica definido
+// para esto (docs/02-design-system.md §3) y que hasta ahora no se usaba
+// en ningun lado. Le da peso real al bloque en escritorio sin inventar
+// una imagen que no existe. Queda un solo {{PENDIENTE}} (el rubro),
+// visible a proposito via .pendiente (utilidades.css).
 ---
 
 <section id="caso" class="seccion">
   <div class="contenedor">
-    <div class="caso">
+    <div class="caso revelar">
       <p class="caso__etiqueta">CASO 001</p>
 
       <h2 class="caso__titulo">ERP completo, en tres semanas.</h2>
 
-      <dl class="caso__datos">
-        <div class="caso__dato">
-          <dt class="caso__dato-etiqueta">El problema</dt>
-          <dd class="caso__dato-valor pendiente">{'{{PENDIENTE: rubro y qué resolvía}}'}</dd>
+      <div class="caso__cuerpo">
+        <div class="caso__problema">
+          <p class="caso__problema-etiqueta">El problema</p>
+          <p class="caso__problema-texto pendiente">{'{{PENDIENTE: rubro y qué resolvía}}'}</p>
         </div>
-        <div class="caso__dato">
-          <dt class="caso__dato-etiqueta">Tiempo</dt>
-          <dd class="caso__dato-valor">3 semanas de construcción</dd>
+
+        <div class="caso__estadistica">
+          <p class="caso__estadistica-numero">3</p>
+          <p class="caso__estadistica-etiqueta">Semanas de construcción</p>
+          <p class="caso__estadistica-estado">
+            <span class="caso__estadistica-punto" aria-hidden="true"></span>
+            En validación con usuarios reales
+          </p>
         </div>
-        <div class="caso__dato">
-          <dt class="caso__dato-etiqueta">Estado</dt>
-          <dd class="caso__dato-valor">en validación con usuarios reales</dd>
-        </div>
-      </dl>
+      </div>
     </div>
   </div>
 </section>
@@ -55,51 +57,88 @@
     text-wrap: balance;
   }
 
-  /* Filete superior + filas separadas: se lee como ficha de orden, mismo
-     lenguaje que la lista de etapas de Proceso.astro. */
-  .caso__datos {
-    max-width: 62ch;
-    border-top: var(--borde);
-  }
-
-  .caso__dato {
+  .caso__cuerpo {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--e1);
-    padding-block: var(--e3);
-    border-bottom: var(--borde);
+    gap: var(--e4);
   }
 
   @media (min-width: 640px) {
-    .caso__dato {
-      grid-template-columns: 14ch 1fr;
-      gap: var(--e3);
-      align-items: baseline;
+    .caso__cuerpo {
+      /* El problema toma mas espacio que la estadistica: es texto, no un
+         numeral solo. */
+      grid-template-columns: 1.4fr 1fr;
+      align-items: stretch;
     }
   }
 
-  .caso__dato-etiqueta {
+  .caso__problema,
+  .caso__estadistica {
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+  }
+
+  .caso__problema-etiqueta {
     font-family: var(--mono);
     font-size: var(--t-etiqueta);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--laton);
+    margin-bottom: var(--e2);
   }
 
-  .caso__dato-valor {
+  .caso__problema-texto {
     font-family: var(--cuerpo);
     font-size: var(--t-cuerpo-l);
     line-height: 1.5;
-    color: var(--papel);
   }
 
-  /* .pendiente (utilidades.css) pisa el color a --humo; el italico ya
-     viene de ahi. Se declara despues para que gane por orden de cascada
-     dentro del mismo archivo -- pero como .pendiente vive en un archivo
-     global y esta es una clase con alcance de componente, Astro le da
-     mayor especificidad al selector con hash. Se fuerza el valor aca. */
-  .caso__dato-valor.pendiente {
+  /* .pendiente (utilidades.css) ya pone --humo + italica; sin este
+     override quedaria en --papel (heredado de .caso__problema-texto) por
+     especificidad -- Astro le da mas peso al selector con scope propio
+     que a la clase global. */
+  .caso__problema-texto.pendiente {
     color: var(--humo);
     font-style: italic;
+  }
+
+  /* Numeral enorme con --t-dato (docs/02-design-system.md §3: "JetBrains
+     Mono 700, tabular-nums" -- definido para esto, no usado en ningun
+     otro lado del sitio todavia). --verde-luz, no --verde-filo: ese es
+     "uso puntual" (Placa.astro) y no corresponde repetirlo aca. */
+  .caso__estadistica-numero {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-dato);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--verde-luz);
+    margin-bottom: var(--e2);
+  }
+
+  .caso__estadistica-etiqueta {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--papel);
+    margin-bottom: var(--e3);
+  }
+
+  .caso__estadistica-estado {
+    display: flex;
+    align-items: center;
+    gap: var(--e2);
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
+  }
+
+  .caso__estadistica-punto {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--verde-luz);
   }
 </style>

@@ -26,14 +26,14 @@ const items = [
 
 <section id="problema" class="seccion">
   <div class="contenedor">
-    <h2 class="problema__titulo">
+    <h2 class="problema__titulo revelar">
       Tenés el problema. Tenés la plata. No tenés cómo saber si te están vendiendo humo.
     </h2>
 
     <ul class="problema__lista grilla-3">
       {
         items.map((item) => (
-          <li class="problema__ficha">
+          <li class="problema__ficha revelar">
             <p class="problema__numero">{item.numero}</p>
             <h3 class="problema__ficha-titulo">{item.titulo}</h3>
             <p class="problema__ficha-descripcion">{item.descripcion}</p>

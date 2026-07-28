@@ -20,7 +20,7 @@ const fichas = [
 
 <section id="experiencia" class="seccion">
   <div class="contenedor">
-    <h2 class="experiencia__titulo">Somos rápidos porque ya lo construimos antes.</h2>
+    <h2 class="experiencia__titulo revelar">Somos rápidos porque ya lo construimos antes.</h2>
 
     <div class="experiencia__intro">
       <p class="experiencia__parrafo">
@@ -44,7 +44,7 @@ const fichas = [
     <ul class="experiencia__lista grilla-3">
       {
         fichas.map((ficha) => (
-          <li class="experiencia__ficha">
+          <li class="experiencia__ficha revelar">
             <Etiqueta>{ficha.etiqueta}</Etiqueta>
             <p class="experiencia__ficha-descripcion">{ficha.descripcion}</p>
           </li>

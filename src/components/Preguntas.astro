@@ -51,12 +51,12 @@ const preguntas = [
 
 <section id="preguntas" class="seccion">
   <div class="contenedor">
-    <h2 class="preguntas__titulo">Preguntas que nos hacen siempre</h2>
+    <h2 class="preguntas__titulo revelar">Preguntas que nos hacen siempre</h2>
 
     <ul class="preguntas__lista">
       {
         preguntas.map((item, i) => (
-          <li class="preguntas__item" data-abierto="false">
+          <li class="preguntas__item revelar" data-abierto="false">
             <h3 class="preguntas__encabezado">
               <button
                 type="button"
