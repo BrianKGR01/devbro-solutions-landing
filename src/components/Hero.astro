@@ -28,7 +28,9 @@ import Placa from './Placa.astro';
         </div>
 
         <p class="hero__microcopia">
-          PRECIO CERRADO ANTES DE EMPEZAR · EL CÓDIGO ES TUYO · SIN PERMANENCIA
+          <span class="hero__microcopia-segmento">PRECIO CERRADO ANTES DE EMPEZAR ·</span>{' '}
+          <span class="hero__microcopia-segmento">EL CÓDIGO ES TUYO ·</span>{' '}
+          <span class="hero__microcopia-segmento">SIN PERMANENCIA</span>
         </p>
       </div>
     </div>
@@ -136,5 +138,12 @@ import Placa from './Placa.astro';
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--humo);
+  }
+
+  /* Cada segmento con su separador "·" pegado al final, sin cortar adentro:
+     el espacio entre spans (fuera del nowrap) es el unico lugar donde puede
+     envolver, asi el punto medio nunca queda huerfano al arranque de linea. */
+  .hero__microcopia-segmento {
+    white-space: nowrap;
   }
 </style>
