@@ -1,0 +1,73 @@
+---
+// #tesis (docs/01-brief.md §3, docs/03-content.md §03).
+// "Va en claro para que corte visualmente y se lea como página de manifiesto"
+// (docs/estructura/07-marca-y-landing.md §03). Único bloque en fondo --papel
+// hasta acá: sirve de respiro visual, sin retícula (.seccion--papel).
+---
+
+<section id="tesis" class="seccion seccion--papel">
+  <div class="contenedor">
+    <div class="tesis">
+      <h2 class="tesis__titulo">En una fiebre del oro, el negocio es vender palas.</h2>
+
+      <div class="tesis__cuerpo">
+        <p class="tesis__parrafo texto-secundario">
+          Ahora mismo hay más gente que nunca con una idea de software y capital para intentarlo.
+          Casi ninguna tiene equipo técnico, y esperar a encontrar un socio programador cuesta
+          meses que la idea no tiene.
+        </p>
+
+        <p class="tesis__parrafo texto-secundario">
+          Nosotros no vamos a la mina. Fabricamos el equipo con el que vos vas a entrar: un
+          producto real, en producción, listo para que tus primeros usuarios lo usen y te digan
+          la verdad.
+        </p>
+      </div>
+
+      <p class="tesis__remate"><strong>Lo que comprás no es código. Es dejar de adivinar.</strong></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tesis__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--tinta);
+    max-width: 18ch;
+    margin-bottom: var(--e6);
+  }
+
+  .tesis__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e3);
+    margin-bottom: var(--e6);
+  }
+
+  .tesis__parrafo {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    max-width: 62ch;
+  }
+
+  /* Remate: mismo cuerpo tipográfico que los párrafos, no un titular nuevo
+     (docs/02-design-system.md distingue "cuerpo" de "titular") -- gana peso
+     por tamaño (--t-titulo), negrita real y contraste --tinta contra el
+     --humo-papel de los párrafos previos. */
+  .tesis__remate {
+    font-family: var(--cuerpo);
+    font-size: var(--t-titulo);
+    line-height: 1.4;
+    color: var(--tinta);
+    max-width: 42ch;
+  }
+
+  .tesis__remate strong {
+    font-weight: 700;
+  }
+</style>
