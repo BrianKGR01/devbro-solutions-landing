@@ -45,7 +45,10 @@ const etapas = [
 
 <section id="proceso" class="seccion">
   <div class="contenedor">
-    <h2 class="proceso__titulo revelar">Siete etapas. Sin sorpresas en el medio.</h2>
+    <h2 class="proceso__titulo revelar">
+      <span class="proceso__titulo-oracion">Siete etapas.</span>
+      <span class="proceso__titulo-oracion">Sin sorpresas en el medio.</span>
+    </h2>
 
     <ol class="proceso__lista">
       {
@@ -61,6 +64,10 @@ const etapas = [
         ))
       }
     </ol>
+
+    <p class="proceso__aclaracion revelar">
+      LOS PLAZOS CORRESPONDEN AL PAQUETE LANZAMIENTO. EXPEDICIÓN TOMA ENTRE 8 Y 14 SEMANAS.
+    </p>
   </div>
 </section>
 
@@ -72,9 +79,14 @@ const etapas = [
     letter-spacing: -0.02em;
     line-height: 0.94;
     color: var(--papel);
-    max-width: 20ch;
     margin-bottom: var(--e7);
     text-wrap: balance;
+  }
+
+  /* Cada oracion en su propia linea, misma tecnica que Problema.astro:
+     span display:block, sin <br> ni <p> separados. */
+  .proceso__titulo-oracion {
+    display: block;
   }
 
   .proceso__lista {
@@ -140,5 +152,17 @@ const etapas = [
     font-size: var(--t-cuerpo);
     line-height: 1.65;
     color: var(--humo);
+  }
+
+  /* Una sola linea al pie del stepper, no una aclaracion por etapa --
+     mismo tratamiento que la microcopia del hero. */
+  .proceso__aclaracion {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.08em;
+    color: var(--humo);
+    max-width: 62ch;
+    margin-top: var(--e5);
   }
 </style>
