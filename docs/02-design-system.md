@@ -279,7 +279,7 @@ Cuadrado de 56px, esquina inferior derecha, `bottom: 24px; right: 24px`. Fondo `
 }
 ```
 
-**Limitado a dos lugares en toda la página**, no es un estilo de texto de uso libre: el remate de `#experiencia` ("Y por eso también sabemos decir que no.") y el párrafo de apertura de `#contacto` ("Una reunión de una hora..."). Si hiciera falta un tercer lugar, es una señal para volver a esta sección y decidir si la restricción sigue teniendo sentido — no agregarlo en silencio.
+**Limitado a dos lugares en toda la página**, no es un estilo de texto de uso libre: el remate de `#experiencia` ("Y por eso también sabemos decir que no.") y, dentro del párrafo de apertura de `#contacto`, **solo la primera oración** ("Una reunión de una hora.") — no el párrafo completo. Subrayar las dos líneas enteras se leía como un hipervínculo justo arriba del formulario, invitando a hacerle clic. Si hiciera falta un tercer lugar, es una señal para volver a esta sección y decidir si la restricción sigue teniendo sentido — no agregarlo en silencio.
 
 ---
 
@@ -376,3 +376,33 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 **Regla base:** mobile-first. Escribí el CSS para 360px y ampliá con `min-width`.
 
 **Verificación obligatoria a 360px:** ningún desbordamiento horizontal, ningún texto cortado, la placa entera visible, todos los CTA alcanzables con el pulgar.
+
+---
+
+## 9. Identidad: favicon y Open Graph (D25)
+
+### Favicon (`public/favicon.svg`)
+
+Cuadrado achaflanado de 32×32 (mismo lenguaje que la placa: `clip-path` vía polígono, nunca `border-radius` — D2), fondo `--tinta`, borde `--verde` de 2px. Adentro, una **D** construida como dos polígonos (silueta + hueco achaflanado), no como texto ni como arco:
+
+- **No es texto:** un favicon standalone no puede cargar la fuente autohospedada Archivo (fuera del documento, no hereda `@font-face` de `base.css`); un `<text>` habría caído a la fuente del sistema.
+- **No es un arco:** el contorno redondeado del vientre de una D clásica se reemplazó por un corte a 45° para que la letra hable el mismo idioma que la placa en vez de introducir una curva que no aparece en ningún otro lado de la marca.
+- **Hex duplicados de `tokens.css`, no nuevos:** un SVG standalone no puede leer custom properties del documento que lo referencia. Los valores (`#080B09`, `#1D7A52`, `#EDEFEA`) son copia literal de `--tinta`/`--verde`/`--papel`, comentado en el archivo.
+- **Verificado a tamaño real:** renderizado con Playwright a 16px y 32px reales (no una versión grande escalada a ojo) — la D se lee con claridad en los dos tamaños, no hizo falta el fallback a silueta sólida.
+
+`public/favicon.ico` (16/32/48px, frames PNG embebidos en un contenedor ICO mínimo escrito a mano — sin librería nueva) y `public/apple-touch-icon.png` (180×180, mismo diseño pero con fondo `--tinta` a sangre completa, sin esquinas transparentes que iOS tendría que rellenar por su cuenta) se derivan del mismo `favicon.svg`.
+
+**Contradice `docs/01-brief.md` §6:** la "versión reducida" documentada ahí (`DEVBRO` sin `SOLUTIONS`) ya no se usa para el favicon — se reemplaza por la D aislada de esta sección. `01-brief.md` §6 se actualiza para reflejarlo.
+
+### Open Graph (`src/pages/og.astro` → `public/og.png`)
+
+Ruta oculta (`noindex`, sin enlace desde la nav, fuera del sitemap) que renderiza un lienzo fijo de 1200×630 — no responsive, se genera una sola vez y se descarta:
+
+- Fondo `--tinta` + retícula (mismos valores que `body`, `docs/02` §4)
+- Wordmark **completo** ("DEVBRO · SOLUTIONS", no la versión reducida — a diferencia del favicon, acá el ancho sobra) arriba a la izquierda
+- Titular del hero ("Tu idea, funcionando, en tres semanas.") en Archivo 900/wdth 118, `4.25rem`
+- La placa a la derecha, en su estado final (numeral `03`, sin transform) — se logra emulando `prefers-reduced-motion: reduce` al capturar, así el script de conteo nunca arranca; el CSS por defecto de `Placa.astro` ya es el estado final, por diseño (Fase 2)
+
+**Verificado:** capturado con Playwright a 1200×630 exactos y también reescalado a ~300px de ancho (miniatura de WhatsApp) — el titular se lee con claridad a ese tamaño; el grabado y "SEMANAS" de la placa no se leen a miniatura, lo cual es aceptable porque son detalle decorativo, no el mensaje.
+
+**Contradice `docs/01-brief.md` §6** en la dirección opuesta al favicon: ahí el wordmark completo es la versión "normal" y la reducida es solo para favicon/OG. Para OG se usa la versión completa a propósito (hay espacio de sobra en un lienzo de 1200px). `01-brief.md` §6 se actualiza.

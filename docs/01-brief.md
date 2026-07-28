@@ -91,7 +91,9 @@ DEVBRO │ SOLUTIONS
 - Separador — regla vertical de 2px, alto igual a la altura-x de la mayúscula, color `--laton`, márgenes laterales de 10px
 - `SOLUTIONS` — JetBrains Mono 700, tamaño `0.62em` respecto de DEVBRO, `letter-spacing: 0.18em`, color `--humo`, alineado a la línea base
 
-**Versión reducida** (favicon, OG): solo `DEVBRO`. **Ya no se usa en la barra móvil** (D21): al sacar el CTA de la barra sobra ancho de sobra para el wordmark completo en cualquier viewport, así que la marca se muestra entera en todos lados.
+**Ya no se usa en la barra móvil** (D21): al sacar el CTA de la barra sobra ancho de sobra para el wordmark completo en cualquier viewport, así que la marca se muestra entera en todos lados.
+
+**Favicon y Open Graph (actualizado en D25, ver `docs/06-decisiones.md`):** el favicon **no** usa una versión reducida del wordmark — es una `D` aislada, construida como polígono achaflanado (`docs/02-design-system.md` §9), porque un favicon standalone no puede cargar la tipografía autohospedada. La imagen de Open Graph, al revés, usa el wordmark **completo** — ahí sí sobra espacio de horizontal.
 
 Debe construirse como componente reutilizable, no como imagen.
 
