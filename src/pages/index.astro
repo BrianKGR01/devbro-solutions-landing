@@ -8,6 +8,11 @@ import Experiencia from '../components/Experiencia.astro';
 import Proceso from '../components/Proceso.astro';
 import Paquetes from '../components/Paquetes.astro';
 import Limites from '../components/Limites.astro';
+import Caso from '../components/Caso.astro';
+import Preguntas from '../components/Preguntas.astro';
+import Contacto from '../components/Contacto.astro';
+import Pie from '../components/Pie.astro';
+import BotonWhatsApp from '../components/BotonWhatsApp.astro';
 ---
 
 <Base>
@@ -20,4 +25,12 @@ import Limites from '../components/Limites.astro';
   <Proceso />
   <Paquetes />
   <Limites />
+  <Caso />
+  <Preguntas />
+  <Contacto />
+
+  <Fragment slot="footer">
+    <Pie />
+    <BotonWhatsApp />
+  </Fragment>
 </Base>
