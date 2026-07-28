@@ -21,10 +21,10 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
 ```css
 :root {
   /* ---- Base ---- */
-  --tinta:        #080B09;   /* fondo principal. Negro con base verde */
+  --tinta:        #080B09;   /* fondo principal (negro con base verde). Tambien texto primario sobre --papel */
   --tinta-2:      #0F1512;   /* superficies elevadas */
   --tinta-3:      #18201C;   /* tarjetas */
-  --papel:        #EDEFEA;   /* fondo de secciones invertidas */
+  --papel:        #EDEFEA;   /* fondo de secciones invertidas. Tambien texto primario sobre --tinta */
   --humo:         #8A968F;   /* texto secundario sobre oscuro */
   --humo-papel:   #56605A;   /* texto secundario sobre papel */
 
@@ -139,7 +139,7 @@ font-variation-settings: 'wght' 900, 'wdth' 118;
 | Display XL | Archivo `wght 900 wdth 118` · `letter-spacing: -0.03em` · `line-height: 0.88` |
 | Display L | Archivo `wght 800 wdth 115` · `letter-spacing: -0.02em` · `line-height: 0.94` · `text-wrap: balance` |
 | Título | Archivo `wght 800 wdth 112` · `line-height: 1.1` |
-| Cuerpo | Inter Tight 400 · `line-height: 1.65` · `max-width: 62ch` |
+| Cuerpo | Inter Tight 400 · `line-height: 1.65` · `max-width: 62ch` · color primario (`--papel` sobre `--tinta`, `--tinta` sobre `--papel`) |
 | Etiqueta | JetBrains Mono 700 · `letter-spacing: 0.12em` · MAYÚSCULAS |
 | Dato | JetBrains Mono 700 · `font-variant-numeric: tabular-nums` |
 

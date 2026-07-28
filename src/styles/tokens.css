@@ -1,9 +1,9 @@
 :root {
   /* ---- Base ---- */
-  --tinta:        #080B09;   /* fondo principal. Negro con base verde */
+  --tinta:        #080B09;   /* fondo principal (negro con base verde). Tambien texto primario sobre --papel */
   --tinta-2:      #0F1512;   /* superficies elevadas */
   --tinta-3:      #18201C;   /* tarjetas */
-  --papel:        #EDEFEA;   /* fondo de secciones invertidas */
+  --papel:        #EDEFEA;   /* fondo de secciones invertidas. Tambien texto primario sobre --tinta */
   --humo:         #8A968F;   /* texto secundario sobre oscuro */
   --humo-papel:   #56605A;   /* texto secundario sobre papel */
 
