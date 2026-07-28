@@ -76,6 +76,24 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
   /* ---- Movimiento ---- */
   --salida: cubic-bezier(0.16, 1, 0.3, 1);
   --entrada: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* ---- Escala tipográfica (detalle de uso en §3) ---- */
+  --t-display-xl: clamp(2.25rem, 8.2vw, 6rem); /* hero */
+  --t-display-l:  clamp(2.1rem, 5vw, 3.6rem); /* títulos de sección */
+  --t-titulo:     1.5rem;
+  --t-cuerpo-l:   1.125rem;
+  --t-cuerpo:     1rem;
+  --t-etiqueta:   0.75rem;
+  --t-dato:       clamp(2rem, 4vw, 3.5rem);
+
+  /* ---- Alto real de la Barra sticky (detalle en §8, D15/D21) ---- */
+  --barra-alto: 74px;
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --barra-alto: 83px;
+  }
 }
 ```
 
@@ -86,7 +104,7 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
 | **Máximo 12% de superficie verde** por pantalla | El verde marca acción, estado y dato. El resto es tinta y papel |
 | **`--laton` solo en numerales y filetes** | Si aparece en más de tres lugares por pantalla, sobra |
 | **`--verde-filo` es luz reflejada** | Nunca como relleno plano |
-| **`--metal` solo en tres lugares** | Filo del botón primario, borde de la placa, reglas divisorias |
+| **`--metal` solo en tres lugares** | Filo del botón primario, borde de la placa, filo del botón flotante de WhatsApp |
 | **Nunca `--metal` como fondo de sección** | Es lo que hace ver "SaaS genérico" |
 
 ### Contraste — verificado, respetalo
@@ -98,8 +116,11 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
 | `--papel` sobre `--verde-base` | 7,6:1 | ✅ Texto en botón primario |
 | `--tinta` sobre `--papel` | 15:1 | ✅ Secciones invertidas |
 | `--humo` sobre `--tinta` | 6,9:1 | ✅ Texto secundario |
+| `--laton` sobre `--tinta` | 7,9:1 | ✅ Contraste alto, pero restringido igual a numerales/filetes por la regla de uso de arriba, no por contraste |
 
 > **Regla derivada, importante:** el texto de acento dentro de párrafos usa **`--verde-luz`**, nunca `--verde`.
+
+> **`--verde-noche` no está en esta tabla a propósito:** contra `--tinta` da 1,29:1 (D17, ver `docs/06-decisiones.md`) — casi invisible. Es superficie teñida (relleno de la placa), nunca texto ni sombra.
 
 ---
 
@@ -125,7 +146,7 @@ font-variation-settings: 'wght' 900, 'wdth' 118;
 ### Escala
 
 ```css
---t-display-xl: clamp(3rem, 9vw, 6.5rem);   /* hero */
+--t-display-xl: clamp(2.25rem, 8.2vw, 6rem);   /* hero. Minimo bajado en D11/D12, ver docs/06-decisiones.md */
 --t-display-l:  clamp(2.1rem, 5vw, 3.6rem); /* títulos de sección */
 --t-titulo:     1.5rem;
 --t-cuerpo-l:   1.125rem;
@@ -185,19 +206,32 @@ El degradado metálico va en el **borde**, no en el relleno. Así el texto siemp
   font-family: var(--display);
   font-variation-settings: 'wght' 800, 'wdth' 112;
   font-size: 0.95rem;
+  text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--papel);
+  cursor: pointer;
+  /* Un boton nunca envuelve a una segunda linea, sin importar cuanto lo
+     aprieten sus contenedores flex (D15) */
+  white-space: nowrap;
+  transition: transform 120ms var(--salida), box-shadow 120ms var(--salida);
+}
+.cta--primario {
   background: var(--relleno-cta);
   border: 2px solid transparent;
   border-image: var(--metal) 1;
   box-shadow: 5px 5px 0 var(--verde);
-  transition: transform 120ms var(--salida), box-shadow 120ms var(--salida);
+}
+.cta--secundario {
+  background: transparent;
+  border: 2px solid var(--humo);
+  box-shadow: 5px 5px 0 var(--verde);
 }
 .cta:hover  { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--verde); }
 .cta:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--verde); }
-.cta:focus-visible { outline: 3px solid var(--laton); outline-offset: 3px; }
 ```
+
+El foco de teclado no lo pone el componente: lo pone la regla global de `base.css` (D4) — `:focus-visible { outline: 3px solid var(--laton); outline-offset: 3px; }` sobre todo elemento interactivo del sitio, botón incluido.
 
 El botón **se hunde** al presionarse. Es la microinteracción principal del sitio y la única que hace falta.
 
