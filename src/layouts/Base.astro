@@ -70,7 +70,8 @@ const organizacionJsonLd = {
   </head>
   <body>
     <a class="saltar-al-contenido" href="#contenido">Saltar al contenido</a>
-    <main id="contenido">
+    <slot name="header" />
+    <main id="contenido" tabindex="-1">
       <slot />
     </main>
   </body>
