@@ -1,0 +1,80 @@
+---
+// Ruta oculta, solo para generar public/og.png con Playwright (docs/06-decisiones.md
+// D25). No es contenido de la pagina: noindex, sin enlace desde la nav ni el
+// sitemap. Lienzo fijo de 1200x630 (proporcion estandar de Open Graph), sin
+// intencion responsive -- se renderiza una sola vez a un ancho de viewport
+// conocido y se descarta.
+import Wordmark from '../components/Wordmark.astro';
+import Placa from '../components/Placa.astro';
+import '../styles/tokens.css';
+import '../styles/base.css';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>OG — DevBro Solutions</title>
+  </head>
+  <body>
+    <div class="og" id="lienzo">
+      <div class="og__marca"><Wordmark /></div>
+      <div class="og__cuerpo">
+        <h1 class="og__titulo">Tu idea, funcionando, en tres semanas.</h1>
+        <div class="og__placa"><Placa /></div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+  }
+
+  .og {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--e6);
+    background-color: var(--tinta);
+    background-image:
+      linear-gradient(var(--reticula) 1px, transparent 1px),
+      linear-gradient(90deg, var(--reticula) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  .og__marca {
+    font-size: 2rem;
+  }
+
+  .og__cuerpo {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e6);
+    min-height: 0;
+  }
+
+  .og__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 900, 'wdth' 118;
+    font-size: 4.25rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--papel);
+    max-width: 620px;
+  }
+
+  .og__placa {
+    flex-shrink: 0;
+  }
+</style>
