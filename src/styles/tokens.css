@@ -65,26 +65,18 @@
   --t-etiqueta:   0.75rem;
   --t-dato:       clamp(2rem, 4vw, 3.5rem);
 
-  /* ---- Alto real de la Barra sticky (Fase 4, docs/06-decisiones.md D15) ----
-     Usado en scroll-margin-top de toda ancla, para que la barra fija no tape
-     el titulo de la seccion al navegar. Dos valores medidos, no uno: la
-     barra mide 74px en las zonas "compactas" (< 640px y 1024-1199px, donde
-     el CTA tambien se achica) y 83px en las "comodas" (640-1023px y
-     >= 1200px). Los breakpoints tienen que coincidir siempre con los de
-     Barra.astro. */
+  /* ---- Alto real de la Barra sticky (D15, resimplificado en D21) ----
+     Usado en scroll-margin-top de toda ancla (utilidades.css, Base.astro)
+     y en el padding superior del panel de menu, para que la barra fija no
+     tape el titulo de la seccion al navegar.
+
+     Desde el rediseno movil (D21) hay UN solo escalon, no tres: bajo
+     1024px la barra es wordmark + boton de menu (sin CTA, que se mudo al
+     panel) y mide 74px constante; el CTA compacto de 1024-1199px da los
+     mismos 74px; solo desde 1200px, con el CTA comodo, sube a 83px.
+     Medido, no estimado. El breakpoint tiene que coincidir siempre con
+     el de Barra.astro. */
   --barra-alto: 74px;
-}
-
-@media (min-width: 640px) {
-  :root {
-    --barra-alto: 83px;
-  }
-}
-
-@media (min-width: 1024px) {
-  :root {
-    --barra-alto: 74px;
-  }
 }
 
 @media (min-width: 1200px) {

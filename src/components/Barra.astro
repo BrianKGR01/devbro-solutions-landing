@@ -1,8 +1,16 @@
 ---
-// Barra de navegación superior, sticky (docs/03-content.md §00, docs/02-design-system.md §8,
-// docs/05-roadmap.md Fase 3). "El menú colapsa a solo el CTA" se refiere a los enlaces de
-// navegación, no a la marca: el wordmark (reducido en móvil) y el CTA están siempre visibles.
-// Sin hamburguesa/drawer -- simplificación deliberada, no existe en este proyecto.
+// Barra de navegación superior, sticky (docs/03-content.md §00,
+// docs/02-design-system.md §8, docs/06-decisiones.md D14/D15/D21).
+//
+// Dos comportamientos, no uno:
+//  - < 1024px: wordmark COMPLETO + botón de menú. El CTA NO vive en la
+//    barra (estaba duplicado con el del hero, a un scroll de distancia):
+//    vive al final del panel, como acción principal de cierre.
+//  - >= 1024px: wordmark + enlaces en línea + CTA, sin botón ni panel.
+//
+// El panel es pantalla completa sobre --tinta, sin drawer lateral. La
+// fila de la barra queda POR ENCIMA del panel (z-index dentro del
+// stacking context del header) para que el botón de cerrar siga visible.
 import Wordmark from './Wordmark.astro';
 import Cta from './Cta.astro';
 import { ENLACES_NAV } from '../lib/navegacion';
@@ -11,8 +19,7 @@ import { ENLACES_NAV } from '../lib/navegacion';
 <header class="barra">
   <div class="contenedor barra__fila">
     <a href="#inicio" class="barra__wordmark" aria-label="DevBro Solutions, inicio">
-      <span class="barra__wordmark-reducido"><Wordmark reducido /></span>
-      <span class="barra__wordmark-completo"><Wordmark /></span>
+      <Wordmark />
     </a>
 
     <nav class="barra__nav" aria-label="Navegación principal">
@@ -32,8 +39,150 @@ import { ENLACES_NAV } from '../lib/navegacion';
     <div class="barra__cta">
       <Cta href="#contacto">Agendar diagnóstico</Cta>
     </div>
+
+    <button
+      type="button"
+      class="barra__boton-menu"
+      id="barra-boton-menu"
+      aria-expanded="false"
+      aria-controls="barra-panel"
+      aria-label="Abrir menú"
+    >
+      <svg class="barra__icono" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        <rect class="barra__icono-barra barra__icono-barra--sup" x="2" y="4.5" width="20" height="3" fill="currentColor" />
+        <rect class="barra__icono-barra barra__icono-barra--med" x="2" y="10.5" width="20" height="3" fill="currentColor" />
+        <rect class="barra__icono-barra barra__icono-barra--inf" x="2" y="16.5" width="20" height="3" fill="currentColor" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="barra__panel" id="barra-panel" hidden>
+    <div class="contenedor barra__panel-interior">
+      <nav class="barra__panel-nav" aria-label="Navegación principal">
+        <ul class="barra__panel-lista">
+          {
+            ENLACES_NAV.map((enlace, i) => (
+              <li>
+                <a class="barra__panel-enlace" href={enlace.href}>
+                  <span class="barra__panel-numeral" aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span class="barra__panel-texto">{enlace.texto}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="barra__panel-cta">
+        <Cta href="#contacto">Agendar diagnóstico</Cta>
+      </div>
+    </div>
   </div>
 </header>
+
+<script is:inline>
+  (function () {
+    var header = document.querySelector('.barra');
+    var boton = document.getElementById('barra-boton-menu');
+    var panel = document.getElementById('barra-panel');
+    if (!header || !boton || !panel) return;
+
+    var escritorio = window.matchMedia('(min-width: 1024px)');
+    var abierto = false;
+
+    // Todo lo que NO es el header queda inert mientras el panel está
+    // abierto: saca el resto de la página del tab order y del árbol de
+    // accesibilidad de una sola vez, sin enumerar elementos a mano (y
+    // cubre cualquier bloque que se agregue al body más adelante).
+    function hermanosDelHeader() {
+      return Array.prototype.filter.call(document.body.children, function (el) {
+        return el !== header;
+      });
+    }
+
+    function enfocablesDelHeader() {
+      return Array.prototype.filter.call(
+        header.querySelectorAll('a[href], button:not([disabled])'),
+        function (el) {
+          // offsetParent null = display:none en algún ancestro (la nav de
+          // escritorio bajo 1024px, o el panel cerrado).
+          return el.offsetParent !== null;
+        }
+      );
+    }
+
+    function abrir() {
+      abierto = true;
+      panel.hidden = false;
+      boton.setAttribute('aria-expanded', 'true');
+      boton.setAttribute('aria-label', 'Cerrar menú');
+      document.body.style.overflow = 'hidden';
+      hermanosDelHeader().forEach(function (el) {
+        el.setAttribute('inert', '');
+      });
+    }
+
+    function cerrar(devolverFoco) {
+      abierto = false;
+      panel.hidden = true;
+      boton.setAttribute('aria-expanded', 'false');
+      boton.setAttribute('aria-label', 'Abrir menú');
+      document.body.style.overflow = '';
+      hermanosDelHeader().forEach(function (el) {
+        el.removeAttribute('inert');
+      });
+      if (devolverFoco) boton.focus();
+    }
+
+    boton.addEventListener('click', function () {
+      if (abierto) cerrar(true);
+      else abrir();
+    });
+
+    // Cualquier ancla del header cierra el panel: navegar a una sección
+    // con el menú tapándola no tiene sentido.
+    header.addEventListener('click', function (evento) {
+      var enlace = evento.target.closest('a[href^="#"]');
+      if (enlace && abierto) cerrar(false);
+    });
+
+    document.addEventListener('keydown', function (evento) {
+      if (!abierto) return;
+
+      if (evento.key === 'Escape') {
+        evento.preventDefault();
+        cerrar(true);
+        return;
+      }
+
+      if (evento.key !== 'Tab') return;
+
+      // Trampa de foco. El resto de la página ya está inert, así que
+      // alcanza con ciclar dentro del header.
+      var enfocables = enfocablesDelHeader();
+      if (!enfocables.length) return;
+      var primero = enfocables[0];
+      var ultimo = enfocables[enfocables.length - 1];
+
+      if (evento.shiftKey && document.activeElement === primero) {
+        evento.preventDefault();
+        ultimo.focus();
+      } else if (!evento.shiftKey && document.activeElement === ultimo) {
+        evento.preventDefault();
+        primero.focus();
+      }
+    });
+
+    // Si se pasa a escritorio con el panel abierto, el botón y el panel
+    // desaparecen por CSS -- sin esto, el inert y el scroll bloqueado
+    // quedarían puestos y la página entera se volvería inusable.
+    escritorio.addEventListener('change', function (evento) {
+      if (evento.matches && abierto) cerrar(false);
+    });
+  })();
+</script>
 
 <style>
   .barra {
@@ -44,94 +193,157 @@ import { ENLACES_NAV } from '../lib/navegacion';
     border-bottom: var(--borde);
   }
 
+  /* La fila queda por encima del panel (mismo stacking context del
+     header) para que el botón de cerrar siga visible y clickeable. */
   .barra__fila {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* Movil: gap ajustado a proposito, ver nota junto al tamano del CTA */
-    gap: var(--e1);
+    gap: var(--e3);
     padding-block: var(--e2);
+    background-color: var(--tinta);
   }
 
-  /* Wordmark y CTA siempre visibles ("el menu colapsa a solo el CTA" es
-     sobre los enlaces de nav, no sobre la marca). Version reducida (solo
-     DEVBRO) por defecto, completa desde 640px -- misma logica que
-     Wordmark.astro ya prevé para movil/favicon/OG. */
   .barra__wordmark {
     display: inline-flex;
     align-items: center;
   }
 
-  .barra__wordmark-completo {
+  /* Bajo 1024px no hay nav en línea ni CTA en la barra: el CTA estaba
+     duplicado con el del hero y competía por el ancho con la marca
+     (docs/06-decisiones.md D21). Los dos viven en el panel. */
+  .barra__nav,
+  .barra__cta {
     display: none;
   }
 
-  .barra__nav {
+  .barra__boton-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--e1);
+    margin-right: calc(var(--e1) * -1);
+    background: transparent;
+    border: none;
+    color: var(--papel);
+    cursor: pointer;
+  }
+
+  .barra__icono-barra {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      transform 180ms var(--salida),
+      opacity 120ms var(--salida);
+  }
+
+  /* Las tres barras de 3px se vuelven X: la del medio se apaga, las
+     otras dos se juntan en el centro (6px cada una) y rotan. */
+  .barra__boton-menu[aria-expanded='true'] .barra__icono-barra--sup {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  .barra__boton-menu[aria-expanded='true'] .barra__icono-barra--med {
+    opacity: 0;
+  }
+
+  .barra__boton-menu[aria-expanded='true'] .barra__icono-barra--inf {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .barra__panel {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background-color: var(--tinta);
+    overflow-y: auto;
+    /* Arranca debajo de la fila de la barra, que queda visible encima. */
+    padding-top: calc(var(--barra-alto) + var(--e6));
+    padding-bottom: var(--e6);
+  }
+
+  .barra__panel[hidden] {
     display: none;
   }
 
-  /* El CTA de Barra.astro no necesita ser tan grande como el del hero.
-     A 360px, "Agendar diagnóstico" con el tamaño del hero desborda su
-     propio boton y envuelve a 2 lineas dentro de una barra fija -- se ve
-     sin terminar e infla el alto de la barra (medido: 104px en vez de
-     83px). Con --t-etiqueta + padding recortado + gap del contenedor
-     bajado a --e1 en movil: 84px (wordmark reducido) + 8px (gap) + 210px
-     (cta) = 302px contra 320px disponibles, ~5,6% de margen -- ajustado,
-     pero es lo que da "Agendar diagnóstico" completo en una barra angosta
-     junto a una marca. Cta.astro ya tiene white-space:nowrap como
-     garantia dura, esto es ademas darle el espacio real que pide. */
-  .barra__cta :global(.cta) {
-    padding: 8px 14px;
+  .barra__panel-interior {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e6);
+  }
+
+  /* Índice de orden de trabajo: numeral en mono/--laton a la izquierda,
+     título en Archivo grande. */
+  .barra__panel-enlace {
+    display: flex;
+    align-items: baseline;
+    gap: var(--e3);
+    padding-block: var(--e3);
+    border-bottom: var(--borde);
+  }
+
+  .barra__panel-lista > li:first-child .barra__panel-enlace {
+    border-top: var(--borde);
+  }
+
+  .barra__panel-numeral {
+    flex-shrink: 0;
+    font-family: var(--mono);
+    font-weight: 700;
     font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    color: var(--laton);
   }
 
-  @media (min-width: 640px) {
-    .barra__wordmark-reducido {
+  .barra__panel-texto {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: clamp(1.5rem, 6vw, 2.25rem);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--papel);
+  }
+
+  .barra__panel-cta :global(.cta) {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .barra__icono-barra {
+      transition: none;
+    }
+  }
+
+  /* Desde 1024px vuelve la barra de escritorio completa: nav en línea +
+     CTA, sin botón de menú ni panel. Los números de ancho de este rango
+     están medidos en docs/06-decisiones.md D14 (corregido en D15): 882px
+     de contenido contra 1024px disponibles con la nav compacta, el punto
+     más ajustado de toda la barra. */
+  @media (min-width: 1024px) {
+    .barra__boton-menu,
+    .barra__panel {
       display: none;
     }
 
-    .barra__wordmark-completo {
-      display: inline-flex;
-    }
-
-    /* De 640 a 1023px solo compiten wordmark completo + cta (sin nav
-       todavia): sobra espacio de sobra para el tamano "normal". */
-    .barra__fila {
-      gap: var(--e3);
-    }
-
-    .barra__cta :global(.cta) {
-      padding: 12px 20px;
-      font-size: 0.8rem;
-    }
-  }
-
-  /* Con los enlaces a tamaño --t-cuerpo (nav "completa") wordmark+nav+cta
-     piden 973px de contenido (medido con el cta SIN envolver -- 175px de
-     wordmark + 511px de lista + 239px de cta natural + 2 gaps de 24px)
-     -- eso recién entra con margen real desde ~1200px (= --ancho-max, no
-     se puede usar var() en un media query, se repite el valor literal;
-     ~9,9% de margen).
-
-     Entre 1024px (el breakpoint de escritorio que ya usa el resto del
-     sitio -- un iPad horizontal) y 1199px NO entra a ese tamaño. Con la
-     nav "compacta" (mono, --t-etiqueta) Y el cta tambien compacto
-     (--t-etiqueta, 8x14) Y el gap del contenedor bajado a --e1: 175
-     (wordmark) + 8 + 481 (nav) + 8 + 210 (cta) = 882px de contenido
-     contra 1024px disponibles, ~4,3% de margen -- el punto mas ajustado
-     de toda la barra, documentado en docs/06-decisiones.md D14. */
-  @media (min-width: 1024px) {
     .barra__fila {
       gap: var(--e1);
+    }
+
+    .barra__nav {
+      display: block;
+    }
+
+    .barra__cta {
+      display: block;
     }
 
     .barra__cta :global(.cta) {
       padding: 8px 14px;
       font-size: var(--t-etiqueta);
-    }
-
-    .barra__nav {
-      display: block;
     }
 
     .barra__lista {

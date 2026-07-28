@@ -67,6 +67,8 @@ Un solo CTA primario, repetido: **"Agendar diagnóstico"**.
 
 Aparece en: barra superior, hero, después de paquetes, y en la sección de contacto.
 
+**Dónde aparece en móvil (rediseñado, ver `docs/06-decisiones.md` D21):** por debajo de 1024px el CTA **no** vive en la barra. La barra muestra el wordmark completo y un botón de menú; el CTA es la acción de cierre del panel del menú. En la barra estaba duplicado con el del hero —los dos visibles casi a la vez, a un scroll de distancia— y competía por el ancho con la marca. El resto de las apariciones no cambia.
+
 **CTA secundario en el hero:** "Cómo trabajamos" → ancla a `#proceso`.
 
 **Canal alternativo permanente:** botón flotante de WhatsApp, esquina inferior derecha, visible desde el scroll del hero en adelante. En Bolivia WhatsApp convierte más que un formulario, y el visitante debe poder elegir.
@@ -88,7 +90,7 @@ DEVBRO │ SOLUTIONS
 - Separador — regla vertical de 2px, alto igual a la altura-x de la mayúscula, color `--laton`, márgenes laterales de 10px
 - `SOLUTIONS` — JetBrains Mono 700, tamaño `0.62em` respecto de DEVBRO, `letter-spacing: 0.18em`, color `--humo`, alineado a la línea base
 
-**Versión reducida** (móvil, favicon, OG): solo `DEVBRO`.
+**Versión reducida** (favicon, OG): solo `DEVBRO`. **Ya no se usa en la barra móvil** (D21): al sacar el CTA de la barra sobra ancho de sobra para el wordmark completo en cualquier viewport, así que la marca se muestra entera en todos lados.
 
 Debe construirse como componente reutilizable, no como imagen.
 

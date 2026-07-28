@@ -337,3 +337,57 @@ Varias decisiones tomadas al construir `Caso.astro`, `Preguntas.astro`, `Contact
 **Constantes compartidas nuevas (`src/lib/`):** `navegacion.ts` (`ENLACES_NAV`, usado por `Barra.astro` y `Pie.astro` — antes duplicado) y `whatsapp.ts` (`ENLACE_WHATSAPP`, usado por `Contacto.astro` y `BotonWhatsApp.astro`). Evita que los dos lugares con el mismo enlace/número pendiente diverjan silenciosamente.
 
 **Marco de imagen de `Caso.astro`: `aspect-ratio: 16/10`.** Sin spec en los docs — es una proporción común de captura de producto/ventana de navegador, elegida para que el marco vacío tenga una forma creíble y no colapse de alto hasta que se reemplace por la imagen real (D9).
+
+---
+
+## D20 · Caso 001 pasa a versión anonimizada
+
+**Duda:** el bloque construido en la Fase 5 (D9, `docs/03-content.md` §08 original) dependía de tres `{{PENDIENTE}}`, uno de ellos una captura de pantalla que ocupaba una pantalla entera de marco vacío. Visto en un celular real, el marco vacío es el elemento más grande de la sección y no comunica nada.
+
+**Resolución:** se recorta a lo que se sostiene solo.
+
+- **Se elimina el marco de imagen** y el `{{PENDIENTE}}` de la captura. Sin la imagen real, el marco es un agujero, no un placeholder útil.
+- **Se elimina el bloque "Lo que construimos".** Sin nombre de cliente ni captura, describir el sistema en detalle no agrega prueba — repite lo que el titular ya dice.
+- **"El problema" pasa de párrafo a fila de ficha**, junto a Tiempo y Estado. Las tres son ahora un `<dl>` de pares etiqueta/valor con filetes, mismo lenguaje visual que la lista de etapas de `Proceso.astro`: se lee como un registro de orden, no como un caso de estudio recortado.
+
+Queda **un solo `{{PENDIENTE}}`, corto** (el rubro), que sigue visible. La sección se puede publicar así, sin esperar material del cliente. `docs/03-content.md` §08 actualizado. **D9 no se reescribe** (la autorización del cliente sigue siendo cierta); esta entrada la reemplaza en cuanto a estructura.
+
+---
+
+## D21 · Rediseño de la barra en móvil: panel de menú, y ajustes de aire del hero
+
+**Duda 1 (probado en un celular real):** por debajo de 1024px la barra mostraba wordmark reducido ("DEVBRO") + un botón grande de "AGENDAR DIAGNÓSTICO". Ese CTA está **duplicado** con el del hero, visible casi a la vez, a un scroll de distancia — y era lo que obligaba a recortar la marca y a apretar todo (los números de D14/D15 son la crónica de esa pelea por el ancho).
+
+**Resolución 1: el CTA sale de la barra y la barra móvil se rediseña.**
+
+- `< 1024px`: **wordmark completo** (sobra ancho en cuanto el CTA no compite) + botón de menú.
+- El CTA vive **al final del panel del menú**, como acción de cierre. No desaparece: cambia de lugar a uno donde no compite y donde cierra la lectura del índice.
+- `≥ 1024px`: sin cambios (nav en línea + CTA, con los tamaños compacto/cómodo de D14/D15).
+
+**El panel:** pantalla completa sobre `--tinta`, sin drawer lateral y sin esquinas redondeadas. Cada enlace lleva numeral de dos dígitos en `--mono`/`--laton` y título en Archivo grande, con filetes entre filas — se lee como el índice de una orden de trabajo. La fila de la barra queda por encima del panel (`z-index` dentro del stacking context del `<header>`) para que el botón de cerrar siga visible. Ícono: tres barras de 3px; al abrir, la del medio se apaga y las otras dos se juntan 6px al centro y rotan ±45° formando la X.
+
+**Sin animación de apertura, a propósito.** El panel usa el atributo `hidden` (aparece y desaparece de golpe) en vez de una transición de altura u opacidad. Es la opción más robusta en accesibilidad —`hidden` saca el contenido del árbol y del tab order sin trucos— y encaja con la dirección "deliberadamente estática y física" de `CLAUDE.md`: el panel se estampa, no se desliza. Solo el ícono anima (180ms), y se anula bajo `prefers-reduced-motion`.
+
+**Contrato de accesibilidad (verificado con Playwright, no asumido):** `aria-expanded` + `aria-controls` en el botón · `Escape` cierra y devuelve el foco al botón · trampa de foco real que cicla dentro del `<header>` (Tab desde el último va al primero, Shift+Tab desde el primero va al último) · scroll del `body` bloqueado · **todo hermano del `<header>` con `inert`**, resuelto iterando `document.body.children` en vez de enumerar elementos a mano, para que cubra cualquier bloque que se agregue al `body` más adelante · cualquier ancla del header cierra el panel, porque navegar a una sección con el menú tapándola no tiene sentido.
+
+**Caso borde que sí importa:** si el viewport pasa a `≥ 1024px` con el panel abierto, el botón y el panel desaparecen por CSS, pero el `inert` y el `overflow: hidden` quedarían puestos — la página entera quedaría sin scroll y sin foco, sin ningún control visible para revertirlo. Se cierra por script con un listener de `matchMedia`. Verificado: tras el resize, `inert` y `overflow` quedan limpios y la página vuelve a scrollear.
+
+**Efecto colateral encontrado: `--barra-alto` había quedado mal.** El token (D15) declaraba 83px para 640-1023px, un valor que venía del CTA "cómodo" que ya no existe en ese rango. La barra real ahí ahora mide 74px. Sin corregirlo, todo `scroll-margin-top` en ese rango habría dejado 9px de más. Corregido y **simplificado a un solo escalón**: 74px bajo 1200px, 83px desde 1200px. Es exactamente el modo de falla contra el que advertía el propio comentario del token ("los breakpoints tienen que coincidir siempre con los de `Barra.astro`") — la primera vez que se cobró.
+
+**Duda 2:** el antetítulo del hero arrancaba demasiado abajo en móvil.
+
+**Resolución 2:** medido a 360×640. El hero es la única sección que arranca pegada a la barra sticky, sin una sección previa que ya haya dado aire, así que el padding general de `--e6` (64px, D15) es de más ahí. Solo el padding **superior** del hero baja a `--e4` (32px) por debajo de 640px:
+
+| | Antes (`--e6`) | Después (`--e4`) |
+|---|---|---|
+| Borde superior del antetítulo | 138px (21,6% de 640) | **106px (16,6%)** |
+| Borde superior del `h1` | 210px | **178px** |
+| Borde inferior de la placa | 582px | **549px** |
+
+Probados también `--e5` (48px → 122px) y `--e3` (24px → 98px). `--e3` deja el antetítulo pegado a la barra; `--e4` es el punto donde se gana la mitad del vacío sin perder la separación. El padding **inferior** no se toca: sigue en `--e6`, que es lo que separa del bloque de Problema (medido en D15).
+
+**Duda 3:** cambio de copy del antetítulo, de `SOFTWARE FACTORY · SANTA CRUZ DE LA SIERRA` a `SOFTWARE FACTORY · PARA FUNDADORES SIN EQUIPO TÉCNICO` (la ciudad se mantiene en el pie).
+
+**Resolución 3:** aplicado. Medido a 360px: **2 líneas**, igual que el copy anterior — no empeora nada, no hace falta acortarlo.
+
+**Bug encontrado al medirlo:** con el copy nuevo el antetítulo pasaba a 2 líneas **también a 1440px**, dejando "TÉCNICO" solo en la segunda. Causa: `base.css` aplica `max-width: 62ch` a todo `<p>` — una regla de cuerpo de texto — que a `--t-etiqueta` (12px) resuelve a 446px, y el texto pide ~449px. El antetítulo es una etiqueta de una línea, no cuerpo: se le pone `max-width: none` y el contenedor sigue limitando el ancho. Desde 639px hacia arriba vuelve a ser 1 línea.
