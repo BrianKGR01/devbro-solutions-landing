@@ -297,7 +297,7 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 
 | Nombre | Ancho | Cambios principales |
 |---|---|---|
-| Móvil | < 640px | Todo a una columna: antetítulo → titular → placa → párrafo/botones/microcopia. Placa centrada, rotación reducida a `-3deg`. Menú colapsa a solo el CTA |
+| Móvil | < 640px | Todo a una columna: antetítulo → titular → placa → párrafo/botones/microcopia. Placa centrada, rotación reducida a `-3deg`. Menú detrás de un botón, en panel de pantalla completa (D21) |
 | Tableta | 640-1023px | Grillas de 3 columnas pasan a 2. Hero sigue en una columna, mismo orden que móvil (placa centrada, `-6deg` desde 640px) |
 | Escritorio | ≥ 1024px | El titular del hero sigue a ancho completo (no comparte fila con la placa — ver Fase 3). La placa pasa a compartir fila con el bloque párrafo + botones + microcopia, no con el titular. Grillas completas |
 
@@ -305,13 +305,22 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 
 **Orden en móvil/tableta (D13, ver `docs/06-decisiones.md`):** la placa va **después** del titular, no antes. Medido a 360×640 (el "pliegue" de una pantalla de celular típica): con la placa primero, el titular quedaba al filo del pliegue (borde inferior a 532px de 640, sin margen real) y el CTA primario siempre queda fuera (707px) sin importar el orden — la altura total no cambia por reordenar. Con antetítulo → titular → placa, el mensaje completo **y** la placa entran enteros en el primer pantallazo sin scroll; el CTA sigue pidiendo scroll, pero eso es normal en cualquier hero mobile y no vale la pena achicar la placa (habría que bajarla a ~17% de su tamaño actual para evitarlo, lo que la destruye como elemento firma) para evitarlo.
 
-**Barra de navegación (D14, corregido en D15, ver `docs/06-decisiones.md`):** la Barra tiene sus propios breakpoints de contenido, distintos de los de arriba — wordmark y CTA siempre visibles, solo los enlaces de nav colapsan. El CTA además alterna entre un tamaño "compacto" (`--t-etiqueta`, padding 8×14) y uno "cómodo" (0.8rem, padding 12×20) para garantizar una sola línea de texto en cualquier ancho:
-- `< 640px`: wordmark reducido (solo "DEVBRO") + CTA compacto. Sin enlaces de nav. Medido: 84px (wordmark) + 8px (gap `--e1`) + 210px (cta) = 302px contra 320px disponibles, ~5,6% de margen
-- `640-1023px`: wordmark completo + CTA cómodo. Sin enlaces de nav — a este ancho el conjunto completo con nav (wordmark + nav + CTA) no entra (medido: 973px de contenido, entra recién con margen desde ~1200px)
-- `1024-1199px`: nav visible, pero compacta — enlaces en JetBrains Mono, `--t-etiqueta`, gap `--e2`, Y el CTA vuelve a compacto (gap del contenedor `--e1`). Medido: 882px de contenido contra 1024px disponibles, ~4,3% de margen — el punto más ajustado de toda la barra
-- `≥ 1200px` (= `--ancho-max`): nav completa — enlaces en Inter Tight, `--t-cuerpo`, gap `--e4`, CTA cómodo. ~9,9% de margen
+**Barra de navegación (D14, corregido en D15, rediseñado en D21 — ver `docs/06-decisiones.md`):** la Barra tiene sus propios breakpoints, distintos de los de arriba. **Un solo corte, en 1024px:**
 
-**Alto real de la Barra y `scroll-margin-top` (D15, ver `docs/06-decisiones.md`):** la Barra es sticky, y su alto real alterna entre dos valores según la misma tabla de breakpoints de arriba (el tamaño del CTA la infla o la achica): **74px** en las zonas compactas (`< 640px` y `1024-1199px`) y **83px** en las cómodas (`640-1023px` y `≥ 1200px`). Este valor vive en `--barra-alto` (`tokens.css`), como variable responsive — nunca un número suelto, porque un número fijo se desincroniza en cuanto cambia el breakpoint. Todo destino de ancla (`.seccion`, y `#contenido` del skip link) usa `scroll-margin-top: calc(var(--barra-alto) + var(--e2))`, para que un salto de navegación nunca deje el título de la sección tapado detrás de la barra fija.
+- **`< 1024px`: wordmark completo + botón de menú.** El CTA **no** está en la barra: vive al final del panel del menú. Sin el CTA sobra ancho, así que el wordmark va entero (antes iba reducido a "DEVBRO" bajo 640px).
+- **`≥ 1024px`: wordmark + enlaces en línea + CTA**, sin botón ni panel. El CTA alterna entre "compacto" (`--t-etiqueta`, padding 8×14) y "cómodo" (0.8rem, padding 12×20) para garantizar una sola línea:
+  - `1024-1199px`: nav compacta (JetBrains Mono, `--t-etiqueta`, gap `--e2`) **y** CTA compacto, gap del contenedor `--e1`. Medido: 882px de contenido contra 1024px disponibles, ~4,3% de margen — el punto más ajustado de toda la barra.
+  - `≥ 1200px` (= `--ancho-max`): nav completa (Inter Tight, `--t-cuerpo`, gap `--e4`) y CTA cómodo. ~9,9% de margen.
+
+**Panel del menú (`< 1024px`, D21):**
+- Pantalla completa (`position: fixed; inset: 0`), fondo `--tinta`. **No** es un drawer lateral y no tiene esquinas redondeadas.
+- La fila de la barra queda **por encima** del panel, para que el botón de cerrar siga visible.
+- Cada enlace: numeral de dos dígitos en `--mono`/`--laton` a la izquierda + título en Archivo `clamp(1.5rem, 6vw, 2.25rem)`, separados por filetes de `--borde`. Se lee como el índice de una orden de trabajo, no como una lista de navegación.
+- El CTA cierra el panel, a ancho completo, como acción principal.
+- Ícono: tres barras de 3px que se convierten en X (la del medio se apaga, las otras se juntan 6px al centro y rotan ±45°). Transición de 180ms, anulada bajo `prefers-reduced-motion`.
+- **Contrato de accesibilidad, obligatorio:** `aria-expanded` + `aria-controls` en el botón · `Escape` cierra · trampa de foco mientras está abierto · al cerrar, el foco vuelve al botón · scroll del `body` bloqueado · todo hermano del `<header>` con `inert`. Además: si el viewport pasa a `≥ 1024px` con el panel abierto, se cierra por script — sin eso, el `inert` y el scroll bloqueado quedarían puestos y la página entera quedaría inutilizable.
+
+**Alto real de la Barra y `scroll-margin-top` (D15, resimplificado en D21):** la Barra es sticky. Desde el rediseño móvil su alto real tiene **un solo escalón**, no tres: **74px** bajo 1200px (el wordmark + botón de móvil y el CTA compacto de 1024-1199px dan la misma altura) y **83px** desde 1200px, con el CTA cómodo. Vive en `--barra-alto` (`tokens.css`) como variable responsive — nunca un número suelto, porque se desincroniza en cuanto cambia la composición de la barra (que es exactamente lo que pasó al rediseñarla: el valor de 640-1023px quedó 9px de más). Todo destino de ancla (`.seccion` y `#contenido` del skip link) usa `scroll-margin-top: calc(var(--barra-alto) + var(--e2))`; el panel del menú usa el mismo token para su `padding-top`.
 
 **Paquetes (D16, ver `docs/06-decisiones.md`):** `Paquetes.astro` rompe la regla general de grillas de esta sección en dos puntos, decididos antes de construir el componente:
 - Las 3 columnas pasan a **1 sola** por debajo de 1024px, no a 2 — un 2+1 en tableta rompe la comparación entre paquetes y deja uno huérfano solo en su fila. No usa `.grilla-3`.
