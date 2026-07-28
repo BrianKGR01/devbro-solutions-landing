@@ -1,14 +1,14 @@
 :root {
   /* ---- Base ---- */
-  --tinta:        #080B09;   /* fondo principal. Negro con base verde */
+  --tinta:        #080B09;   /* fondo principal (negro con base verde). Tambien texto primario sobre --papel */
   --tinta-2:      #0F1512;   /* superficies elevadas */
   --tinta-3:      #18201C;   /* tarjetas */
-  --papel:        #EDEFEA;   /* fondo de secciones invertidas */
+  --papel:        #EDEFEA;   /* fondo de secciones invertidas. Tambien texto primario sobre --tinta */
   --humo:         #8A968F;   /* texto secundario sobre oscuro */
   --humo-papel:   #56605A;   /* texto secundario sobre papel */
 
   /* ---- Verde metálico ---- */
-  --verde-noche:  #0C2A1E;   /* superficies teñidas, sombras sólidas */
+  --verde-noche:  #0C2A1E;   /* superficies teñidas (relleno de la placa). NO sombras: contra --tinta da 1,29:1, ver docs/06-decisiones.md D17 */
   --verde-base:   #145239;   /* relleno de botones */
   --verde:        #1D7A52;   /* bordes, íconos, títulos grandes */
   --verde-luz:    #4FA57C;   /* TEXTO de acento sobre oscuro */

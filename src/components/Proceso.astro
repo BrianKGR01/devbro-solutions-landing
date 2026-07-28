@@ -1,0 +1,144 @@
+---
+// #proceso (docs/03-content.md §05, docs/05-roadmap.md Fase 4).
+// "Las siete etapas se leen como secuencia, no como lista suelta" -- por eso
+// no es una grilla de tarjetas sueltas: es una linea vertical continua con
+// un nodo por etapa, mismo lenguaje visual que un orden de trabajo numerado.
+const etapas = [
+  {
+    clave: 'E0 · ARRANQUE',
+    duracion: '1 día',
+    descripcion: 'Firmamos, definimos un solo interlocutor y abrimos accesos.',
+  },
+  {
+    clave: 'E1 · BLUEPRINT',
+    duracion: '3 a 5 días',
+    descripcion:
+      'Diseñamos todas las pantallas y cerramos por escrito qué se va a construir. Este documento es tu seguro.',
+  },
+  {
+    clave: 'E2 · CONSTRUCCIÓN',
+    duracion: '3 a 6 semanas',
+    descripcion: 'Tenés un enlace en vivo desde el primer día y una demo todas las semanas.',
+  },
+  {
+    clave: 'E3 · PRELANZAMIENTO',
+    duracion: '2 a 3 días',
+    descripcion: 'Lo probás vos con casos reales. Capacitamos a tu equipo.',
+  },
+  {
+    clave: 'E4 · LANZAMIENTO',
+    duracion: '1 día',
+    descripcion: 'Sale a producción, en tu propia infraestructura, con tu dominio.',
+  },
+  {
+    clave: 'E5 · DIAGNÓSTICO',
+    duracion: '1 a 2 semanas',
+    descripcion: 'Ajustamos lo que aparezca con usuarios reales.',
+  },
+  {
+    clave: 'E6 · TRASPASO',
+    duracion: '1 día',
+    descripcion: 'Código, documentación, credenciales y un video explicando todo. Es tuyo.',
+  },
+];
+---
+
+<section id="proceso" class="seccion">
+  <div class="contenedor">
+    <h2 class="proceso__titulo">Siete etapas. Sin sorpresas en el medio.</h2>
+
+    <ol class="proceso__lista">
+      {
+        etapas.map((etapa) => (
+          <li class="proceso__etapa">
+            <span class="proceso__etapa-nodo" aria-hidden="true" />
+            <p class="proceso__etapa-encabezado">
+              <span class="proceso__etapa-clave">{etapa.clave}</span>
+              <span class="proceso__etapa-duracion">{etapa.duracion}</span>
+            </p>
+            <p class="proceso__etapa-descripcion">{etapa.descripcion}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .proceso__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 20ch;
+    margin-bottom: var(--e7);
+    text-wrap: balance;
+  }
+
+  .proceso__lista {
+    position: relative;
+    max-width: 62ch;
+    /* Espacio para el nodo + la linea vertical a la izquierda de cada etapa */
+    padding-left: var(--e5);
+  }
+
+  /* La linea continua que convierte 7 items sueltos en una secuencia visible */
+  .proceso__lista::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: calc(var(--e5) / 2 - 1px);
+    width: 2px;
+    background: var(--verde);
+  }
+
+  .proceso__etapa {
+    position: relative;
+    padding-bottom: var(--e6);
+  }
+
+  .proceso__etapa:last-child {
+    padding-bottom: 0;
+  }
+
+  .proceso__etapa-nodo {
+    position: absolute;
+    top: 4px;
+    left: calc(var(--e5) / -2 - 5px);
+    width: 10px;
+    height: 10px;
+    background: var(--laton);
+  }
+
+  .proceso__etapa-encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--e2);
+    margin-bottom: var(--e2);
+  }
+
+  .proceso__etapa-clave {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.1em;
+    color: var(--laton);
+  }
+
+  .proceso__etapa-duracion {
+    font-family: var(--cuerpo);
+    font-weight: 600;
+    font-size: var(--t-cuerpo);
+    color: var(--papel);
+  }
+
+  .proceso__etapa-descripcion {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.65;
+    color: var(--humo);
+  }
+</style>

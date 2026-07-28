@@ -1,0 +1,126 @@
+---
+// #experiencia (docs/03-content.md §04, docs/05-roadmap.md Fase 4).
+// Seccion mas importante despues del hero: desarma la objecion silenciosa
+// "si es tan rapido y tan barato, algo malo tiene". Necesita respirar --
+// margenes generosos entre bloques, no una pared de texto.
+import Etiqueta from './Etiqueta.astro';
+
+const fichas = [
+  { etiqueta: '+10 AÑOS', descripcion: 'Construyendo software a código puro' },
+  {
+    etiqueta: 'SISTEMAS COMPLETOS',
+    descripcion: 'ERP, gestión comercial, agendamiento, operaciones',
+  },
+  {
+    etiqueta: 'ARQUITECTURA PORTABLE',
+    descripcion: 'Podés migrar de nube o llevarte todo a tu propio servidor',
+  },
+];
+---
+
+<section id="experiencia" class="seccion">
+  <div class="contenedor">
+    <h2 class="experiencia__titulo">Somos rápidos porque ya lo construimos antes.</h2>
+
+    <div class="experiencia__intro">
+      <p class="experiencia__parrafo">
+        No es una promesa de herramienta nueva. Es más de diez años escribiendo software a código
+        puro, en todo tipo de sistemas.
+      </p>
+
+      <p class="experiencia__parrafo">
+        Cuando entregamos un ERP completo en tres semanas, no fue porque una inteligencia
+        artificial lo haya inventado: fue porque <strong
+          >dos personas del equipo ya habían construido ERPs antes</strong
+        >, invirtiendo meses en cada uno. Ya sabían qué hacer, qué evitar y en qué orden.
+      </p>
+
+      <p class="experiencia__parrafo">
+        La inteligencia artificial hace que la parte que ya sabíamos hacer tome días en vez de
+        semanas. Esa es toda la magia.
+      </p>
+    </div>
+
+    <ul class="experiencia__lista grilla-3">
+      {
+        fichas.map((ficha) => (
+          <li class="experiencia__ficha">
+            <Etiqueta>{ficha.etiqueta}</Etiqueta>
+            <p class="experiencia__ficha-descripcion">{ficha.descripcion}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="experiencia__remate">
+      <strong>Y por eso también sabemos decir que no.</strong> Un generador de código escribe lo que
+      le pidas. Nosotros te decimos cuándo lo que pediste te va a costar caro en seis meses.
+    </p>
+  </div>
+</section>
+
+<style>
+  .experiencia__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 20ch;
+    margin-bottom: var(--e6);
+    text-wrap: balance;
+  }
+
+  .experiencia__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e3);
+    max-width: 62ch;
+    margin-bottom: var(--e7);
+  }
+
+  .experiencia__parrafo {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--papel);
+  }
+
+  .experiencia__parrafo strong {
+    font-weight: 600;
+  }
+
+  .experiencia__lista {
+    margin-bottom: var(--e7);
+  }
+
+  .experiencia__ficha {
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+  }
+
+  .experiencia__ficha :global(.etiqueta) {
+    margin-bottom: var(--e3);
+  }
+
+  .experiencia__ficha-descripcion {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.5;
+    color: var(--papel);
+  }
+
+  .experiencia__remate {
+    font-family: var(--cuerpo);
+    font-size: var(--t-titulo);
+    line-height: 1.4;
+    color: var(--papel);
+    max-width: 52ch;
+  }
+
+  .experiencia__remate strong {
+    font-weight: 600;
+  }
+</style>

@@ -255,3 +255,63 @@ Verificado con la Range API (conteo real de líneas, no `scrollWidth`) en 360/64
 **Resolución 3:** `@media (max-width: 639px) { .seccion { padding-block: var(--e6); } }` en `utilidades.css` — un escalón menos (64px en vez de 96px) solo por debajo de 640px. Encima de ese ancho el clamp ya tiene más `vh` disponible para dar más aire, así que no hace falta la excepción.
 
 `docs/02-design-system.md` §4 y §8 actualizados con las tres resoluciones.
+
+---
+
+## D16 · Paquetes: grilla de 1 columna hasta 1024px, LANZAMIENTO primero en móvil
+
+**Decisión (no una duda a resolver, viene dada):** `Paquetes.astro` rompe la regla general de grillas de `docs/02-design-system.md` §8 (1 columna → 2 en tableta → 3 en escritorio) en dos puntos, ambos pedidos explícitamente antes de construir el componente:
+
+1. **Las 3 columnas pasan a 1 sola por debajo de 1024px, no a 2.** Un 2+1 en tableta rompe la comparación entre paquetes y deja uno huérfano en su propia fila. `Paquetes.astro` no usa `.grilla-3` (que sigue siendo 1→2→3 para el resto del sitio, p. ej. `Problema.astro`) — tiene su propia grilla con un solo breakpoint en 1024px.
+2. **En la columna única, LANZAMIENTO va primero**, no en el medio (orden del documento: SONDA, LANZAMIENTO, EXPEDICIÓN). Es el paquete que se quiere vender, y el orden de escritorio no se traduce a móvil. Implementado con `order: -1` en `.paquetes__tarjeta--lanzamiento`, revertido a `order: 0` desde 1024px — el DOM mantiene el orden del documento en todo momento (orden lógico de precio creciente), así que un lector de pantalla lo linealiza igual sin importar el `order` visual.
+
+La tarjeta destacada (LANZAMIENTO) usa el patrón `.ficha--destacada` ya definido en §5 (`border: var(--borde-fuerte)` + `box-shadow: 8px 8px 0 var(--verde-noche)`), más su propia etiqueta de texto ("EL QUE ELIGE EL 80%") y un CTA en variante primaria (las otras dos tarjetas usan secundaria) — tres señales de jerarquía a la vez, ninguna de ellas gritando. Sin emoji: el copy fuente (`docs/03-content.md`) trae "LANZAMIENTO ⭐", pero ningún emoji aparece en el sitio (regla dura de `CLAUDE.md`).
+
+**Bug encontrado en la verificación (Playwright, `getBoundingClientRect` en todo el árbol, no estimado):** a 360px y a 1024px la página desbordaba horizontalmente — cada `.paquetes__tarjeta` medía 367px de ancho fijo sin importar el ancho real de su columna (320px a 360px; 286px a 1024px con 3 columnas). Causa: el CTA (`Cta.astro`) tiene `white-space: nowrap` (D15) — dentro de un item de grilla, el `min-width: auto` implícito usa el min-content de sus descendientes como piso, y un texto que no puede envolver eleva ese piso al ancho natural del botón. Mismo patrón de bug que en `Hero.astro` (`docs/06-decisiones.md`, min-width:0 en un item de grilla que abarca contenido no encogible).
+
+**Fix, dos partes:**
+- `min-width: 0` en `.paquetes__tarjeta` — deja que la columna respete su `1fr` real.
+- El CTA "cómodo" (0.8rem, padding 12×20, el que usa la Barra desde 640px) sigue sin entrar en una tarjeta de ~256-336px de ancho útil. `Paquetes.astro` usa el CTA en su tamaño "compacto" (`--t-etiqueta`) en las tres tarjetas, en todo momento — a diferencia de la Barra, acá no hay ningún breakpoint de este componente con espacio de sobra —, con `width: 100%` para que ocupe todo el ancho disponible de la tarjeta en vez de quedar angosto y descentrado.
+
+Verificado (Range API + `scrollWidth` vs `clientWidth`): el CTA es una sola línea, sin texto recortado, en 360/640/1023/1024/1440px, en las tres tarjetas.
+
+---
+
+## D17 · Las sombras sólidas eran invisibles: color de sombra corregido a `--verde`
+
+**Duda (levantada por el usuario, error del design system original):** `docs/02-design-system.md` §5 especificaba `box-shadow: Npx Npx 0 var(--verde-noche)` para el botón y la tarjeta destacada. Contraste real, calculado (fórmula WCAG de luminancia relativa, no estimado):
+
+| Par | Contraste |
+|---|---|
+| `--verde-noche` (#0C2A1E) vs `--tinta` (#080B09) | **1,29:1** |
+| `--verde-base` (#145239) vs `--tinta` | 2,16:1 |
+| `--verde` (#1D7A52) vs `--tinta` | 3,73:1 |
+
+1,29:1 es casi el mismo color — la sombra sólida desplazada, el rasgo que define el estilo neobrutalista del sitio, no se leía en ningún lado. Nota: el usuario había estimado 2,9:1 para `--verde-base`; el cálculo preciso da 2,16:1 — probablemente una estimación de cabeza, no cambia la conclusión.
+
+**Restricción encontrada antes de tocar nada:** `--verde-noche` es un token de doble uso — además de (nunca) servir de color de sombra, es el relleno real de `.placa__interior` y del remache de la placa (`Placa.astro`), verificado y ajustado en la Fase 2. **No se puede cambiar el valor hexadecimal del token** sin romper la placa. La corrección tiene que repuntar las declaraciones de `box-shadow` a otro token de la escala, dejando `--verde-noche` intacto.
+
+**Método de decisión:** comparación en vivo, no solo cálculo. Se sirvió la página con Playwright y se sobreescribió `--verde-noche` con un `<style>` inyectado, con el scope limitado a `.cta, .paquetes__tarjeta--destacada` (no `:root`) para no afectar a la placa en la captura de prueba. Capturas de la sección Paquetes completa y zoom a la esquina de sombra de la tarjeta LANZAMIENTO con los tres valores: actual (`--verde-noche`, confirmado invisible), `--verde-base` (visible pero apagado) y `--verde` (visible, saturado, se lee como canto duro sin ambigüedad).
+
+**Resolución: `--verde`.** Motivos:
+- Contraste más alto (3,73:1) da la lectura más inequívoca de "sombra dura", que era el pedido explícito.
+- La tarjeta destacada ya usa `border: var(--borde-fuerte)` = `2px solid var(--verde)` — el borde y la sombra en el mismo verde se leen como un solo sistema de acento reforzándose, no como dos elementos en conflicto. `--verde-base` habría quedado como un tono intermedio sin relación clara con ningún otro elemento del sistema.
+- Ninguna de las dos opciones corre riesgo de leerse como halo: `box-shadow` sin `blur-radius` siempre renderiza como bloque de canto recto sin importar el color — el problema nunca fue difuminado, fue contraste puro.
+
+**Cambiado:** `Cta.astro` (los 4 `box-shadow` de `.cta--primario`/`.cta--secundario`/`:hover`/`:active`) y `Paquetes.astro` (`.paquetes__tarjeta--destacada`), de `var(--verde-noche)` a `var(--verde)`. `docs/02-design-system.md` §4-5 actualizado (regla transversal + snippets de `.cta` y `.ficha--destacada`) y el comentario de `--verde-noche` en `tokens.css`/§2 corregido para no mencionar sombras. **D5 y D16 no se reescriben** (documentan fielmente lo que existía en el momento en que se escribieron) — esta entrada es la corrección posterior de ambas.
+
+---
+
+## D18 · Paquetes apretado a 1024px, y doble uso de `--papel`/`--tinta` documentado
+
+**Duda 1:** comparando capturas propias de Paquetes a 1024px vs 1440px, las tarjetas se veían notablemente más altas y más difíciles de escanear a 1024px — justo el ancho donde el visitante compara los tres precios por primera vez lado a lado (recién ahí la grilla pasa a 3 columnas).
+
+**Medido (Range API, conteo real de líneas, no estimado):** a 1024px, 14 de los 22 ítems de lista de las tres tarjetas envolvían a 2 líneas (SONDA 5/6, LANZAMIENTO 5/8, EXPEDICIÓN 4/8), con las tarjetas a 775px de alto. A 1199-1440px el envoltorio cae a 0-4 de 22 y el alto baja a 661-727px — confirma que 1024-1199px es un punto de compresión real, no percibido: el contenedor recién pasó a 3 columnas pero todavía no llegó a `--ancho-max` (1200px), así que la columna es más angosta ahí que en cualquier otro punto de la grilla de 3.
+
+**Resolución:** barrido de combinaciones (Playwright, override de CSS en vivo) restringido a valores de la escala de 8px para el padding (regla dura de `CLAUDE.md`, no se puede usar un valor suelto como 20px aunque mejore el ajuste). Elegido: `padding: var(--e2)` (16px, antes `--e4`/32px) en `.paquetes__tarjeta` + `font-size: 0.8125rem` en `.paquetes__caracteristicas li` (antes `--t-cuerpo`/1rem — no hay token en la escala tipográfica entre `--t-etiqueta` 0.75rem y `--t-cuerpo` 1rem, se usa el valor literal con el cálculo documentado en el propio componente), **solo en `@media (min-width: 1024px) and (max-width: 1199px)`**. Resultado: 21 de 22 ítems en una línea, 606px de alto. El único que sigue envolviendo ("2 semanas de diagnóstico post-lanzamiento") no entra a ningún tamaño razonable sin perjudicar la legibilidad del resto — no vale la pena seguir bajando por una sola frase larga.
+
+**Se descarta pasar a 1 columna en este rango** (pedido explícito): la comparación lado a lado en tablet horizontal vale más que el ahorro de altura, y ya existe la excepción de Paquetes a 1 columna por debajo de 1024px (D16) — bajarla más angostaría la ventana en la que se puede comparar.
+
+**Duda 2:** `docs/02-design-system.md` §2 documentaba `--papel` solo como "fondo de secciones invertidas", pero el token cumple una segunda función real en todo el sitio desde Fase 3 (`Tesis.astro`) y ahora Fase 4 (`Experiencia.astro`, `Hero.astro`): texto primario sobre `--tinta`. `--tinta` tiene el mismo problema en espejo (texto primario sobre `--papel` en `Tesis.astro`/`Limites.astro`, documentado solo como "fondo principal").
+
+**Resolución:** comentario de ambos tokens actualizado en `tokens.css` y `docs/02-design-system.md` §2 para nombrar las dos funciones — no se crea un alias semántico nuevo (ej. `--texto-primario`): el patrón "el fondo de una superficie es el texto primario de su inversa" ya es la convención implícita y consistente en todo el sitio para estos dos tokens específicos, agregar un alias solo para uno de los dos sería asimétrico. Se agregó además una nota en la fila "Cuerpo" de la tabla de escala tipográfica (§3), que no tenía ninguna guía de color — el hueco que originó el bug de `Experiencia.astro` corregido más arriba en este documento.
