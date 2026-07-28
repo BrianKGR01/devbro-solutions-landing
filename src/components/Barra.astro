@@ -1,0 +1,185 @@
+---
+// Barra de navegación superior, sticky (docs/03-content.md §00, docs/02-design-system.md §8,
+// docs/05-roadmap.md Fase 3). "El menú colapsa a solo el CTA" se refiere a los enlaces de
+// navegación, no a la marca: el wordmark (reducido en móvil) y el CTA están siempre visibles.
+// Sin hamburguesa/drawer -- simplificación deliberada, no existe en este proyecto.
+import Wordmark from './Wordmark.astro';
+import Cta from './Cta.astro';
+
+const enlaces = [
+  { href: '#experiencia', texto: 'Por qué somos rápidos' },
+  { href: '#proceso', texto: 'Cómo trabajamos' },
+  { href: '#paquetes', texto: 'Paquetes' },
+  { href: '#preguntas', texto: 'Preguntas' },
+];
+---
+
+<header class="barra">
+  <div class="contenedor barra__fila">
+    <a href="#inicio" class="barra__wordmark" aria-label="DevBro Solutions, inicio">
+      <span class="barra__wordmark-reducido"><Wordmark reducido /></span>
+      <span class="barra__wordmark-completo"><Wordmark /></span>
+    </a>
+
+    <nav class="barra__nav" aria-label="Navegación principal">
+      <ul class="barra__lista">
+        {
+          enlaces.map((enlace) => (
+            <li>
+              <a class="barra__enlace" href={enlace.href}>
+                {enlace.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="barra__cta">
+      <Cta href="#contacto">Agendar diagnóstico</Cta>
+    </div>
+  </div>
+</header>
+
+<style>
+  .barra {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: var(--tinta);
+    border-bottom: var(--borde);
+  }
+
+  .barra__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Movil: gap ajustado a proposito, ver nota junto al tamano del CTA */
+    gap: var(--e1);
+    padding-block: var(--e2);
+  }
+
+  /* Wordmark y CTA siempre visibles ("el menu colapsa a solo el CTA" es
+     sobre los enlaces de nav, no sobre la marca). Version reducida (solo
+     DEVBRO) por defecto, completa desde 640px -- misma logica que
+     Wordmark.astro ya prevé para movil/favicon/OG. */
+  .barra__wordmark {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .barra__wordmark-completo {
+    display: none;
+  }
+
+  .barra__nav {
+    display: none;
+  }
+
+  /* El CTA de Barra.astro no necesita ser tan grande como el del hero.
+     A 360px, "Agendar diagnóstico" con el tamaño del hero desborda su
+     propio boton y envuelve a 2 lineas dentro de una barra fija -- se ve
+     sin terminar e infla el alto de la barra (medido: 104px en vez de
+     83px). Con --t-etiqueta + padding recortado + gap del contenedor
+     bajado a --e1 en movil: 84px (wordmark reducido) + 8px (gap) + 210px
+     (cta) = 302px contra 320px disponibles, ~5,6% de margen -- ajustado,
+     pero es lo que da "Agendar diagnóstico" completo en una barra angosta
+     junto a una marca. Cta.astro ya tiene white-space:nowrap como
+     garantia dura, esto es ademas darle el espacio real que pide. */
+  .barra__cta :global(.cta) {
+    padding: 8px 14px;
+    font-size: var(--t-etiqueta);
+  }
+
+  @media (min-width: 640px) {
+    .barra__wordmark-reducido {
+      display: none;
+    }
+
+    .barra__wordmark-completo {
+      display: inline-flex;
+    }
+
+    /* De 640 a 1023px solo compiten wordmark completo + cta (sin nav
+       todavia): sobra espacio de sobra para el tamano "normal". */
+    .barra__fila {
+      gap: var(--e3);
+    }
+
+    .barra__cta :global(.cta) {
+      padding: 12px 20px;
+      font-size: 0.8rem;
+    }
+  }
+
+  /* Con los enlaces a tamaño --t-cuerpo (nav "completa") wordmark+nav+cta
+     piden 973px de contenido (medido con el cta SIN envolver -- 175px de
+     wordmark + 511px de lista + 239px de cta natural + 2 gaps de 24px)
+     -- eso recién entra con margen real desde ~1200px (= --ancho-max, no
+     se puede usar var() en un media query, se repite el valor literal;
+     ~9,9% de margen).
+
+     Entre 1024px (el breakpoint de escritorio que ya usa el resto del
+     sitio -- un iPad horizontal) y 1199px NO entra a ese tamaño. Con la
+     nav "compacta" (mono, --t-etiqueta) Y el cta tambien compacto
+     (--t-etiqueta, 8x14) Y el gap del contenedor bajado a --e1: 175
+     (wordmark) + 8 + 481 (nav) + 8 + 210 (cta) = 882px de contenido
+     contra 1024px disponibles, ~4,3% de margen -- el punto mas ajustado
+     de toda la barra, documentado en docs/06-decisiones.md D14. */
+  @media (min-width: 1024px) {
+    .barra__fila {
+      gap: var(--e1);
+    }
+
+    .barra__cta :global(.cta) {
+      padding: 8px 14px;
+      font-size: var(--t-etiqueta);
+    }
+
+    .barra__nav {
+      display: block;
+    }
+
+    .barra__lista {
+      display: flex;
+      align-items: center;
+      gap: var(--e2);
+    }
+
+    .barra__enlace {
+      font-family: var(--mono);
+      font-size: var(--t-etiqueta);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--humo);
+      white-space: nowrap;
+      transition: color 120ms var(--salida);
+    }
+
+    .barra__enlace:hover {
+      color: var(--papel);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .barra__fila {
+      gap: var(--e3);
+    }
+
+    .barra__cta :global(.cta) {
+      padding: 12px 20px;
+      font-size: 0.8rem;
+    }
+
+    .barra__lista {
+      gap: var(--e4);
+    }
+
+    .barra__enlace {
+      font-family: var(--cuerpo);
+      font-size: var(--t-cuerpo);
+      letter-spacing: normal;
+      text-transform: none;
+    }
+  }
+</style>

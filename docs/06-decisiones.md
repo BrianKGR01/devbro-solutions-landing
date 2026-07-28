@@ -153,4 +153,105 @@ Ninguno bloquea el desarrollo. Se implementan como placeholder visible y como va
 
 **Duda:** el `overflow-wrap: break-word` global agregado en la Fase 1 evita el desborde partiendo palabras largas dentro de la palabra misma. Pero `--t-display-xl` tiene un mínimo de `3rem` (`clamp(3rem, 9vw, 6.5rem)`), y a 360px de ancho la palabra "funcionando," del titular real del hero ("Tu idea, funcionando, en tres semanas") podría no entrar completa en una sola línea dentro del ancho disponible del contenedor, forzando un corte de palabra visualmente feo en vez de un salto de línea limpio.
 
-**Resolución:** pendiente de verificar en la Fase 3, cuando se construya `Hero.astro` con el texto real. Si el corte de palabra ocurre, bajar el mínimo de `--t-display-xl` a `2.5rem` en `tokens.css` (o revisar el `letter-spacing`/padding lateral del hero a 360px) antes de dar la sección por terminada. No se resuelve ahora porque `Placa.astro` (Fase 2) no usa `--t-display-xl` y no hay titular real todavía contra el cual probarlo.
+**Resolución:** confirmado con medición real (Playwright + Range API, fuente Archivo cargada, no estimado). A 360px, contenedor de 320px de ancho disponible:
+
+| `--t-display-xl` | Palabra más ancha ("funcionando,") | Desborda |
+|---|---|---|
+| `3rem` (48px, valor original) | 368.94px | **Sí** — confirma la duda |
+| `2.5rem` (40px, propuesta inicial) | 307.45px | No, pero con solo ~12.5px de margen (~4%) |
+| `2.25rem` (36px, valor elegido) | 276.7px | No, con ~43px de margen (~13.5%) |
+
+Se eligió `2.25rem` en vez de `2.5rem`: el margen de `2.5rem` es del mismo orden que el que causó el bug del grabado de la placa en la Fase 2 (Fase 2, PR #2) — no vale la pena repetir ese riesgo por 0,25rem de diferencia. Con el titular real completo ("Tu idea, funcionando, en tres semanas.") en una columna de 320px, `2.25rem` envuelve en 4 líneas sin desbordar ninguna ("Tu idea," / "funcionando," / "en tres" / "semanas."), lo cual es normal y esperable para un titular hero en el ancho mínimo soportado.
+
+`tokens.css` actualizado: `--t-display-xl: clamp(2.25rem, 9vw, 6.5rem);`. El máximo (`6.5rem`) queda pendiente de la resolución del conflicto de ancho en escritorio (ver plan de Fase 3 — Hero, punto 1), que se decide junto con el layout de columnas del Hero, no acá.
+
+---
+
+## D12 · El titular del hero no comparte columna con la placa
+
+**Duda:** `docs/02-design-system.md` §8 especificaba "Hero en dos columnas (texto izquierda, placa derecha)" desde escritorio. Con la placa aprobada en 400px (≈428px de caja delimitadora rotada a -6°) y el titular real ("Tu idea, funcionando, en tres semanas."), ninguna combinación de reparto de columnas, sangrado de la placa fuera del padding, o reducción del tamaño del titular llegaba a un resultado aceptable: o el titular quedaba del mismo tamaño que `--t-display-l` (rompiendo la jerarquía tipográfica), o desbordaba, o exigía un sangrado de la placa mucho más agresivo del razonable (~300px más allá del contenedor).
+
+**Resolución:** el supuesto de "dos columnas" era el problema, no la placa ni el titular. Se cambia la estructura: el titular ocupa siempre el **ancho completo** del contenedor (nunca comparte fila con la placa), y la placa se reubica junto al bloque de párrafo + botones + microcopia — un contenido mucho más angosto que nunca compite por el ancho del titular.
+
+Se evaluaron dos formas de ubicar la placa junto al titular de ancho completo:
+- **Encastrada en el hueco que deja el borde derecho irregular del titular** (las líneas cortas como "Tu idea," dejan espacio libre a la derecha). Descartada con números: a `6rem` (96px), la línea más larga ("en tres semanas.") deja solo 108,59px libres en su propia línea — la placa (428px) no entra ni cerca, y esa es sistemáticamente la línea más larga con contenido real.
+- **Al costado del bloque de párrafo + botones + microcopia.** Elegida: ese bloque es texto chico (18px) sin riesgo de desborde por palabra suelta, y deja una columna cómoda (445px en el breakpoint más angosto donde aplica).
+
+**Breakpoint:** se reutiliza el quiebre de escritorio ya existente (1024px) para el cambio de posición de la placa, en vez de introducir uno nuevo.
+
+**Tipografía, medida y verificada (Playwright + Range API, no estimada):**
+- A 1440px (columna completa 1072px): `--t-display-xl` en `6rem` (96px) da 10,13% de margen contra la línea más ancha; en `5,5rem` (88px), 17,62%.
+- El coeficiente fluido del `clamp()` estaba mal calibrado: `9vw` llegaba a su tope justo cuando la columna todavía no había crecido lo suficiente (margen de **-0,32%** en el viewport de transición, ~1067px — desbordaba). `8.2vw` da 8,59% en su propio punto de transición (~1171px) y no baja de 8,57% en todo el rango barrido (1000-1440px).
+
+`tokens.css`: `--t-display-xl: clamp(2.25rem, 8.2vw, 6rem);` — reemplaza el máximo pendiente de D11.
+
+**Altura del hero:** la restricción "entra sin scroll en 1440×900" (`docs/01-brief.md`) se relaja deliberadamente para este rediseño — con el titular a 96px en 3 líneas, el hero solo mide 847px reales. Con la Barra ya construida y medida (83px, no los ~92px estimados en el borrador de este plan), el total real es **Barra + Hero = 930px contra 900px de viewport, ~30px de scroll.** Aceptado explícitamente: el tamaño del titular y la jerarquía tipográfica valen más que evitar ese scroll mínimo.
+
+---
+
+## D13 · La placa va después del titular en móvil, no antes
+
+**Duda:** `docs/02-design-system.md` §8 (redacción original) ponía la placa arriba del titular en móvil. Con la placa ya construida (Fase 2) y el hero real (Fase 3, D12), hacía falta confirmar si eso dejaba el mensaje y el CTA visibles en el primer pantallazo de un celular real.
+
+**Resolución:** medido a 360×640 (Playwright, `getBoundingClientRect()`, no estimado):
+
+| Elemento | Con la placa primero (orden original) |
+|---|---|
+| Borde inferior del titular (`h1`) | 532px — dentro del pliegue (640px), pero sin margen real |
+| CTA primario (borde superior) | 707px — **fuera del pliegue** |
+
+El CTA queda fuera del pliegue **en cualquier orden**: los 4 bloques (placa, antetítulo, titular, contenido) están en una sola columna con el mismo gap uniforme entre todos, así que la altura total —y por lo tanto la posición final del CTA— no cambia según el orden en que aparezcan. Confirmado reordenando en vivo (inyectando el CSS del nuevo orden) y volviendo a medir: el CTA se mantuvo exacto en 707-772px.
+
+Lo que **sí** cambia con el orden es qué entra en el primer pantallazo. Reordenando a antetítulo → titular → placa → contenido:
+
+| Elemento | Con el titular primero (orden nuevo) |
+|---|---|
+| Titular (`h1`) | 168-294px |
+| Placa | 326-532px — **completa, dentro del pliegue** |
+| CTA primario | 707-772px — sigue fuera, sin cambios |
+
+Con el orden nuevo, el mensaje completo **y** la placa entera entran en el primer pantallazo sin scroll, en vez de solo el titular al límite. El CTA sigue pidiendo scroll, pero eso es esperable en cualquier hero mobile — para evitarlo por completo habría que achicar la placa a ~17% de su tamaño actual (destruyéndola como elemento firma) a cambio de ahorrar un scroll mínimo. No vale la pena.
+
+**Se elige el reordenamiento.** `Hero.astro` actualizado: `grid-template-areas` para <1024px pasa de `placa/antetitulo/titulo/contenido` a `antetitulo/titulo/placa/contenido`. `docs/02-design-system.md` §8 y `docs/01-brief.md` §3 sincronizados.
+
+---
+
+## D14 · Barra: el wordmark siempre va, solo la nav colapsa — y a 1024px cabe una versión compacta
+
+**Duda 1:** la primera versión de `Barra.astro` ocultaba wordmark **y** nav en móvil, dejando solo el CTA centrado. `docs/01-brief.md` dice "el menú colapsa a solo el CTA" — eso es sobre los enlaces de navegación, no sobre la marca; una barra sin wordmark no se identifica como DevBro Solutions.
+
+**Resolución 1:** wordmark (versión reducida, solo "DEVBRO", bajo 640px — la misma versión que ya definía `docs/01-brief.md` §6 para móvil) y CTA quedan **siempre** visibles, alineados a los extremos. Solo `.barra__nav` colapsa.
+
+**Duda 2:** con el wordmark corregido, el breakpoint de 1200px que resolvía el desborde de contenido (ver §8) dejaba **todo** el rango 1024-1199px sin ningún enlace de navegación — un iPad horizontal (1024px) no tiene forma de navegar a `#proceso`, `#paquetes`, etc.
+
+**Resolución 2:** medido (no estimado) si una versión compacta de la nav entra en ese rango: enlaces en JetBrains Mono `--t-etiqueta` con letter-spacing 0.08em, gap `--e2` (16px) en vez de `--e4` (32px). A 1024px (el caso más ajustado del rango, el margen solo mejora al crecer el viewport): 922px de contenido contra 1024px disponibles → **10% de margen.** Entra con margen real.
+
+**Se agregan tres estados para la nav de la Barra**, no dos: sin nav (`<1024px`) → nav compacta mono (`1024-1199px`) → nav completa Inter Tight (`≥1200px`). `docs/02-design-system.md` §8 actualizado con la tabla completa.
+
+**Corrección posterior (D15):** el número "922px de contenido, 10% de margen" de la Resolución 2 estaba contaminado — se midió con el CTA ya envuelto a 2 líneas (bug corregido recién en D15), no con su ancho natural de una línea. El número real, con el CTA arreglado, es 882px contra 1024px disponibles (~4,3% de margen). Sigue entrando, pero con bastante menos aire del que decía esta entrada. Ver D15 para el detalle.
+
+---
+
+## D15 · CTA de la Barra partido en 2 líneas, scroll-margin-top, y aire entre Hero y Problema
+
+**Duda 1:** a 360px, "Agendar diagnóstico" dentro de `.barra__cta` envolvía a 2 líneas. Un botón partido a la mitad dentro de una barra fija se ve sin terminar, e infla el alto de la barra de 83px a 104px — rompiendo la premisa de D14 de que la barra tiene una altura predecible.
+
+**Causa:** `Cta.astro` no tenía `white-space: nowrap` en `.cta`. Cualquier squeeze del contenedor flex (móvil angosto, o 1024px donde wordmark+nav+cta compiten por espacio) hacía que el texto envolviera en vez de forzar el ancho del botón.
+
+**Resolución 1:** dos capas de arreglo, no una sola:
+- `white-space: nowrap` en `.cta` (`Cta.astro`) — garantía dura, universal, para cualquier uso futuro del componente.
+- En `Barra.astro`, el CTA alterna entre dos tamaños según el mismo breakpoint que ya regía la nav: **compacto** (`--t-etiqueta`, padding 8×14) en las zonas donde compite por espacio (`<640px` y `1024-1199px`) y **cómodo** (0.8rem, padding 12×20) donde sobra aire (`640-1023px` y `≥1200px`). El gap del contenedor (`.barra__fila`) también baja a `--e1` en las zonas compactas.
+
+Verificado con la Range API (conteo real de líneas, no `scrollWidth`) en 360/640/1024/1199/1200/1440px: el CTA es una sola línea en los seis. Como efecto colateral, esto reveló que la medición de D14 (922px / 10%) estaba contaminada por el mismo bug — corregida arriba a 882px / 4,3%.
+
+**Duda 2:** la Barra es sticky. En Fase 4 aparecen los primeros destinos reales de su nav (`#experiencia`, `#proceso`, `#paquetes`, más `#preguntas` después) — sin compensación, cualquier salto de ancla deja el título de la sección tapado detrás de la barra fija.
+
+**Resolución 2:** `--barra-alto` (nueva variable en `tokens.css`) sigue exactamente los mismos cuatro breakpoints que ya definía D14 para la Barra, porque el alto real de la barra depende del mismo tamaño de CTA que alterna en esos breakpoints — medido (no estimado): **74px** en las zonas compactas (`<640px`, `1024-1199px`) y **83px** en las cómodas (`640-1023px`, `≥1200px`). Es una variable responsive, no un número suelto, para que nunca se desincronice si la Barra cambia de altura en el futuro.
+
+`scroll-margin-top: calc(var(--barra-alto) + var(--e2))` se aplica a `.seccion` (cubre toda sección actual y futura automáticamente, todas comparten esa clase) y a `#contenido` (`Base.astro`) por separado, porque el destino del skip link no lleva `.seccion`.
+
+**Duda 3:** medido el espacio vertical entre el Hero y Problema a 360px: 192px, exactamente el padding-block de ambas secciones apilado (96px + 96px = el piso del `clamp(var(--e7), 12vh, var(--e9))` en una pantalla mobile típica). En una pantalla de 640px de alto eso es casi un tercio de scroll vacío entre dos secciones que deberían leerse como continuas.
+
+**Resolución 3:** `@media (max-width: 639px) { .seccion { padding-block: var(--e6); } }` en `utilidades.css` — un escalón menos (64px en vez de 96px) solo por debajo de 640px. Encima de ese ancho el clamp ya tiene más `vh` disponible para dar más aire, así que no hace falta la excepción.
+
+`docs/02-design-system.md` §4 y §8 actualizados con las tres resoluciones.

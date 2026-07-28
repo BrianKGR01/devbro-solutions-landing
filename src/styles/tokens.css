@@ -57,11 +57,38 @@
   --entrada: cubic-bezier(0.7, 0, 0.84, 0);
 
   /* ---- Escala tipográfica (docs/02-design-system.md §3) ---- */
-  --t-display-xl: clamp(3rem, 9vw, 6.5rem);   /* hero */
+  --t-display-xl: clamp(2.25rem, 8.2vw, 6rem); /* hero. Min por D11, tope y coeficiente por Fase 3 (ver docs/06-decisiones.md) */
   --t-display-l:  clamp(2.1rem, 5vw, 3.6rem); /* títulos de sección */
   --t-titulo:     1.5rem;
   --t-cuerpo-l:   1.125rem;
   --t-cuerpo:     1rem;
   --t-etiqueta:   0.75rem;
   --t-dato:       clamp(2rem, 4vw, 3.5rem);
+
+  /* ---- Alto real de la Barra sticky (Fase 4, docs/06-decisiones.md D15) ----
+     Usado en scroll-margin-top de toda ancla, para que la barra fija no tape
+     el titulo de la seccion al navegar. Dos valores medidos, no uno: la
+     barra mide 74px en las zonas "compactas" (< 640px y 1024-1199px, donde
+     el CTA tambien se achica) y 83px en las "comodas" (640-1023px y
+     >= 1200px). Los breakpoints tienen que coincidir siempre con los de
+     Barra.astro. */
+  --barra-alto: 74px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --barra-alto: 83px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --barra-alto: 74px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --barra-alto: 83px;
+  }
 }

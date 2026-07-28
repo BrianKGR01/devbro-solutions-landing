@@ -1,0 +1,92 @@
+---
+// #problema (docs/01-brief.md: "3 ítems con numeral en latón", docs/03-content.md §02).
+// Patrón "Tarjeta / ítem de orden" (docs/02-design-system.md §5, .ficha/.ficha__num)
+// replicado acá con nombres en español porque todavía no existe un componente
+// Ficha.astro reutilizable.
+const items = [
+  {
+    numero: 'ÍTEM 01',
+    titulo: 'Nadie te sabe decir cuánto',
+    descripcion:
+      'Pedís tres cotizaciones por lo mismo y te dan seis mil, veinticinco mil y sesenta mil dólares. Ninguno te explica por qué.',
+  },
+  {
+    numero: 'ÍTEM 02',
+    titulo: 'Los plazos se estiran solos',
+    descripcion: 'Te dijeron tres meses. Vas por el séptimo. Todavía no lo vio un usuario real.',
+  },
+  {
+    numero: 'ÍTEM 03',
+    titulo: 'Te quedás amarrado',
+    descripcion:
+      'El sistema funciona, pero solo ellos lo entienden. No podés cambiar de equipo aunque quieras.',
+  },
+];
+---
+
+<section id="problema" class="seccion">
+  <div class="contenedor">
+    <h2 class="problema__titulo">
+      Tenés el problema. Tenés la plata. No tenés cómo saber si te están vendiendo humo.
+    </h2>
+
+    <ul class="problema__lista grilla-3">
+      {
+        items.map((item) => (
+          <li class="problema__ficha">
+            <p class="problema__numero">{item.numero}</p>
+            <h3 class="problema__ficha-titulo">{item.titulo}</h3>
+            <p class="problema__ficha-descripcion">{item.descripcion}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .problema__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 20ch;
+    margin-bottom: var(--e6);
+    /* Regla base para --t-display-l (docs/02-design-system.md §3): evita
+       cortes que separan una oracion corta de la siguiente palabra suelta. */
+    text-wrap: balance;
+  }
+
+  .problema__ficha {
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+  }
+
+  .problema__numero {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    color: var(--laton);
+    margin-bottom: var(--e2);
+  }
+
+  .problema__ficha-titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: var(--t-titulo);
+    line-height: 1.1;
+    color: var(--papel);
+    margin-bottom: var(--e2);
+  }
+
+  .problema__ficha-descripcion {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.65;
+    color: var(--humo);
+  }
+</style>

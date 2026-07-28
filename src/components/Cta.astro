@@ -27,6 +27,11 @@ const Elemento = href ? 'a' : 'button';
     letter-spacing: 0.04em;
     color: var(--papel);
     cursor: pointer;
+    /* Un boton nunca envuelve a una segunda linea, sin importar cuanto
+       lo aprieten sus contenedores flex -- se ve sin terminar (visto en
+       Barra.astro a 360px y a 1024px). Quien lo use en un espacio chico
+       debe darle suficiente ancho o texto mas corto, no dejar que envuelva. */
+    white-space: nowrap;
     transition:
       transform 120ms var(--salida),
       box-shadow 120ms var(--salida);
