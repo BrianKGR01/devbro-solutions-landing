@@ -7,6 +7,9 @@ import Cta from '../components/Cta.astro';
 import Etiqueta from '../components/Etiqueta.astro';
 import Placa from '../components/Placa.astro';
 import Hero from '../components/Hero.astro';
+import Barra from '../components/Barra.astro';
+import Problema from '../components/Problema.astro';
+import Tesis from '../components/Tesis.astro';
 
 const paleta = [
   '--tinta',
@@ -31,7 +34,11 @@ const escala = [
 ---
 
 <Base title="Página de prueba — Fase 1 · DevBro Solutions">
+  <Barra slot="header" />
+
   <Hero />
+  <Problema />
+  <Tesis />
 
   <section class="prueba seccion">
     <div class="contenedor">
