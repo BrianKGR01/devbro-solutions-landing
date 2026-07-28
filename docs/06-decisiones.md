@@ -255,3 +255,22 @@ Verificado con la Range API (conteo real de líneas, no `scrollWidth`) en 360/64
 **Resolución 3:** `@media (max-width: 639px) { .seccion { padding-block: var(--e6); } }` en `utilidades.css` — un escalón menos (64px en vez de 96px) solo por debajo de 640px. Encima de ese ancho el clamp ya tiene más `vh` disponible para dar más aire, así que no hace falta la excepción.
 
 `docs/02-design-system.md` §4 y §8 actualizados con las tres resoluciones.
+
+---
+
+## D16 · Paquetes: grilla de 1 columna hasta 1024px, LANZAMIENTO primero en móvil
+
+**Decisión (no una duda a resolver, viene dada):** `Paquetes.astro` rompe la regla general de grillas de `docs/02-design-system.md` §8 (1 columna → 2 en tableta → 3 en escritorio) en dos puntos, ambos pedidos explícitamente antes de construir el componente:
+
+1. **Las 3 columnas pasan a 1 sola por debajo de 1024px, no a 2.** Un 2+1 en tableta rompe la comparación entre paquetes y deja uno huérfano en su propia fila. `Paquetes.astro` no usa `.grilla-3` (que sigue siendo 1→2→3 para el resto del sitio, p. ej. `Problema.astro`) — tiene su propia grilla con un solo breakpoint en 1024px.
+2. **En la columna única, LANZAMIENTO va primero**, no en el medio (orden del documento: SONDA, LANZAMIENTO, EXPEDICIÓN). Es el paquete que se quiere vender, y el orden de escritorio no se traduce a móvil. Implementado con `order: -1` en `.paquetes__tarjeta--lanzamiento`, revertido a `order: 0` desde 1024px — el DOM mantiene el orden del documento en todo momento (orden lógico de precio creciente), así que un lector de pantalla lo linealiza igual sin importar el `order` visual.
+
+La tarjeta destacada (LANZAMIENTO) usa el patrón `.ficha--destacada` ya definido en §5 (`border: var(--borde-fuerte)` + `box-shadow: 8px 8px 0 var(--verde-noche)`), más su propia etiqueta de texto ("EL QUE ELIGE EL 80%") y un CTA en variante primaria (las otras dos tarjetas usan secundaria) — tres señales de jerarquía a la vez, ninguna de ellas gritando. Sin emoji: el copy fuente (`docs/03-content.md`) trae "LANZAMIENTO ⭐", pero ningún emoji aparece en el sitio (regla dura de `CLAUDE.md`).
+
+**Bug encontrado en la verificación (Playwright, `getBoundingClientRect` en todo el árbol, no estimado):** a 360px y a 1024px la página desbordaba horizontalmente — cada `.paquetes__tarjeta` medía 367px de ancho fijo sin importar el ancho real de su columna (320px a 360px; 286px a 1024px con 3 columnas). Causa: el CTA (`Cta.astro`) tiene `white-space: nowrap` (D15) — dentro de un item de grilla, el `min-width: auto` implícito usa el min-content de sus descendientes como piso, y un texto que no puede envolver eleva ese piso al ancho natural del botón. Mismo patrón de bug que en `Hero.astro` (`docs/06-decisiones.md`, min-width:0 en un item de grilla que abarca contenido no encogible).
+
+**Fix, dos partes:**
+- `min-width: 0` en `.paquetes__tarjeta` — deja que la columna respete su `1fr` real.
+- El CTA "cómodo" (0.8rem, padding 12×20, el que usa la Barra desde 640px) sigue sin entrar en una tarjeta de ~256-336px de ancho útil. `Paquetes.astro` usa el CTA en su tamaño "compacto" (`--t-etiqueta`) en las tres tarjetas, en todo momento — a diferencia de la Barra, acá no hay ningún breakpoint de este componente con espacio de sobra —, con `width: 100%` para que ocupe todo el ancho disponible de la tarjeta en vez de quedar angosto y descentrado.
+
+Verificado (Range API + `scrollWidth` vs `clientWidth`): el CTA es una sola línea, sin texto recortado, en 360/640/1023/1024/1440px, en las tres tarjetas.

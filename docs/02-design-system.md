@@ -313,6 +313,10 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 
 **Alto real de la Barra y `scroll-margin-top` (D15, ver `docs/06-decisiones.md`):** la Barra es sticky, y su alto real alterna entre dos valores según la misma tabla de breakpoints de arriba (el tamaño del CTA la infla o la achica): **74px** en las zonas compactas (`< 640px` y `1024-1199px`) y **83px** en las cómodas (`640-1023px` y `≥ 1200px`). Este valor vive en `--barra-alto` (`tokens.css`), como variable responsive — nunca un número suelto, porque un número fijo se desincroniza en cuanto cambia el breakpoint. Todo destino de ancla (`.seccion`, y `#contenido` del skip link) usa `scroll-margin-top: calc(var(--barra-alto) + var(--e2))`, para que un salto de navegación nunca deje el título de la sección tapado detrás de la barra fija.
 
+**Paquetes (D16, ver `docs/06-decisiones.md`):** `Paquetes.astro` rompe la regla general de grillas de esta sección en dos puntos, decididos antes de construir el componente:
+- Las 3 columnas pasan a **1 sola** por debajo de 1024px, no a 2 — un 2+1 en tableta rompe la comparación entre paquetes y deja uno huérfano solo en su fila. No usa `.grilla-3`.
+- En la columna única, **LANZAMIENTO va primero**, no en el medio (el orden del documento — SONDA, LANZAMIENTO, EXPEDICIÓN — se mantiene en el DOM; solo el orden visual cambia vía `order` CSS por debajo de 1024px).
+
 **Regla base:** mobile-first. Escribí el CSS para 360px y ampliá con `min-width`.
 
 **Verificación obligatoria a 360px:** ningún desbordamiento horizontal, ningún texto cortado, la placa entera visible, todos los CTA alcanzables con el pulgar.
