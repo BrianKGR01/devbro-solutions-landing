@@ -27,7 +27,9 @@ const items = [
 <section id="problema" class="seccion">
   <div class="contenedor">
     <h2 class="problema__titulo revelar">
-      Tenés el problema. Tenés la plata. No tenés cómo saber si te están vendiendo humo.
+      <span class="problema__titulo-oracion">Tenés el problema.</span>
+      <span class="problema__titulo-oracion">Tenés la plata.</span>
+      <span class="problema__titulo-oracion">No tenés cómo saber si te están vendiendo humo.</span>
     </h2>
 
     <ul class="problema__lista grilla-3">
@@ -41,6 +43,8 @@ const items = [
         ))
       }
     </ul>
+
+    <p class="problema__microcopia revelar">NINGUNO DE ESTOS TRES ES CULPA TUYA</p>
   </div>
 </section>
 
@@ -52,11 +56,23 @@ const items = [
     letter-spacing: -0.02em;
     line-height: 0.94;
     color: var(--papel);
-    max-width: 20ch;
     margin-bottom: var(--e6);
     /* Regla base para --t-display-l (docs/02-design-system.md §3): evita
-       cortes que separan una oracion corta de la siguiente palabra suelta. */
+       cortes que separan una oracion corta de la siguiente palabra suelta.
+       Se hereda a cada span de abajo -- sigue sirviendo para balancear el
+       envoltorio interno de la tercera oracion en movil. */
     text-wrap: balance;
+  }
+
+  /* Cada oracion arranca en su propia linea (display:block), pero puede
+     envolver internamente si no entra -- por eso NO son <br> ni <p>
+     separados, que impedirian el balance interno de la oracion larga.
+     Sin max-width en el h2: el ancho real del contenedor ya decide donde
+     envuelve cada una, sin una columna artificial mas angosta. Sin margen
+     entre spans -- el line-height 0.94 ya da el espaciado apretado que
+     pide el resto de los titulares. */
+  .problema__titulo-oracion {
+    display: block;
   }
 
   .problema__ficha {
@@ -88,5 +104,17 @@ const items = [
     font-size: var(--t-cuerpo);
     line-height: 1.65;
     color: var(--humo);
+  }
+
+  /* Mismo tratamiento que la microcopia del hero (docs/03-content.md §01):
+     mono, --t-etiqueta, --humo. */
+  .problema__microcopia {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--humo);
+    margin-top: var(--e5);
   }
 </style>
