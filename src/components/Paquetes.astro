@@ -226,6 +226,36 @@ const paquetes = [
     background: var(--verde-luz);
   }
 
+  /* Zona apretada: recien pasa a 3 columnas en 1024px, y el contenedor
+     todavia no llego a su --ancho-max (1200px) -- la columna es mas
+     angosta aca que en cualquier otro punto de la grilla de 3. Medido
+     (Range API, conteo real de lineas, no estimado): con el tamano y
+     padding por defecto, 14 de 22 items de las 3 tarjetas envolvian a 2
+     lineas en este rango, inflando las tarjetas a 775px de alto -- justo
+     donde el visitante compara precios lado a lado. Bajando el padding
+     de la tarjeta a --e2 y el tamano de los items a 0.8125rem (paso
+     intermedio entre --t-etiqueta y --t-cuerpo, no hay token para esto
+     en la escala): 21 de 22 en una linea, 606px de alto. El item que
+     sigue envolviendo ("2 semanas de diagnostico post-lanzamiento") no
+     entra a ningun tamano razonable -- no vale la pena seguir bajando
+     el resto por una sola frase larga.
+     Tiene que ir DESPUES de las reglas base de .paquetes__tarjeta y
+     .paquetes__caracteristicas li en el archivo: misma especificidad
+     (una sola clase), asi que el orden de cascada -- no el media query
+     -- decide cual gana. Puesto antes, la regla base incondicional de
+     mas abajo ganaba siempre, sin importar el ancho (bug real, detectado
+     al reverificar con Playwright que el font-size computado seguia en
+     16px a 1024px). */
+  @media (min-width: 1024px) and (max-width: 1199px) {
+    .paquetes__tarjeta {
+      padding: var(--e2);
+    }
+
+    .paquetes__caracteristicas li {
+      font-size: 0.8125rem;
+    }
+  }
+
   .paquetes__nota {
     font-family: var(--mono);
     font-size: var(--t-etiqueta);
