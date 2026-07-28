@@ -1,0 +1,94 @@
+---
+// Boton flotante de WhatsApp (docs/02-design-system.md §5, docs/04-engineering.md §6).
+// Numero pendiente de confirmar (docs/06-decisiones.md D10): el href
+// queda con el placeholder literal, visible al inspeccionar el enlace --
+// no se inventa un numero. El icono es un glifo de chat/telefono propio,
+// no el logo registrado de WhatsApp.
+import { ENLACE_WHATSAPP } from '../lib/whatsapp';
+---
+
+<a
+  href={ENLACE_WHATSAPP}
+  class="boton-whatsapp"
+  aria-label="Escribinos por WhatsApp"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+    <path
+      d="M12 3a9 9 0 0 0-7.75 13.5L3 21l4.64-1.22A9 9 0 1 0 12 3z"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M8.3 8.6c.2-.5.5-.5.7-.5h.5c.2 0 .4 0 .6.4.2.5.6 1.5.7 1.6.1.1.1.3 0 .4-.1.2-.2.3-.3.4-.2.2-.3.3-.1.6.6 1 1.3 1.7 2.2 2.2.3.2.5.1.6-.1l.4-.5c.2-.2.3-.2.5-.1l1.4.7c.2.1.3.2.3.3.1.4-.1 1-.4 1.3-.3.3-.9.6-1.5.5-1.4-.1-2.9-.9-4-1.9-1-1-1.7-2.3-1.9-3.1-.2-.7 0-1.3.3-1.7z"
+      fill="currentColor"
+    />
+  </svg>
+</a>
+
+<script is:inline>
+  (function () {
+    var boton = document.querySelector('.boton-whatsapp');
+    var hero = document.getElementById('inicio');
+    if (!boton || !hero || !('IntersectionObserver' in window)) return;
+
+    var observador = new IntersectionObserver(
+      function (entradas) {
+        entradas.forEach(function (entrada) {
+          boton.classList.toggle('boton-whatsapp--visible', !entrada.isIntersecting);
+        });
+      },
+      { threshold: 0 }
+    );
+    observador.observe(hero);
+  })();
+</script>
+
+<style>
+  .boton-whatsapp {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--verde-base);
+    border: 2px solid transparent;
+    border-image: var(--metal) 1;
+    box-shadow: 5px 5px 0 var(--verde);
+    color: var(--papel);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 300ms var(--salida),
+      transform 120ms var(--salida),
+      box-shadow 120ms var(--salida);
+  }
+
+  .boton-whatsapp--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .boton-whatsapp:hover {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 var(--verde);
+  }
+
+  .boton-whatsapp:active {
+    transform: translate(5px, 5px);
+    box-shadow: 0 0 0 var(--verde);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .boton-whatsapp {
+      transition: none;
+    }
+  }
+</style>

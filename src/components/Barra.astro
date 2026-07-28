@@ -5,13 +5,7 @@
 // Sin hamburguesa/drawer -- simplificación deliberada, no existe en este proyecto.
 import Wordmark from './Wordmark.astro';
 import Cta from './Cta.astro';
-
-const enlaces = [
-  { href: '#experiencia', texto: 'Por qué somos rápidos' },
-  { href: '#proceso', texto: 'Cómo trabajamos' },
-  { href: '#paquetes', texto: 'Paquetes' },
-  { href: '#preguntas', texto: 'Preguntas' },
-];
+import { ENLACES_NAV } from '../lib/navegacion';
 ---
 
 <header class="barra">
@@ -24,7 +18,7 @@ const enlaces = [
     <nav class="barra__nav" aria-label="Navegación principal">
       <ul class="barra__lista">
         {
-          enlaces.map((enlace) => (
+          ENLACES_NAV.map((enlace) => (
             <li>
               <a class="barra__enlace" href={enlace.href}>
                 {enlace.texto}
