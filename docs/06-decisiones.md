@@ -274,3 +274,28 @@ La tarjeta destacada (LANZAMIENTO) usa el patrón `.ficha--destacada` ya definid
 - El CTA "cómodo" (0.8rem, padding 12×20, el que usa la Barra desde 640px) sigue sin entrar en una tarjeta de ~256-336px de ancho útil. `Paquetes.astro` usa el CTA en su tamaño "compacto" (`--t-etiqueta`) en las tres tarjetas, en todo momento — a diferencia de la Barra, acá no hay ningún breakpoint de este componente con espacio de sobra —, con `width: 100%` para que ocupe todo el ancho disponible de la tarjeta en vez de quedar angosto y descentrado.
 
 Verificado (Range API + `scrollWidth` vs `clientWidth`): el CTA es una sola línea, sin texto recortado, en 360/640/1023/1024/1440px, en las tres tarjetas.
+
+---
+
+## D17 · Las sombras sólidas eran invisibles: color de sombra corregido a `--verde`
+
+**Duda (levantada por el usuario, error del design system original):** `docs/02-design-system.md` §5 especificaba `box-shadow: Npx Npx 0 var(--verde-noche)` para el botón y la tarjeta destacada. Contraste real, calculado (fórmula WCAG de luminancia relativa, no estimado):
+
+| Par | Contraste |
+|---|---|
+| `--verde-noche` (#0C2A1E) vs `--tinta` (#080B09) | **1,29:1** |
+| `--verde-base` (#145239) vs `--tinta` | 2,16:1 |
+| `--verde` (#1D7A52) vs `--tinta` | 3,73:1 |
+
+1,29:1 es casi el mismo color — la sombra sólida desplazada, el rasgo que define el estilo neobrutalista del sitio, no se leía en ningún lado. Nota: el usuario había estimado 2,9:1 para `--verde-base`; el cálculo preciso da 2,16:1 — probablemente una estimación de cabeza, no cambia la conclusión.
+
+**Restricción encontrada antes de tocar nada:** `--verde-noche` es un token de doble uso — además de (nunca) servir de color de sombra, es el relleno real de `.placa__interior` y del remache de la placa (`Placa.astro`), verificado y ajustado en la Fase 2. **No se puede cambiar el valor hexadecimal del token** sin romper la placa. La corrección tiene que repuntar las declaraciones de `box-shadow` a otro token de la escala, dejando `--verde-noche` intacto.
+
+**Método de decisión:** comparación en vivo, no solo cálculo. Se sirvió la página con Playwright y se sobreescribió `--verde-noche` con un `<style>` inyectado, con el scope limitado a `.cta, .paquetes__tarjeta--destacada` (no `:root`) para no afectar a la placa en la captura de prueba. Capturas de la sección Paquetes completa y zoom a la esquina de sombra de la tarjeta LANZAMIENTO con los tres valores: actual (`--verde-noche`, confirmado invisible), `--verde-base` (visible pero apagado) y `--verde` (visible, saturado, se lee como canto duro sin ambigüedad).
+
+**Resolución: `--verde`.** Motivos:
+- Contraste más alto (3,73:1) da la lectura más inequívoca de "sombra dura", que era el pedido explícito.
+- La tarjeta destacada ya usa `border: var(--borde-fuerte)` = `2px solid var(--verde)` — el borde y la sombra en el mismo verde se leen como un solo sistema de acento reforzándose, no como dos elementos en conflicto. `--verde-base` habría quedado como un tono intermedio sin relación clara con ningún otro elemento del sistema.
+- Ninguna de las dos opciones corre riesgo de leerse como halo: `box-shadow` sin `blur-radius` siempre renderiza como bloque de canto recto sin importar el color — el problema nunca fue difuminado, fue contraste puro.
+
+**Cambiado:** `Cta.astro` (los 4 `box-shadow` de `.cta--primario`/`.cta--secundario`/`:hover`/`:active`) y `Paquetes.astro` (`.paquetes__tarjeta--destacada`), de `var(--verde-noche)` a `var(--verde)`. `docs/02-design-system.md` §4-5 actualizado (regla transversal + snippets de `.cta` y `.ficha--destacada`) y el comentario de `--verde-noche` en `tokens.css`/§2 corregido para no mencionar sombras. **D5 y D16 no se reescriben** (documentan fielmente lo que existía en el momento en que se escribieron) — esta entrada es la corrección posterior de ambas.

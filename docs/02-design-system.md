@@ -29,7 +29,7 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
   --humo-papel:   #56605A;   /* texto secundario sobre papel */
 
   /* ---- Verde metálico ---- */
-  --verde-noche:  #0C2A1E;   /* superficies teñidas, sombras sólidas */
+  --verde-noche:  #0C2A1E;   /* superficies teñidas (relleno de la placa). NO sombras (D17) */
   --verde-base:   #145239;   /* relleno de botones */
   --verde:        #1D7A52;   /* bordes, íconos, títulos grandes */
   --verde-luz:    #4FA57C;   /* TEXTO de acento sobre oscuro */
@@ -171,7 +171,7 @@ body {
 
 ### Reglas transversales
 - `border-radius: 0` en todo. Única excepción: chaflanes de la placa
-- Sombras sólidas sin desenfoque: `box-shadow: 6px 6px 0 var(--verde-noche)`
+- Sombras sólidas sin desenfoque: `box-shadow: 6px 6px 0 var(--verde)`. **No `var(--verde-noche)`** (D17, ver `docs/06-decisiones.md`): contra `--tinta`, `--verde-noche` da 1,29:1 de contraste — prácticamente invisible, no una sombra dura. `--verde-noche` sigue existiendo para superficies teñidas (relleno de la placa); no es el color de sombra
 - Bordes de 2px. Nunca 1px
 
 ### Botón primario — *filo metálico*
@@ -191,11 +191,11 @@ El degradado metálico va en el **borde**, no en el relleno. Así el texto siemp
   background: var(--relleno-cta);
   border: 2px solid transparent;
   border-image: var(--metal) 1;
-  box-shadow: 5px 5px 0 var(--verde-noche);
+  box-shadow: 5px 5px 0 var(--verde);
   transition: transform 120ms var(--salida), box-shadow 120ms var(--salida);
 }
-.cta:hover  { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--verde-noche); }
-.cta:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--verde-noche); }
+.cta:hover  { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--verde); }
+.cta:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--verde); }
 .cta:focus-visible { outline: 3px solid var(--laton); outline-offset: 3px; }
 ```
 
@@ -221,7 +221,7 @@ Transparente, `border: 2px solid var(--humo)`, texto `--papel`. Mismo comportami
 }
 .ficha--destacada {
   border: var(--borde-fuerte);
-  box-shadow: 8px 8px 0 var(--verde-noche);
+  box-shadow: 8px 8px 0 var(--verde);
 }
 ```
 
