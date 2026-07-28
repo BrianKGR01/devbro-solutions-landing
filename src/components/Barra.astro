@@ -1,0 +1,116 @@
+---
+// Barra de navegación superior, sticky (docs/03-content.md §00, docs/02-design-system.md §8,
+// docs/05-roadmap.md Fase 3). En móvil (<640px) colapsa a solo el CTA: sin wordmark,
+// sin enlaces, sin hamburguesa -- simplificación deliberada, no hay drawer en este proyecto.
+import Wordmark from './Wordmark.astro';
+import Cta from './Cta.astro';
+
+const enlaces = [
+  { href: '#experiencia', texto: 'Por qué somos rápidos' },
+  { href: '#proceso', texto: 'Cómo trabajamos' },
+  { href: '#paquetes', texto: 'Paquetes' },
+  { href: '#preguntas', texto: 'Preguntas' },
+];
+---
+
+<header class="barra">
+  <div class="contenedor barra__fila">
+    <a href="#inicio" class="barra__wordmark" aria-label="DevBro Solutions, inicio">
+      <Wordmark />
+    </a>
+
+    <nav class="barra__nav" aria-label="Navegación principal">
+      <ul class="barra__lista">
+        {
+          enlaces.map((enlace) => (
+            <li>
+              <a class="barra__enlace" href={enlace.href}>
+                {enlace.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="barra__cta">
+      <Cta href="#contacto">Agendar diagnóstico</Cta>
+    </div>
+  </div>
+</header>
+
+<style>
+  .barra {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: var(--tinta);
+    border-bottom: var(--borde);
+  }
+
+  .barra__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e3);
+    padding-block: var(--e2);
+  }
+
+  /* Móvil: solo el CTA (docs/05-roadmap.md Fase 3) */
+  .barra__wordmark,
+  .barra__nav {
+    display: none;
+  }
+
+  .barra__cta {
+    margin-inline-start: auto;
+  }
+
+  /* El CTA de Barra.astro no necesita ser tan grande como el del hero;
+     se reduce el padding solo dentro de este componente para que la
+     barra no crezca demasiado en altura. */
+  .barra__cta :global(.cta) {
+    padding: 12px 20px;
+    font-size: 0.8rem;
+  }
+
+  /* Wordmark + nav + CTA piden 973px de contenido (medido, no estimado:
+     wordmark 175px + lista de enlaces 511px + cta 239px + 2 gaps de 24px).
+     Con el padding lateral fluido eso recien entra con margen real desde
+     ~1200px de viewport -- no desde los 640px del resto del sitio. A 640px
+     el texto de los enlaces se comprimía y envolvía dentro de su propio
+     item, inflando la barra a 140px y desbordando horizontalmente.
+     1200px = --ancho-max (no se puede usar var() en un media query, se
+     repite el valor literal), da ~9,9% de margen. */
+  @media (min-width: 1200px) {
+    .barra__wordmark {
+      display: inline-flex;
+    }
+
+    .barra__nav {
+      display: block;
+    }
+
+    .barra__cta {
+      margin-inline-start: 0;
+    }
+
+    .barra__lista {
+      display: flex;
+      align-items: center;
+      gap: var(--e4);
+    }
+
+    .barra__enlace {
+      font-family: var(--cuerpo);
+      font-size: var(--t-cuerpo);
+      color: var(--humo);
+      white-space: nowrap;
+      transition: color 120ms var(--salida);
+    }
+
+    .barra__enlace:hover {
+      color: var(--papel);
+    }
+  }
+</style>
