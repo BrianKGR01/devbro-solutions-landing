@@ -147,6 +147,8 @@ Se implementa con los `{{PENDIENTE}}` visibles y el marco de imagen dimensionado
 
 Ninguno bloquea el desarrollo. Se implementan como placeholder visible y como variable de entorno donde corresponda.
 
+**Corrección posterior (D24):** correo y WhatsApp ya están confirmados y son reales (`info@devbro.xyz`, `+591 75020808`). El dominio de producción sigue `{{PENDIENTE}}` — ver D3.
+
 ---
 
 ## D11 · Riesgo de desborde en el titular del hero a 360px
@@ -448,3 +450,23 @@ Cuatro auditorías pedidas para el cierre de fase. Las cuatro dieron limpio — 
 Métricas de escritorio (el target de `docs/04-engineering.md` §7 es explícitamente "escritorio"): LCP 0,6s (meta <1,8s), CLS 0,002 (meta <0,05), TBT 0ms. JS total enviado: 7,9 KB (meta <15 KB) — todo inline, ningún archivo `.js` separado (`network-requests` de Lighthouse reporta 0 bytes de tipo Script porque no hay ninguno externo; medido a mano contando el contenido de cada `<script>` del HTML compilado). En móvil (sin target explícito en los docs) el LCP sube a 2,3s por el throttling agresivo de 4G simulado — el elemento LCP es el párrafo del hero (texto, no imagen; el sitio no tiene ninguna imagen de hero). No se optimiza más: no hay un target movil que incumplir, y forzar una mejora ahí competiría contra decisiones ya tomadas (fuentes reales, sin recortar el CSS del sitio).
 
 **Sincronización de documentación vs. código real.** Ver el mensaje donde se listaron los 4 hallazgos antes de corregirlos — resumen: el bloque de tokens de §2 le faltaban ~30 líneas reales (escala tipográfica + `--barra-alto`), el valor de `--t-display-xl` en §3 estaba desactualizado desde Fase 3, el snippet de `.cta` en §5 no reflejaba el `white-space:nowrap` ni el split real en `.cta--primario`/`.cta--secundario`, y la regla de "`--metal` solo en tres lugares" nombraba un uso que nunca se construyó ("reglas divisorias") sin contar el que sí existe (botón de WhatsApp). Los cuatro corregidos. De paso: `--laton` se agregó a la tabla de contraste verificado (7,9:1, restringido por regla de uso, no por contraste) y se documentó por qué `--verde-noche` no está en esa tabla (D17).
+
+---
+
+## D24 · Lote de ajustes de copy y jerarquía
+
+Lote grande de cambios de copy, todos reflejados en `docs/03-content.md`. Se documentan acá los que involucran una decisión técnica, no cada cambio de texto en sí (eso ya está en el contenido).
+
+**Título por oración, técnica compartida (`#problema`, `#proceso`).** Cada oración en un `<span>` con `display:block`, no `<br>` ni párrafos separados: fuerza el salto de línea entre oraciones pero deja que cada una envuelva internamente si no entra, sin partir palabras. Se sacó el `max-width` angosto que tenían estos títulos (pensado para que `text-wrap: balance` decidiera el corte solo) — con el salto ya forzado por los spans, ese `max-width` solo apretaba de más a las oraciones cortas sin necesidad. `text-wrap: balance` se deja en el contenedor (se hereda): sigue sirviendo para balancear el envoltorio interno de la oración larga de `#problema` cuando cae a 2 líneas.
+
+**Subrayado en látón: recurso limitado a dos lugares, no un estilo de texto.** Clase compartida `.subrayado-laton` (`utilidades.css`, no repetida por componente): `text-decoration-color: var(--laton)`, `text-decoration-thickness: 3px`, `text-underline-offset: 6px`. Usada en exactamente dos lugares: el remate de `Experiencia.astro` ("Y por eso también sabemos decir que no.") y el párrafo de apertura de `Contacto.astro` ("Una reunión de una hora..."). Verificado visualmente (zoom, no solo medido) que el offset de 6px despeja los descendentes en ambos tamaños de fuente donde se usa (`--t-titulo` y `--t-cuerpo-l`) — ninguna letra con descendente toca la línea. **No usar en un tercer lugar** sin revisar antes si la restricción sigue vigente; documentado en `docs/02-design-system.md` §5.
+
+**Contraste de peso en el título de Contacto.** El planteo ("La idea que tenés hoy vale...") en `wght 500` de Archivo, el remate ("nada, hasta que alguien la use.") en `wght 900` — el mismo peso que el `<h1>` del hero (`--t-display-xl`), un eco tipográfico entre la apertura y el cierre de la página. Probado visualmente a tamaño real (`--t-display-l`, hasta 3,6rem): 500 se lee limpio y con peso real, no débil ni como error de carga de la fuente variable — no hizo falta subirlo a 600.
+
+**Lista de negaciones en `#limites` (sección papel): marcador cuadrado sólido en `--tinta`.** Mismo patrón de viñeta cuadrada que `Paquetes.astro` (`::before` de 6×6px), pero en `--tinta` en vez de `--verde-luz`: reutiliza el contraste ya verificado (15:1) de la sección invertida en vez de introducir un color nuevo sin verificar contra `--papel`. Nunca emoji (D8) — la sección es de fondo papel, un emoji ahí destacaría todavía más que en el resto del sitio.
+
+**Conclusión de `#limites` a peso de titular.** "Hacemos una sola cosa..." pasa de `.limites__parrafo` (cuerpo, `--t-cuerpo-l`) a una clase propia `.limites__cierre` en `--t-titulo` con `font-variation-settings` de titular (`wght 800`) — para que pese como cierre de sección, no como una negación más de la lista.
+
+**`Caso.astro` desconectado de la página, no borrado.** `index.astro` deja de importarlo; el componente, con su copy real y el compactado de escritorio de D22, sigue en el repo para reactivarse cuando haya un caso de éxito con tracción real que mostrar. Sin enlaces de nav a `#caso` que sacar (nunca existió uno en `ENLACES_NAV`). `docs/01-brief.md` §3 actualizado: la tabla de estructura pasa de once a diez bloques, con una nota explícita sobre por qué `Caso.astro` no aparece ahí.
+
+**Datos reales: WhatsApp y correo.** `src/lib/whatsapp.ts` deja de tener el placeholder `{{PENDIENTE: número}}` — número real `59175020808`. `Pie.astro` reemplaza los dos `{{PENDIENTE}}` (correo, WhatsApp) por enlaces reales (`mailto:info@devbro.xyz`, el mismo `ENLACE_WHATSAPP` compartido). `CORREO_DESTINO` en `.env.example` pasa a tener el valor real (`kevingomez@devbro.xyz`) — es el único de los cuatro valores del formulario que ya no queda vacío; `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` y `RESEND_API_KEY` siguen vacíos a propósito (pedido explícito: no se tocan hasta el final). D10 corregido con una nota — no se reescribe la tabla original, que documenta fielmente el estado en el momento en que se escribió.

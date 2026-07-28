@@ -24,7 +24,7 @@ Escribí y diseñá para esa persona. Si una decisión la haría sentir tonta, e
 
 ## 3. Estructura de la página
 
-Once bloques, en este orden exacto. No agregues, no reordenes.
+Diez bloques, en este orden exacto. No agregues, no reordenes.
 
 | # | ID | Bloque | Fondo |
 |---|---|---|---|
@@ -36,12 +36,13 @@ Once bloques, en este orden exacto. No agregues, no reordenes.
 | 05 | `#proceso` | Cómo trabajamos, E0-E6 | tinta |
 | 06 | `#paquetes` | Tres paquetes | tinta |
 | 07 | `#limites` | Lo que no hacemos | **papel** (invertida) |
-| 08 | `#caso` | Prueba: caso 001 | tinta |
-| 09 | `#preguntas` | Preguntas frecuentes | tinta |
-| 10 | `#contacto` | Cierre + formulario | tinta |
-| 11 | — | Pie | tinta |
+| 08 | `#preguntas` | Preguntas frecuentes | tinta |
+| 09 | `#contacto` | Cierre + formulario | tinta |
+| 10 | — | Pie | tinta |
 
 Las dos secciones en papel (03 y 07) son deliberadas: rompen la monotonía del oscuro y funcionan como respiro visual. No las conviertas a oscuro.
+
+**`Caso.astro` (D24, ver `docs/06-decisiones.md`):** construido y con copy real (docs/03-content.md §08), pero desconectado de `index.astro` — no aparece en la página. Se reactiva cuando haya un caso de éxito con tracción real que mostrar. La tabla de arriba ya no lo incluye.
 
 **Estructura interna del hero (01):** el titular ocupa siempre el ancho completo del bloque, nunca una columna compartida con la placa — la placa (428px rotada) y un titular con jerarquía real no entran juntos en columna sin sacrificar uno de los dos. Desde el breakpoint de escritorio (1024px) la placa se ubica junto al párrafo + botones + microcopia; por debajo, **después** del titular (no antes — medido a 360×640, ver D13), centrada. Detalle completo y números en `docs/06-decisiones.md` D12 y D13, y `docs/02-design-system.md` §8.
 

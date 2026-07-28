@@ -1,10 +1,11 @@
 ---
 // Pie de pagina (docs/03-content.md §11). Fondo --tinta, no --papel (ver
-// docs/01-brief.md tabla de secciones). {{PENDIENTE}} de correo y
-// WhatsApp quedan visibles (docs/06-decisiones.md D10) -- no se inventan.
+// docs/01-brief.md tabla de secciones). Correo y WhatsApp reales desde
+// D24 (docs/06-decisiones.md) -- ya no son {{PENDIENTE}}.
 // Sin "S.A." en ningun lado (regla dura de CLAUDE.md).
 import Wordmark from './Wordmark.astro';
 import { ENLACES_NAV } from '../lib/navegacion';
+import { ENLACE_WHATSAPP } from '../lib/whatsapp';
 ---
 
 <footer class="pie">
@@ -33,8 +34,12 @@ import { ENLACES_NAV } from '../lib/navegacion';
       <div class="pie__columna">
         <p class="pie__columna-titulo">Contacto</p>
         <ul class="pie__lista">
-          <li class="pendiente">{'{{PENDIENTE: correo}}'}</li>
-          <li class="pendiente">{'{{PENDIENTE: WhatsApp}}'}</li>
+          <li>
+            <a href="mailto:info@devbro.xyz">info@devbro.xyz</a>
+          </li>
+          <li>
+            <a href={ENLACE_WHATSAPP} target="_blank" rel="noopener noreferrer">+591 75020808</a>
+          </li>
         </ul>
       </div>
     </div>

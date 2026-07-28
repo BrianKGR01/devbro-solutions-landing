@@ -268,6 +268,19 @@ Mono, mayúsculas, `border: 2px solid`, fondo transparente, `padding: 4px 10px`.
 ### Botón flotante de WhatsApp
 Cuadrado de 56px, esquina inferior derecha, `bottom: 24px; right: 24px`. Fondo `--verde-base`, borde metálico, sombra sólida. Ícono SVG inline, sin librería. Aparece con fade al salir del hero. `aria-label="Escribinos por WhatsApp"`.
 
+### Subrayado en `--laton` — recurso de énfasis acotado (D24)
+
+```css
+.subrayado-laton {
+  text-decoration: underline;
+  text-decoration-color: var(--laton);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+```
+
+**Limitado a dos lugares en toda la página**, no es un estilo de texto de uso libre: el remate de `#experiencia` ("Y por eso también sabemos decir que no.") y el párrafo de apertura de `#contacto` ("Una reunión de una hora..."). Si hiciera falta un tercer lugar, es una señal para volver a esta sección y decidir si la restricción sigue teniendo sentido — no agregarlo en silencio.
+
 ---
 
 ## 6. Elemento firma: **la placa troquelada**

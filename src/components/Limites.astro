@@ -9,15 +9,19 @@
     <div class="limites revelar">
       <h2 class="limites__titulo">Lo que no hacemos</h2>
 
-      <p class="limites__parrafo">
-        No hacemos marketing, ni pauta, ni redes. No armamos tu modelo de negocio. No buscamos
-        inversores por vos. No vendemos horas de programador. Y si vemos que tu idea todavía no
-        está lista para construirse, te lo decimos antes de cobrarte.
-      </p>
+      <ul class="limites__lista">
+        <li>No hacemos marketing, ni pauta, ni redes.</li>
+        <li>No armamos tu modelo de negocio.</li>
+        <li>No buscamos inversores por vos.</li>
+        <li>No vendemos horas de programador.</li>
+      </ul>
 
       <p class="limites__parrafo">
-        Hacemos una sola cosa: el producto. Bien, rápido, y tuyo al terminar.
+        Y si vemos que tu idea todavía no está lista para construirse, te lo decimos antes de
+        cobrarte.
       </p>
+
+      <p class="limites__cierre">Hacemos una sola cosa: el producto. Bien, rápido, y tuyo al terminar.</p>
     </div>
   </div>
 </section>
@@ -35,6 +39,37 @@
     text-wrap: balance;
   }
 
+  /* Lista de negaciones, una por item: el parrafo corrido se saltea, la
+     lista no. Marcador cuadrado solido en --tinta (nunca emoji, D8) --
+     misma tinta que el texto, reutiliza el contraste ya verificado (15:1)
+     en vez de introducir un color nuevo para la seccion de papel. */
+  .limites__lista {
+    margin-bottom: var(--e4);
+  }
+
+  .limites__lista li {
+    position: relative;
+    padding-left: var(--e3);
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--tinta);
+  }
+
+  .limites__lista li + li {
+    margin-top: var(--e2);
+  }
+
+  .limites__lista li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    background: var(--tinta);
+  }
+
   .limites__parrafo {
     font-family: var(--cuerpo);
     font-size: var(--t-cuerpo-l);
@@ -43,7 +78,15 @@
     max-width: 62ch;
   }
 
-  .limites__parrafo + .limites__parrafo {
-    margin-top: var(--e3);
+  /* Conclusion de la seccion: pasa a peso de titular (--t-titulo, Archivo
+     800) para que pese como cierre, no como una negacion mas. */
+  .limites__cierre {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: var(--t-titulo);
+    line-height: 1.2;
+    color: var(--tinta);
+    max-width: 42ch;
+    margin-top: var(--e6);
   }
 </style>
