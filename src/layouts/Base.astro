@@ -75,6 +75,45 @@ const organizacionJsonLd = {
       <slot />
     </main>
     <slot name="footer" />
+
+    <script is:inline>
+      // Aparicion al hacer scroll (docs/02-design-system.md §7): una sola
+      // vez por elemento, escalonado maximo de 60ms entre hermanos que
+      // comparten padre. El escalon se calcula aca (no a mano en cada
+      // componente) para que agregar/quitar un item de una lista no
+      // rompa el orden de los demas.
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (!('IntersectionObserver' in window)) return;
+
+        var elementos = document.querySelectorAll('.revelar');
+        if (!elementos.length) return;
+
+        var contadorPorPadre = new Map();
+        elementos.forEach(function (el) {
+          var padre = el.parentElement;
+          var indice = contadorPorPadre.get(padre) || 0;
+          contadorPorPadre.set(padre, indice + 1);
+          el.style.transitionDelay = indice * 60 + 'ms';
+        });
+
+        var observador = new IntersectionObserver(
+          function (entradas) {
+            entradas.forEach(function (entrada) {
+              if (entrada.isIntersecting) {
+                entrada.target.classList.add('revelar--visible');
+                observador.unobserve(entrada.target);
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        elementos.forEach(function (el) {
+          observador.observe(el);
+        });
+      })();
+    </script>
   </body>
 </html>
 

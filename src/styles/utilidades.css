@@ -60,12 +60,39 @@
 
 /* ---- Placeholder de contenido pendiente ---- */
 /* Texto {{PENDIENTE}} visible a proposito (CLAUDE.md: "no rellenes con
-   texto inventado"). Usado en Caso.astro (problema/construimos/captura)
-   y Pie.astro (correo/WhatsApp). --humo (6,9:1 sobre --tinta, ya
-   verificado en docs/02 SS2) + italica lo distingue de copy terminado.
-   No --laton: docs/02 SS2 lo restringe a "numerales y filetes" -- un
-   parrafo de placeholder no es ninguna de las dos cosas. */
+   texto inventado"). Usado en Caso.astro (rubro, D20) y Pie.astro
+   (correo/WhatsApp). --humo (6,9:1 sobre --tinta, ya verificado en
+   docs/02 SS2) + italica lo distingue de copy terminado. No --laton:
+   docs/02 SS2 lo restringe a "numerales y filetes" -- un dato de
+   placeholder no es ninguna de las dos cosas. */
 .pendiente {
   color: var(--humo);
   font-style: italic;
+}
+
+/* ---- Aparicion al hacer scroll (docs/02-design-system.md §7) ---- */
+/* opacity 0->1 + translateY(8px->0), 400ms, --salida. Una sola vez por
+   elemento (el script de Base.astro desconecta el observer tras el
+   primer disparo), escalonado maximo de 60ms entre hermanos. No se
+   aplica al Hero: ya es visible sin scroll, animarlo se leeria como un
+   parpadeo de carga, no como aparicion. */
+.revelar {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 400ms var(--salida),
+    transform 400ms var(--salida);
+}
+
+.revelar.revelar--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revelar {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
