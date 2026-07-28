@@ -54,7 +54,8 @@ const enlaces = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--e3);
+    /* Movil: gap ajustado a proposito, ver nota junto al tamano del CTA */
+    gap: var(--e1);
     padding-block: var(--e2);
   }
 
@@ -75,6 +76,21 @@ const enlaces = [
     display: none;
   }
 
+  /* El CTA de Barra.astro no necesita ser tan grande como el del hero.
+     A 360px, "Agendar diagnóstico" con el tamaño del hero desborda su
+     propio boton y envuelve a 2 lineas dentro de una barra fija -- se ve
+     sin terminar e infla el alto de la barra (medido: 104px en vez de
+     83px). Con --t-etiqueta + padding recortado + gap del contenedor
+     bajado a --e1 en movil: 84px (wordmark reducido) + 8px (gap) + 210px
+     (cta) = 302px contra 320px disponibles, ~5,6% de margen -- ajustado,
+     pero es lo que da "Agendar diagnóstico" completo en una barra angosta
+     junto a una marca. Cta.astro ya tiene white-space:nowrap como
+     garantia dura, esto es ademas darle el espacio real que pide. */
+  .barra__cta :global(.cta) {
+    padding: 8px 14px;
+    font-size: var(--t-etiqueta);
+  }
+
   @media (min-width: 640px) {
     .barra__wordmark-reducido {
       display: none;
@@ -83,29 +99,43 @@ const enlaces = [
     .barra__wordmark-completo {
       display: inline-flex;
     }
-  }
 
-  /* El CTA de Barra.astro no necesita ser tan grande como el del hero;
-     se reduce el padding solo dentro de este componente para que la
-     barra no crezca demasiado en altura. */
-  .barra__cta :global(.cta) {
-    padding: 12px 20px;
-    font-size: 0.8rem;
+    /* De 640 a 1023px solo compiten wordmark completo + cta (sin nav
+       todavia): sobra espacio de sobra para el tamano "normal". */
+    .barra__fila {
+      gap: var(--e3);
+    }
+
+    .barra__cta :global(.cta) {
+      padding: 12px 20px;
+      font-size: 0.8rem;
+    }
   }
 
   /* Con los enlaces a tamaño --t-cuerpo (nav "completa") wordmark+nav+cta
-     piden 973px de contenido (medido: wordmark 175px + lista 511px + cta
-     239px + 2 gaps de 24px) -- eso recién entra con margen real desde
-     ~1200px (= --ancho-max, no se puede usar var() en un media query, se
-     repite el valor literal; ~9,9% de margen).
+     piden 973px de contenido (medido con el cta SIN envolver -- 175px de
+     wordmark + 511px de lista + 239px de cta natural + 2 gaps de 24px)
+     -- eso recién entra con margen real desde ~1200px (= --ancho-max, no
+     se puede usar var() en un media query, se repite el valor literal;
+     ~9,9% de margen).
 
      Entre 1024px (el breakpoint de escritorio que ya usa el resto del
-     sitio -- un iPad horizontal) y 1199px NO entra a ese tamaño, pero sí
-     entra una nav "compacta" en mono/--t-etiqueta con gap --e2: medido,
-     922px de contenido contra 1024px disponibles, 10% de margen. Por eso
-     hay dos tratamientos de .barra__enlace en cascada: el compacto nace
-     en 1024px, el completo lo reemplaza en 1200px. */
+     sitio -- un iPad horizontal) y 1199px NO entra a ese tamaño. Con la
+     nav "compacta" (mono, --t-etiqueta) Y el cta tambien compacto
+     (--t-etiqueta, 8x14) Y el gap del contenedor bajado a --e1: 175
+     (wordmark) + 8 + 481 (nav) + 8 + 210 (cta) = 882px de contenido
+     contra 1024px disponibles, ~4,3% de margen -- el punto mas ajustado
+     de toda la barra, documentado en docs/06-decisiones.md D14. */
   @media (min-width: 1024px) {
+    .barra__fila {
+      gap: var(--e1);
+    }
+
+    .barra__cta :global(.cta) {
+      padding: 8px 14px;
+      font-size: var(--t-etiqueta);
+    }
+
     .barra__nav {
       display: block;
     }
@@ -132,6 +162,15 @@ const enlaces = [
   }
 
   @media (min-width: 1200px) {
+    .barra__fila {
+      gap: var(--e3);
+    }
+
+    .barra__cta :global(.cta) {
+      padding: 12px 20px;
+      font-size: 0.8rem;
+    }
+
     .barra__lista {
       gap: var(--e4);
     }
