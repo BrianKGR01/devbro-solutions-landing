@@ -1,0 +1,144 @@
+---
+// #caso (docs/03-content.md §08, docs/06-decisiones.md D9). El cliente ya
+// autorizo aparecer como caso de exito -- los textos y la captura real
+// llegan despues. Los {{PENDIENTE}} quedan visibles a proposito (clase
+// .pendiente en utilidades.css, --humo + italica): no se inventa
+// contenido, y el marco de imagen tiene un aspect-ratio fijo para que la
+// maqueta no colapse cuando se reemplace por la captura real.
+---
+
+<section id="caso" class="seccion">
+  <div class="contenedor">
+    <p class="caso__etiqueta">CASO 001</p>
+
+    <h2 class="caso__titulo">ERP completo, en tres semanas.</h2>
+
+    <div class="caso__par">
+      <div class="caso__bloque">
+        <p class="caso__bloque-label">El problema</p>
+        <p class="caso__bloque-texto pendiente">
+          {'{{PENDIENTE: una o dos líneas describiendo qué necesitaba el cliente}}'}
+        </p>
+      </div>
+
+      <div class="caso__bloque">
+        <p class="caso__bloque-label">Lo que construimos</p>
+        <p class="caso__bloque-texto pendiente">
+          {'{{PENDIENTE: dos o tres líneas describiendo el sistema}}'}
+        </p>
+      </div>
+    </div>
+
+    <dl class="caso__datos">
+      <div class="caso__dato">
+        <dt class="caso__dato-etiqueta">Tiempo</dt>
+        <dd class="caso__dato-valor">3 semanas de construcción</dd>
+      </div>
+      <div class="caso__dato">
+        <dt class="caso__dato-etiqueta">Estado</dt>
+        <dd class="caso__dato-valor">en validación con usuarios reales</dd>
+      </div>
+    </dl>
+
+    <div class="caso__marco" role="img" aria-label="Espacio reservado para la captura de pantalla del producto, todavía no disponible">
+      <p class="pendiente">{'{{PENDIENTE: captura de pantalla real del producto}}'}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .caso__etiqueta {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    color: var(--laton);
+    margin-bottom: var(--e2);
+  }
+
+  .caso__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 20ch;
+    margin-bottom: var(--e6);
+    text-wrap: balance;
+  }
+
+  .caso__par {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e4);
+    margin-bottom: var(--e5);
+  }
+
+  @media (min-width: 640px) {
+    .caso__par {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .caso__bloque {
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+  }
+
+  .caso__bloque-label {
+    font-family: var(--cuerpo);
+    font-weight: 600;
+    font-size: var(--t-cuerpo);
+    color: var(--papel);
+    margin-bottom: var(--e2);
+  }
+
+  .caso__bloque-texto {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.65;
+  }
+
+  .caso__datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e6);
+    margin-bottom: var(--e6);
+  }
+
+  .caso__dato-etiqueta {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--laton);
+    margin-bottom: var(--e1);
+  }
+
+  .caso__dato-valor {
+    font-family: var(--cuerpo);
+    font-weight: 600;
+    font-size: var(--t-cuerpo-l);
+    color: var(--papel);
+  }
+
+  /* Marco vacio dimensionado: aspect-ratio fijo (aprox. ventana de
+     navegador con una captura de producto adentro) para que la seccion
+     no colapse de alto hasta que se reemplace por la imagen real. */
+  .caso__marco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+    text-align: center;
+  }
+
+  /* .pendiente vive en utilidades.css -- compartida con Pie.astro y
+     BotonWhatsApp.astro, los otros lugares con {{PENDIENTE}} visible. */
+</style>

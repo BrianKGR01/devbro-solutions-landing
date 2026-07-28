@@ -57,3 +57,15 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ---- Placeholder de contenido pendiente ---- */
+/* Texto {{PENDIENTE}} visible a proposito (CLAUDE.md: "no rellenes con
+   texto inventado"). Usado en Caso.astro (problema/construimos/captura)
+   y Pie.astro (correo/WhatsApp). --humo (6,9:1 sobre --tinta, ya
+   verificado en docs/02 SS2) + italica lo distingue de copy terminado.
+   No --laton: docs/02 SS2 lo restringe a "numerales y filetes" -- un
+   parrafo de placeholder no es ninguna de las dos cosas. */
+.pendiente {
+  color: var(--humo);
+  font-style: italic;
+}
