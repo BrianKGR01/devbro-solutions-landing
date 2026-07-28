@@ -12,7 +12,7 @@ import Placa from './Placa.astro';
         <Placa />
       </div>
 
-      <p class="hero__antetitulo">SOFTWARE FACTORY · SANTA CRUZ DE LA SIERRA</p>
+      <p class="hero__antetitulo">SOFTWARE FACTORY · PARA FUNDADORES SIN EQUIPO TÉCNICO</p>
 
       <h1 class="hero__titulo">Tu idea,<br />funcionando,<br />en tres semanas.</h1>
 
@@ -38,6 +38,20 @@ import Placa from './Placa.astro';
 </section>
 
 <style>
+  /* El hero es la unica seccion que arranca pegada a la barra sticky, sin
+     una seccion previa que ya haya dado aire. Con el padding general de
+     --e6 (64px, D15) el antetitulo caia en 138px a 360x640: 21,6% de la
+     pantalla vacia antes de la primera palabra. Con --e4 (32px) cae en
+     106px (16,6%) y el borde inferior de la placa sube de 582 a 549px,
+     con margen real dentro del pliegue. Solo el padding SUPERIOR: el
+     inferior sigue en --e6, que es lo que separa del bloque de Problema
+     (medido en D15). Ver docs/06-decisiones.md D21. */
+  @media (max-width: 639px) {
+    .hero {
+      padding-top: var(--e4);
+    }
+  }
+
   /* Mobile-first: todo apilado, placa arriba (docs/02-design-system.md §8) */
   .hero__cuerpo {
     display: grid;
@@ -91,6 +105,11 @@ import Placa from './Placa.astro';
     text-transform: uppercase;
     color: var(--humo);
     min-width: 0;
+    /* base.css pone max-width:62ch en todo <p> -- es una regla de cuerpo
+       de texto y este es una etiqueta de una linea. Con el copy nuevo
+       (mas largo) esos 62ch caian en 446px y dejaban "TÉCNICO" solo en
+       una segunda linea a 1440px. El contenedor ya limita el ancho. */
+    max-width: none;
   }
 
   .hero__titulo {

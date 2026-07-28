@@ -20,7 +20,7 @@ Convenciones: `ETIQUETA` = texto en mono/mayúsculas · **negrita** = destacado 
 
 ## 01 · Hero — `#inicio`
 
-`SOFTWARE FACTORY · SANTA CRUZ DE LA SIERRA`
+`SOFTWARE FACTORY · PARA FUNDADORES SIN EQUIPO TÉCNICO`
 
 # Tu idea, funcionando, en tres semanas.
 
@@ -203,18 +203,11 @@ Hacemos una sola cosa: el producto. Bien, rápido, y tuyo al terminar.
 
 ## ERP completo, en tres semanas.
 
-**El problema**
-{{PENDIENTE: una o dos líneas describiendo qué necesitaba el cliente}}
-
-**Lo que construimos**
-{{PENDIENTE: dos o tres líneas describiendo el sistema}}
-
+**El problema:** {{PENDIENTE: rubro y qué resolvía}}
 **Tiempo:** 3 semanas de construcción
 **Estado:** en validación con usuarios reales
 
-{{PENDIENTE: captura de pantalla real del producto}}
-
-> **Nota de implementación:** el cliente ya autorizó aparecer como caso de éxito. Los textos y la imagen llegan después. Implementá el bloque completo con los placeholders visibles y un marco vacío del tamaño correcto para la captura, para que la maqueta no colapse cuando se agregue el contenido real.
+> **Nota de implementación (versión anonimizada, ver `docs/06-decisiones.md` D20):** el bloque se sostiene con el titular y tres datos. **Sin captura de pantalla y sin marco de imagen** — el marco vacío ocupaba una pantalla entera de nada. **Sin el bloque "Lo que construimos"** — sin nombre de cliente ni captura, describir el sistema en detalle no agrega prueba. Queda un solo `{{PENDIENTE}}`, corto, visible: el rubro. El cliente ya autorizó aparecer como caso de éxito, pero esta versión no depende de eso para publicarse.
 
 ---
 
