@@ -19,10 +19,12 @@ const presupuestos = [
   <div class="contenedor">
     <div class="contacto__cabecera revelar">
       <h2 class="contacto__titulo">
-        La idea que tenés hoy vale exactamente lo mismo que la que tuviste hace un año: nada, hasta
-        que alguien la use.
+        <span class="contacto__titulo-liviano"
+          >La idea que tenés hoy vale exactamente lo mismo que la que tuviste hace un año:</span
+        >
+        <span class="contacto__titulo-fuerte">nada, hasta que alguien la use.</span>
       </h2>
-      <p class="contacto__intro">
+      <p class="contacto__intro subrayado-laton">
         Una reunión de una hora. Te decimos si es viable, cuánto cuesta y cuánto tarda. Si no nos
         convence, también te lo decimos.
       </p>
@@ -162,13 +164,29 @@ const presupuestos = [
 
   .contacto__titulo {
     font-family: var(--display);
-    font-variation-settings: 'wght' 800, 'wdth' 115;
     font-size: var(--t-display-l);
     letter-spacing: -0.02em;
     line-height: 0.94;
     color: var(--papel);
     margin-bottom: var(--e4);
-    text-wrap: balance;
+  }
+
+  /* Contraste de peso interno: el planteo va liviano, el remate ("nada,
+     hasta que alguien la use.") en 900 -- mismo peso que el h1 del hero
+     (--t-display-xl), un eco tipografico intencional entre la apertura y
+     el cierre de la pagina. display:block en los dos: mismo salto de
+     linea forzado que Problema/Proceso, sin <br> ni parrafos sueltos. */
+  .contacto__titulo-liviano,
+  .contacto__titulo-fuerte {
+    display: block;
+  }
+
+  .contacto__titulo-liviano {
+    font-variation-settings: 'wght' 500, 'wdth' 112;
+  }
+
+  .contacto__titulo-fuerte {
+    font-variation-settings: 'wght' 900, 'wdth' 115;
   }
 
   .contacto__intro {
