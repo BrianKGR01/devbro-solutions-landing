@@ -185,7 +185,7 @@ Se evaluaron dos formas de ubicar la placa junto al titular de ancho completo:
 
 `tokens.css`: `--t-display-xl: clamp(2.25rem, 8.2vw, 6rem);` — reemplaza el máximo pendiente de D11.
 
-**Altura del hero:** la restricción "entra sin scroll en 1440×900" (`docs/01-brief.md`) se relaja deliberadamente para este rediseño — con el titular a 96px en 3 líneas, el hero mide ~957px reales, unos ~57px de scroll a 900px de viewport. Aceptado explícitamente: el tamaño del titular y la jerarquía tipográfica valen más que evitar ese scroll mínimo.
+**Altura del hero:** la restricción "entra sin scroll en 1440×900" (`docs/01-brief.md`) se relaja deliberadamente para este rediseño — con el titular a 96px en 3 líneas, el hero solo mide 847px reales. Con la Barra ya construida y medida (83px, no los ~92px estimados en el borrador de este plan), el total real es **Barra + Hero = 930px contra 900px de viewport, ~30px de scroll.** Aceptado explícitamente: el tamaño del titular y la jerarquía tipográfica valen más que evitar ese scroll mínimo.
 
 ---
 
