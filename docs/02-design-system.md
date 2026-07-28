@@ -137,13 +137,15 @@ font-variation-settings: 'wght' 900, 'wdth' 118;
 | Rol | Ajustes |
 |---|---|
 | Display XL | Archivo `wght 900 wdth 118` · `letter-spacing: -0.03em` · `line-height: 0.88` |
-| Display L | Archivo `wght 800 wdth 115` · `letter-spacing: -0.02em` · `line-height: 0.94` |
+| Display L | Archivo `wght 800 wdth 115` · `letter-spacing: -0.02em` · `line-height: 0.94` · `text-wrap: balance` |
 | Título | Archivo `wght 800 wdth 112` · `line-height: 1.1` |
 | Cuerpo | Inter Tight 400 · `line-height: 1.65` · `max-width: 62ch` |
 | Etiqueta | JetBrains Mono 700 · `letter-spacing: 0.12em` · MAYÚSCULAS |
 | Dato | JetBrains Mono 700 · `font-variant-numeric: tabular-nums` |
 
 > **Detalle crítico:** los titulares llevan `line-height` por debajo de 1 y tracking negativo. Deben verse **compactados**, como tipos de metal apretados. Es lo que separa neobrutalismo bien hecho de "letra grande y negrita".
+
+> **`text-wrap: balance` en Display L (Fase 3):** verificado en `Problema.astro` — sin esto, "Tenés el problema. Tenés la plata..." cortaba en "Tenés el problema. Tenés / la plata...", separando la primera oración de su continuación. Con `balance` corta en "Tenés el problema. / Tenés la plata...", respetando el límite de oración. Es una mejora progresiva (si el navegador no la soporta, cae a wrap normal sin roturas) — regla base para todo título en Display L, no solo para Problema.
 
 ---
 
@@ -302,6 +304,12 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 **Nota sobre el hero (decidido en Fase 3, ver `docs/06-decisiones.md` D12):** el titular (`--t-display-xl`) nunca comparte columna con la placa — la placa mide 428px de ancho rotada y ninguna combinación razonable de columna + tamaño de fuente entra sin sacrificar la jerarquía tipográfica o el tamaño del titular. El titular ocupa siempre el ancho completo del contenedor; la placa se reubica junto al bloque de párrafo/botones/microcopia a partir del breakpoint de escritorio (1024px).
 
 **Orden en móvil/tableta (D13, ver `docs/06-decisiones.md`):** la placa va **después** del titular, no antes. Medido a 360×640 (el "pliegue" de una pantalla de celular típica): con la placa primero, el titular quedaba al filo del pliegue (borde inferior a 532px de 640, sin margen real) y el CTA primario siempre queda fuera (707px) sin importar el orden — la altura total no cambia por reordenar. Con antetítulo → titular → placa, el mensaje completo **y** la placa entran enteros en el primer pantallazo sin scroll; el CTA sigue pidiendo scroll, pero eso es normal en cualquier hero mobile y no vale la pena achicar la placa (habría que bajarla a ~17% de su tamaño actual para evitarlo, lo que la destruye como elemento firma) para evitarlo.
+
+**Barra de navegación (D14, ver `docs/06-decisiones.md`):** la Barra tiene sus propios breakpoints de contenido, distintos de los de arriba — wordmark y CTA siempre visibles, solo los enlaces de nav colapsan:
+- `< 640px`: wordmark reducido (solo "DEVBRO") + CTA. Sin enlaces de nav
+- `640-1023px`: wordmark completo + CTA. Sin enlaces de nav — a este ancho el conjunto completo (wordmark + nav + CTA) no entra (medido: 973px de contenido, entra recién con margen desde ~1200px)
+- `1024-1199px`: nav visible, pero compacta — enlaces en JetBrains Mono, `--t-etiqueta`, gap `--e2`. Medido: 922px de contenido contra 1024px disponibles, 10% de margen
+- `≥ 1200px` (= `--ancho-max`): nav completa — enlaces en Inter Tight, `--t-cuerpo`, gap `--e4`. ~9,9% de margen
 
 **Regla base:** mobile-first. Escribí el CSS para 360px y ampliá con `min-width`.
 

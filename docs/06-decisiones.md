@@ -213,3 +213,17 @@ Lo que **sí** cambia con el orden es qué entra en el primer pantallazo. Reorde
 Con el orden nuevo, el mensaje completo **y** la placa entera entran en el primer pantallazo sin scroll, en vez de solo el titular al límite. El CTA sigue pidiendo scroll, pero eso es esperable en cualquier hero mobile — para evitarlo por completo habría que achicar la placa a ~17% de su tamaño actual (destruyéndola como elemento firma) a cambio de ahorrar un scroll mínimo. No vale la pena.
 
 **Se elige el reordenamiento.** `Hero.astro` actualizado: `grid-template-areas` para <1024px pasa de `placa/antetitulo/titulo/contenido` a `antetitulo/titulo/placa/contenido`. `docs/02-design-system.md` §8 y `docs/01-brief.md` §3 sincronizados.
+
+---
+
+## D14 · Barra: el wordmark siempre va, solo la nav colapsa — y a 1024px cabe una versión compacta
+
+**Duda 1:** la primera versión de `Barra.astro` ocultaba wordmark **y** nav en móvil, dejando solo el CTA centrado. `docs/01-brief.md` dice "el menú colapsa a solo el CTA" — eso es sobre los enlaces de navegación, no sobre la marca; una barra sin wordmark no se identifica como DevBro Solutions.
+
+**Resolución 1:** wordmark (versión reducida, solo "DEVBRO", bajo 640px — la misma versión que ya definía `docs/01-brief.md` §6 para móvil) y CTA quedan **siempre** visibles, alineados a los extremos. Solo `.barra__nav` colapsa.
+
+**Duda 2:** con el wordmark corregido, el breakpoint de 1200px que resolvía el desborde de contenido (ver §8) dejaba **todo** el rango 1024-1199px sin ningún enlace de navegación — un iPad horizontal (1024px) no tiene forma de navegar a `#proceso`, `#paquetes`, etc.
+
+**Resolución 2:** medido (no estimado) si una versión compacta de la nav entra en ese rango: enlaces en JetBrains Mono `--t-etiqueta` con letter-spacing 0.08em, gap `--e2` (16px) en vez de `--e4` (32px). A 1024px (el caso más ajustado del rango, el margen solo mejora al crecer el viewport): 922px de contenido contra 1024px disponibles → **10% de margen.** Entra con margen real.
+
+**Se agregan tres estados para la nav de la Barra**, no dos: sin nav (`<1024px`) → nav compacta mono (`1024-1199px`) → nav completa Inter Tight (`≥1200px`). `docs/02-design-system.md` §8 actualizado con la tabla completa.
