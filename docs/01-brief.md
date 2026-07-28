@@ -24,7 +24,7 @@ Escribí y diseñá para esa persona. Si una decisión la haría sentir tonta, e
 
 ## 3. Estructura de la página
 
-Once bloques, en este orden exacto. No agregues, no reordenes.
+Diez bloques, en este orden exacto. No agregues, no reordenes.
 
 | # | ID | Bloque | Fondo |
 |---|---|---|---|
@@ -36,12 +36,15 @@ Once bloques, en este orden exacto. No agregues, no reordenes.
 | 05 | `#proceso` | Cómo trabajamos, E0-E6 | tinta |
 | 06 | `#paquetes` | Tres paquetes | tinta |
 | 07 | `#limites` | Lo que no hacemos | **papel** (invertida) |
-| 08 | `#caso` | Prueba: caso 001 | tinta |
-| 09 | `#preguntas` | Preguntas frecuentes | tinta |
-| 10 | `#contacto` | Cierre + formulario | tinta |
-| 11 | — | Pie | tinta |
+| 08 | `#preguntas` | Preguntas frecuentes | tinta |
+| 09 | `#contacto` | Cierre + formulario | tinta |
+| 10 | — | Pie | tinta |
 
 Las dos secciones en papel (03 y 07) son deliberadas: rompen la monotonía del oscuro y funcionan como respiro visual. No las conviertas a oscuro.
+
+**`Caso.astro` (D24, ver `docs/06-decisiones.md`):** construido y con copy real (docs/03-content.md §08), pero desconectado de `index.astro` — no aparece en la página. Se reactiva cuando haya un caso de éxito con tracción real que mostrar. La tabla de arriba ya no lo incluye.
+
+**Estructura interna del hero (01):** el titular ocupa siempre el ancho completo del bloque, nunca una columna compartida con la placa — la placa (428px rotada) y un titular con jerarquía real no entran juntos en columna sin sacrificar uno de los dos. Desde el breakpoint de escritorio (1024px) la placa se ubica junto al párrafo + botones + microcopia; por debajo, **después** del titular (no antes — medido a 360×640, ver D13), centrada. Detalle completo y números en `docs/06-decisiones.md` D12 y D13, y `docs/02-design-system.md` §8.
 
 ---
 
@@ -65,6 +68,8 @@ Un solo CTA primario, repetido: **"Agendar diagnóstico"**.
 
 Aparece en: barra superior, hero, después de paquetes, y en la sección de contacto.
 
+**Dónde aparece en móvil (rediseñado, ver `docs/06-decisiones.md` D21):** por debajo de 1024px el CTA **no** vive en la barra. La barra muestra el wordmark completo y un botón de menú; el CTA es la acción de cierre del panel del menú. En la barra estaba duplicado con el del hero —los dos visibles casi a la vez, a un scroll de distancia— y competía por el ancho con la marca. El resto de las apariciones no cambia.
+
 **CTA secundario en el hero:** "Cómo trabajamos" → ancla a `#proceso`.
 
 **Canal alternativo permanente:** botón flotante de WhatsApp, esquina inferior derecha, visible desde el scroll del hero en adelante. En Bolivia WhatsApp convierte más que un formulario, y el visitante debe poder elegir.
@@ -86,7 +91,9 @@ DEVBRO │ SOLUTIONS
 - Separador — regla vertical de 2px, alto igual a la altura-x de la mayúscula, color `--laton`, márgenes laterales de 10px
 - `SOLUTIONS` — JetBrains Mono 700, tamaño `0.62em` respecto de DEVBRO, `letter-spacing: 0.18em`, color `--humo`, alineado a la línea base
 
-**Versión reducida** (móvil, favicon, OG): solo `DEVBRO`.
+**Ya no se usa en la barra móvil** (D21): al sacar el CTA de la barra sobra ancho de sobra para el wordmark completo en cualquier viewport, así que la marca se muestra entera en todos lados.
+
+**Favicon y Open Graph (actualizado en D25, ver `docs/06-decisiones.md`):** el favicon **no** usa una versión reducida del wordmark — es una `D` aislada, construida como polígono achaflanado (`docs/02-design-system.md` §9), porque un favicon standalone no puede cargar la tipografía autohospedada. La imagen de Open Graph, al revés, usa el wordmark **completo** — ahí sí sobra espacio de horizontal.
 
 Debe construirse como componente reutilizable, no como imagen.
 

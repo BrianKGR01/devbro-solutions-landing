@@ -20,23 +20,25 @@ Convenciones: `ETIQUETA` = texto en mono/mayúsculas · **negrita** = destacado 
 
 ## 01 · Hero — `#inicio`
 
-`SOFTWARE FACTORY · SANTA CRUZ DE LA SIERRA`
+`SOFTWARE FACTORY · PARA FUNDADORES SIN EQUIPO TÉCNICO`
 
 # Tu idea, funcionando, en tres semanas.
 
-Construimos el producto que tu idea necesita para salir al mercado. Sin ocho meses de espera. Sin quedarte con un sistema que se cae a los cien usuarios.
+Construimos el producto que tu idea necesita para salir al mercado. Sin ocho meses de espera. Sin un sistema que se cae a los cien usuarios. Y si tu proyecto necesita más de tres semanas, te lo decimos antes de empezar.
 
 `[ AGENDAR DIAGNÓSTICO ]`  `[ Cómo trabajamos ]`
 
-`PRECIO CERRADO ANTES DE EMPEZAR · EL CÓDIGO ES TUYO · SIN PERMANENCIA`
+`PRECIO CERRADO ANTES DE EMPEZAR · EL CÓDIGO ES TUYO · SIN MENSUALIDADES`
 
-**Placa:** `DEVBRO SOLUTIONS · ORDEN Nº 0001` / numeral animado / `SEMANAS`
+**Placa:** `DEVBRO SOLUTIONS · ORDEN DE TRABAJO` / numeral animado / `SEMANAS`
 
 ---
 
 ## 02 · El problema — `#problema`
 
-## Tenés el problema. Tenés la plata. No tenés cómo saber si te están vendiendo humo.
+## Tenés el problema.<br>Tenés la plata.<br>No tenés cómo saber si te están vendiendo humo.
+
+> **Nota de implementación:** cada oración arranca en su propia línea (un `<span>` con `display:block` por oración, no `<br>` real ni párrafos separados), pero puede envolver internamente en móvil sin romperse — ver `docs/06-decisiones.md`.
 
 `ÍTEM 01`
 ### Nadie te sabe decir cuánto
@@ -50,11 +52,13 @@ Te dijeron tres meses. Vas por el séptimo. Todavía no lo vio un usuario real.
 ### Te quedás amarrado
 El sistema funciona, pero solo ellos lo entienden. No podés cambiar de equipo aunque quieras.
 
+`NINGUNO DE ESTOS TRES ES CULPA TUYA`
+
 ---
 
 ## 03 · La tesis — `#tesis` *(fondo papel)*
 
-## En una fiebre del oro, el negocio es vender palas.
+## En la fiebre del oro, nuestro negocio es vender palas.
 
 Ahora mismo hay más gente que nunca con una idea de software y capital para intentarlo. Casi ninguna tiene equipo técnico, y esperar a encontrar un socio programador cuesta meses que la idea no tiene.
 
@@ -72,7 +76,7 @@ Nosotros no vamos a la mina. Fabricamos el equipo con el que vos vas a entrar: u
 
 No es una promesa de herramienta nueva. Es más de diez años escribiendo software a código puro, en todo tipo de sistemas.
 
-Cuando entregamos un ERP completo en tres semanas, no fue porque una inteligencia artificial lo haya inventado: fue porque **dos personas del equipo ya habían construido ERPs antes**, invirtiendo meses en cada uno. Ya sabían qué hacer, qué evitar y en qué orden.
+Cuando entregamos un sistema completo en semanas no es porque una inteligencia artificial lo haya inventado: es porque **nuestro equipo ya construyó sistemas parecidos antes**, invirtiendo meses en cada uno. Ya sabe qué hacer, qué evitar y en qué orden.
 
 La inteligencia artificial hace que la parte que ya sabíamos hacer tome días en vez de semanas. Esa es toda la magia.
 
@@ -82,20 +86,22 @@ La inteligencia artificial hace que la parte que ya sabíamos hacer tome días e
 Construyendo software a código puro
 
 `SISTEMAS COMPLETOS`
-ERP, gestión comercial, agendamiento, operaciones
+Gestión comercial, sistemas contables, operaciones, software a medida
 
 `ARQUITECTURA PORTABLE`
-Podés migrar de nube o llevarte todo a tu propio servidor
+Podés migrar de nube o llevarte todo a tu propio servidor, vos elegís
 
 **Cierre de sección:**
 
-**Y por eso también sabemos decir que no.** Un generador de código escribe lo que le pidas. Nosotros te decimos cuándo lo que pediste te va a costar caro en seis meses.
+**Y por eso también sabemos decir que no.** (subrayado en `--laton`, ver `docs/06-decisiones.md` D24 — recurso limitado a dos lugares de toda la página) Un generador de código escribe lo que le pidas. Nosotros te decimos cuándo lo que pediste te va a costar caro en seis meses.
 
 ---
 
 ## 05 · Cómo trabajamos — `#proceso`
 
-## Siete etapas. Sin sorpresas en el medio.
+## Siete etapas.<br>Sin sorpresas en el medio.
+
+> **Nota de implementación:** cada oración en su propia línea (mismo `<span display:block>` que `#problema`, ver `docs/06-decisiones.md`).
 
 `E0 · ARRANQUE` — **1 día**
 Firmamos, definimos un solo interlocutor y abrimos accesos.
@@ -117,6 +123,8 @@ Ajustamos lo que aparezca con usuarios reales.
 
 `E6 · TRASPASO` — **1 día**
 Código, documentación, credenciales y un video explicando todo. Es tuyo.
+
+`LOS PLAZOS CORRESPONDEN AL PAQUETE LANZAMIENTO. EXPEDICIÓN TOMA ENTRE 8 Y 14 SEMANAS.`
 
 ---
 
@@ -191,30 +199,32 @@ El precio final depende del alcance. Te lo cerramos por escrito en la primera se
 
 ## Lo que no hacemos
 
-No hacemos marketing, ni pauta, ni redes. No armamos tu modelo de negocio. No buscamos inversores por vos. No vendemos horas de programador. Y si vemos que tu idea todavía no está lista para construirse, te lo decimos antes de cobrarte.
+- No hacemos marketing, ni pauta, ni redes.
+- No armamos tu modelo de negocio.
+- No buscamos inversores por vos.
+- No vendemos horas de programador.
 
-Hacemos una sola cosa: el producto. Bien, rápido, y tuyo al terminar.
+Y si vemos que tu idea todavía no está lista para construirse, te lo decimos antes de cobrarte.
+
+**Hacemos una sola cosa: el producto. Bien, rápido, y tuyo al terminar.** (peso de titular, `--t-titulo` — es la conclusión de la sección, no otra negación más. Ver `docs/06-decisiones.md` D24.)
 
 ---
 
 ## 08 · Prueba — `#caso`
 
+> **Desconectada de la página (D24, ver `docs/06-decisiones.md`).** `Caso.astro` sigue construido y con este copy, pero `index.astro` no lo importa — no aparece en el sitio. Se reactiva cuando haya un caso de éxito con tracción real.
+
 `CASO 001`
 
 ## ERP completo, en tres semanas.
 
-**El problema**
-{{PENDIENTE: una o dos líneas describiendo qué necesitaba el cliente}}
-
-**Lo que construimos**
-{{PENDIENTE: dos o tres líneas describiendo el sistema}}
-
+**El problema:** {{PENDIENTE: rubro y qué resolvía}}
 **Tiempo:** 3 semanas de construcción
 **Estado:** en validación con usuarios reales
 
-{{PENDIENTE: captura de pantalla real del producto}}
+> **Nota de implementación (versión anonimizada, ver `docs/06-decisiones.md` D20):** el bloque se sostiene con el titular y tres datos. **Sin captura de pantalla y sin marco de imagen** — el marco vacío ocupaba una pantalla entera de nada. **Sin el bloque "Lo que construimos"** — sin nombre de cliente ni captura, describir el sistema en detalle no agrega prueba. Queda un solo `{{PENDIENTE}}`, corto, visible: el rubro. El cliente ya autorizó aparecer como caso de éxito, pero esta versión no depende de eso para publicarse.
 
-> **Nota de implementación:** el cliente ya autorizó aparecer como caso de éxito. Los textos y la imagen llegan después. Implementá el bloque completo con los placeholders visibles y un marco vacío del tamaño correcto para la captura, para que la maqueta no colapse cuando se agregue el contenido real.
+> **Nota de layout (D22):** en escritorio, "El problema" y "Tiempo + Estado" se presentan como dos bloques lado a lado, no como una lista de tres filas — "Tiempo" se convierte en un numeral grande ("3") con "Semanas de construcción" debajo, usando `--t-dato` (token ya definido en el sistema para datos destacados, sin usar hasta esta sección). Le da peso real al bloque sin depender de una imagen.
 
 ---
 
@@ -292,7 +302,7 @@ No se pudo enviar. Escribinos por WhatsApp y lo resolvemos ahí.
 Software factory. Santa Cruz de la Sierra, Bolivia.
 
 **Columna — Página:** Por qué somos rápidos · Cómo trabajamos · Paquetes · Preguntas
-**Columna — Contacto:** {{PENDIENTE: correo}} · {{PENDIENTE: WhatsApp}}
+**Columna — Contacto:** info@devbro.xyz · +591 75020808 (WhatsApp, D24)
 
 `© 2026 DEVBRO SOLUTIONS`
 

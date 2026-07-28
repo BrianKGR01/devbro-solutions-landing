@@ -1,0 +1,169 @@
+---
+// #inicio (docs/01-brief.md §3, docs/03-content.md §01).
+// El titular nunca comparte columna con la placa: ver docs/06-decisiones.md D12.
+import Cta from './Cta.astro';
+import Placa from './Placa.astro';
+---
+
+<section id="inicio" class="hero seccion">
+  <div class="contenedor">
+    <div class="hero__cuerpo">
+      <div class="hero__placa">
+        <Placa />
+      </div>
+
+      <p class="hero__antetitulo">SOFTWARE FACTORY · PARA FUNDADORES SIN EQUIPO TÉCNICO</p>
+
+      <h1 class="hero__titulo">Tu idea,<br />funcionando,<br />en tres semanas.</h1>
+
+      <div class="hero__contenido">
+        <p class="hero__parrafo">
+          Construimos el producto que tu idea necesita para salir al mercado. Sin ocho meses de
+          espera. Sin un sistema que se cae a los cien usuarios. Y si tu proyecto necesita más de
+          tres semanas, te lo decimos antes de empezar.
+        </p>
+
+        <div class="hero__botones">
+          <Cta href="#contacto">Agendar diagnóstico</Cta>
+          <Cta href="#proceso" variante="secundario">Cómo trabajamos</Cta>
+        </div>
+
+        <p class="hero__microcopia">
+          <span class="hero__microcopia-segmento">PRECIO CERRADO ANTES DE EMPEZAR ·</span>{' '}
+          <span class="hero__microcopia-segmento">EL CÓDIGO ES TUYO ·</span>{' '}
+          <span class="hero__microcopia-segmento">SIN MENSUALIDADES</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* El hero es la unica seccion que arranca pegada a la barra sticky, sin
+     una seccion previa que ya haya dado aire. Con el padding general de
+     --e6 (64px, D15) el antetitulo caia en 138px a 360x640: 21,6% de la
+     pantalla vacia antes de la primera palabra. Con --e4 (32px) cae en
+     106px (16,6%) y el borde inferior de la placa sube de 582 a 549px,
+     con margen real dentro del pliegue. Solo el padding SUPERIOR: el
+     inferior sigue en --e6, que es lo que separa del bloque de Problema
+     (medido en D15). Ver docs/06-decisiones.md D21. */
+  @media (max-width: 639px) {
+    .hero {
+      padding-top: var(--e4);
+    }
+  }
+
+  /* Mobile-first: todo apilado, placa arriba (docs/02-design-system.md §8) */
+  .hero__cuerpo {
+    display: grid;
+    /* antetitulo/titulo primero: con la placa arriba, el mensaje quedaba
+       justo al filo del pliegue a 360x640 (h1Bottom 532px de 640, sin
+       margen real) y el CTA quedaba fuera de cualquier forma (707px) --
+       reordenar no arregla el CTA (la altura total no cambia), pero deja
+       todo el mensaje + la placa visibles sin scroll en vez de solo el
+       mensaje al limite. Ver docs/02-design-system.md §8. */
+    grid-template-areas:
+      'antetitulo'
+      'titulo'
+      'placa'
+      'contenido';
+    gap: var(--e4);
+  }
+
+  @media (min-width: 1024px) {
+    .hero__cuerpo {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        'antetitulo antetitulo'
+        'titulo titulo'
+        'contenido placa';
+      column-gap: var(--e5);
+    }
+  }
+
+  .hero__placa {
+    grid-area: placa;
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero__placa {
+      align-self: center;
+    }
+  }
+
+  /* min-width:0 en antetitulo y titulo: sin esto, el min-width:auto implicito
+     de un item que abarca ambas columnas fuerza la columna "auto" de la placa
+     a crecer para darle lugar al contenido minimo del texto -- eso causaba
+     el desborde horizontal medido en 1023/1440/1920px. */
+  .hero__antetitulo {
+    grid-area: antetitulo;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--humo);
+    min-width: 0;
+    /* base.css pone max-width:62ch en todo <p> -- es una regla de cuerpo
+       de texto y este es una etiqueta de una linea. Con el copy nuevo
+       (mas largo) esos 62ch caian en 446px y dejaban "TÉCNICO" solo en
+       una segunda linea a 1440px. El contenedor ya limita el ancho. */
+    max-width: none;
+  }
+
+  .hero__titulo {
+    grid-area: titulo;
+    font-family: var(--display);
+    font-variation-settings: 'wght' 900, 'wdth' 118;
+    font-size: var(--t-display-xl);
+    letter-spacing: -0.03em;
+    line-height: 0.88;
+    color: var(--papel);
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+
+  .hero__contenido {
+    grid-area: contenido;
+    display: flex;
+    flex-direction: column;
+    gap: var(--e3);
+    align-self: start;
+    min-width: 0;
+  }
+
+  .hero__parrafo {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--papel);
+    max-width: 62ch;
+  }
+
+  .hero__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--e2);
+  }
+
+  /* Linea corrida, no chips: docs/03-content.md §01 la escribe como una sola
+     linea con separadores "·", y Etiqueta (docs/02 §5) es para datos de
+     paquete ("3 SEMANAS"), no para esto. */
+  .hero__microcopia {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--humo);
+  }
+
+  /* Cada segmento con su separador "·" pegado al final, sin cortar adentro:
+     el espacio entre spans (fuera del nowrap) es el unico lugar donde puede
+     envolver, asi el punto medio nunca queda huerfano al arranque de linea. */
+  .hero__microcopia-segmento {
+    white-space: nowrap;
+  }
+</style>

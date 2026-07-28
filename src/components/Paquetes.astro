@@ -1,0 +1,292 @@
+---
+// #paquetes (docs/03-content.md §06, docs/05-roadmap.md Fase 4).
+// Dos excepciones deliberadas a la regla general de grillas (docs/02-design-system.md
+// §8), documentadas ahi mismo: (a) las 3 columnas pasan a 1 sola por debajo de
+// 1024px, no a 2 -- un 2+1 rompe la comparacion entre paquetes y deja uno
+// huerfano abajo; (b) en esa columna unica, LANZAMIENTO va primero via CSS
+// `order`, no en el medio -- es el paquete que se quiere vender y el orden
+// de escritorio (SONDA, LANZAMIENTO, EXPEDICION) no se traduce a movil. El
+// orden del DOM se mantiene igual al del documento (SONDA, LANZAMIENTO,
+// EXPEDICION) a proposito: es el orden logico de precio creciente, y un
+// lector de pantalla lo linealiza igual sin importar el `order` visual.
+import Etiqueta from './Etiqueta.astro';
+import Cta from './Cta.astro';
+
+const paquetes = [
+  {
+    id: 'sonda',
+    nombre: 'SONDA',
+    etiqueta: 'VALIDACIÓN TÉCNICA',
+    precio: 'USD 1.200',
+    duracion: '5 días',
+    intro: 'Antes de construir nada, definimos qué se construye y cuánto cuesta.',
+    caracteristicas: [
+      'Sesión de descubrimiento a fondo',
+      'Alcance del producto, por escrito',
+      'Arquitectura y stack recomendado',
+      'Mapa completo de pantallas',
+      'Estimación firme de tiempo y costo',
+      'Veredicto honesto de viabilidad',
+    ],
+    nota: 'SI SEGUÍS CON NOSOTROS, SE DESCUENTA COMPLETO',
+    destacado: false,
+  },
+  {
+    id: 'lanzamiento',
+    nombre: 'LANZAMIENTO',
+    etiqueta: 'EL QUE ELIGE EL 80%',
+    precio: 'Desde USD 5.000',
+    duracion: '3 a 6 semanas',
+    intro: 'Tu producto en producción, listo para tus primeros usuarios.',
+    caracteristicas: [
+      'Todo lo de SONDA',
+      'Diseño completo del producto',
+      'Aplicación web en producción',
+      'Usuarios, roles y permisos',
+      'Panel de administración',
+      'Desplegado en tu propia infraestructura',
+      'Código fuente y documentación, tuyos',
+      '2 semanas de diagnóstico post-lanzamiento',
+    ],
+    nota: null,
+    destacado: true,
+  },
+  {
+    id: 'expedicion',
+    nombre: 'EXPEDICIÓN',
+    etiqueta: 'PRODUCTO COMPLETO',
+    precio: 'Desde USD 14.000',
+    duracion: '8 a 14 semanas',
+    intro: 'Cuando el proyecto es más grande que un primer lanzamiento.',
+    caracteristicas: [
+      'Todo lo de LANZAMIENTO',
+      'Integraciones con servicios externos',
+      'Aplicación móvil',
+      'Reportería y analítica',
+      'Multi-sucursal o multi-empresa',
+      'Migración de datos existentes',
+      '4 semanas de diagnóstico',
+      'Traspaso técnico a tu equipo',
+    ],
+    nota: null,
+    destacado: false,
+  },
+];
+---
+
+<section id="paquetes" class="seccion">
+  <div class="contenedor">
+    <h2 class="paquetes__titulo revelar">Tres formas de empezar.</h2>
+
+    <ul class="paquetes__grilla">
+      {
+        paquetes.map((paquete) => (
+          <li
+            class={`paquetes__tarjeta revelar ${paquete.destacado ? 'paquetes__tarjeta--destacada' : ''} paquetes__tarjeta--${paquete.id}`}
+          >
+            <h3 class="paquetes__nombre">{paquete.nombre}</h3>
+            <Etiqueta>{paquete.etiqueta}</Etiqueta>
+            <p class="paquetes__precio">
+              <strong>{paquete.precio}</strong> · {paquete.duracion}
+            </p>
+            <p class="paquetes__intro">{paquete.intro}</p>
+            <ul class="paquetes__caracteristicas">
+              {paquete.caracteristicas.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+            {paquete.nota && <p class="paquetes__nota">{paquete.nota}</p>}
+            <div class="paquetes__cta">
+              <Cta href="#contacto" variante={paquete.destacado ? 'primario' : 'secundario'}>
+                Agendar diagnóstico
+              </Cta>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="paquetes__cierre">
+      El precio final depende del alcance. Te lo cerramos por escrito en la primera semana, antes
+      de que pagues el saldo.
+    </p>
+  </div>
+</section>
+
+<style>
+  .paquetes__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 20ch;
+    margin-bottom: var(--e6);
+    text-wrap: balance;
+  }
+
+  /* Excepcion a .grilla-3 (docs/02-design-system.md §8): 1 columna hasta
+     1024px, no 2 -- ver nota junto a los imports. */
+  .paquetes__grilla {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e4);
+  }
+
+  .paquetes__tarjeta--lanzamiento {
+    order: -1;
+  }
+
+  @media (min-width: 1024px) {
+    .paquetes__grilla {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .paquetes__tarjeta--lanzamiento {
+      order: 0;
+    }
+  }
+
+  .paquetes__tarjeta {
+    display: flex;
+    flex-direction: column;
+    /* El CTA (Cta.astro) tiene white-space:nowrap -- sin min-width:0 el
+       item de grilla usa el min-content de ese texto como piso, forzando
+       la columna mas ancha que su 1fr real (mismo bug visto en Hero.astro,
+       docs/06-decisiones.md). */
+    min-width: 0;
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+  }
+
+  .paquetes__tarjeta--destacada {
+    border: var(--borde-fuerte);
+    /* --verde, no --verde-noche (docs/06-decisiones.md D17): --verde-noche
+       contra --tinta da 1,29:1 de contraste, practicamente invisible. */
+    box-shadow: 8px 8px 0 var(--verde);
+  }
+
+  .paquetes__nombre {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: var(--t-titulo);
+    color: var(--papel);
+    margin-bottom: var(--e2);
+  }
+
+  .paquetes__tarjeta :global(.etiqueta) {
+    margin-bottom: var(--e3);
+  }
+
+  .paquetes__precio {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    color: var(--papel);
+    margin-bottom: var(--e3);
+  }
+
+  .paquetes__precio strong {
+    font-weight: 600;
+  }
+
+  .paquetes__intro {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.5;
+    color: var(--humo);
+    margin-bottom: var(--e3);
+  }
+
+  .paquetes__caracteristicas {
+    margin-bottom: var(--e3);
+  }
+
+  .paquetes__caracteristicas li {
+    position: relative;
+    padding-left: var(--e3);
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.5;
+    color: var(--humo);
+  }
+
+  .paquetes__caracteristicas li + li {
+    margin-top: var(--e1);
+  }
+
+  .paquetes__caracteristicas li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    background: var(--verde-luz);
+  }
+
+  /* Zona apretada: recien pasa a 3 columnas en 1024px, y el contenedor
+     todavia no llego a su --ancho-max (1200px) -- la columna es mas
+     angosta aca que en cualquier otro punto de la grilla de 3. Medido
+     (Range API, conteo real de lineas, no estimado): con el tamano y
+     padding por defecto, 14 de 22 items de las 3 tarjetas envolvian a 2
+     lineas en este rango, inflando las tarjetas a 775px de alto -- justo
+     donde el visitante compara precios lado a lado. Bajando el padding
+     de la tarjeta a --e2 y el tamano de los items a 0.8125rem (paso
+     intermedio entre --t-etiqueta y --t-cuerpo, no hay token para esto
+     en la escala): 21 de 22 en una linea, 606px de alto. El item que
+     sigue envolviendo ("2 semanas de diagnostico post-lanzamiento") no
+     entra a ningun tamano razonable -- no vale la pena seguir bajando
+     el resto por una sola frase larga.
+     Tiene que ir DESPUES de las reglas base de .paquetes__tarjeta y
+     .paquetes__caracteristicas li en el archivo: misma especificidad
+     (una sola clase), asi que el orden de cascada -- no el media query
+     -- decide cual gana. Puesto antes, la regla base incondicional de
+     mas abajo ganaba siempre, sin importar el ancho (bug real, detectado
+     al reverificar con Playwright que el font-size computado seguia en
+     16px a 1024px). */
+  @media (min-width: 1024px) and (max-width: 1199px) {
+    .paquetes__tarjeta {
+      padding: var(--e2);
+    }
+
+    .paquetes__caracteristicas li {
+      font-size: 0.8125rem;
+    }
+  }
+
+  .paquetes__nota {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.06em;
+    color: var(--laton);
+    margin-bottom: var(--e3);
+  }
+
+  .paquetes__cta {
+    margin-top: auto;
+    padding-top: var(--e2);
+  }
+
+  /* Tarjeta angosta (single column hasta 1024px, y solo ~286px de ancho
+     incluso en la grilla de 3 columnas): el tamano "comodo" del CTA (el
+     que usa la Barra desde 640px) no entra sin desbordar el padding de
+     la tarjeta. Se usa el tamano "compacto" en todo momento aca, no solo
+     bajo un breakpoint -- ninguna combinacion de ancho de tarjeta en este
+     componente tiene espacio de sobra. */
+  .paquetes__cta :global(.cta) {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: var(--t-etiqueta);
+    text-align: center;
+  }
+
+  .paquetes__cierre {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
+    max-width: 62ch;
+    margin-top: var(--e6);
+  }
+</style>

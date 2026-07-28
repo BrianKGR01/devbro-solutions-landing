@@ -1,0 +1,292 @@
+---
+// #contacto (docs/03-content.md §10, docs/04-engineering.md §6).
+// Formulario nativo, sin framework. Los nombres de los campos coinciden
+// 1:1 con las columnas de la tabla `leads` y con lo que espera
+// src/pages/api/contacto.ts -- cambiar uno sin el otro rompe el envio.
+import Cta from './Cta.astro';
+import { ENLACE_WHATSAPP } from '../lib/whatsapp';
+
+const presupuestos = [
+  'Menos de USD 5.000',
+  'Entre USD 5.000 y 10.000',
+  'Entre USD 10.000 y 20.000',
+  'Más de USD 20.000',
+  'Todavía no lo definí',
+];
+---
+
+<section id="contacto" class="seccion">
+  <div class="contenedor">
+    <div class="contacto__cabecera revelar">
+      <h2 class="contacto__titulo">
+        <span class="contacto__titulo-liviano"
+          >La idea que tenés hoy vale exactamente lo mismo que la que tuviste hace un año:</span
+        >
+        <span class="contacto__titulo-fuerte">nada, hasta que alguien la use.</span>
+      </h2>
+      <p class="contacto__intro">
+        <span class="subrayado-laton">Una reunión de una hora.</span> Te decimos si es viable, cuánto
+        cuesta y cuánto tarda. Si no nos convence, también te lo decimos.
+      </p>
+    </div>
+
+    <form id="formulario-contacto" class="contacto__formulario revelar">
+      <div class="contacto__campo">
+        <label for="campo-nombre">Nombre y apellido <span class="contacto__requerido" aria-hidden="true">*</span></label>
+        <input type="text" id="campo-nombre" name="nombre" required autocomplete="name" />
+      </div>
+
+      <div class="contacto__campo">
+        <label for="campo-correo">Correo <span class="contacto__requerido" aria-hidden="true">*</span></label>
+        <input type="email" id="campo-correo" name="correo" required autocomplete="email" />
+      </div>
+
+      <div class="contacto__campo">
+        <label for="campo-whatsapp">WhatsApp <span class="contacto__requerido" aria-hidden="true">*</span></label>
+        <input type="tel" id="campo-whatsapp" name="whatsapp" required autocomplete="tel" />
+      </div>
+
+      <div class="contacto__campo">
+        <label for="campo-industria"
+          >¿En qué industria trabajás y hace cuánto? <span class="contacto__requerido" aria-hidden="true">*</span></label
+        >
+        <input type="text" id="campo-industria" name="industria" required />
+      </div>
+
+      <div class="contacto__campo">
+        <label for="campo-problema"
+          >¿Qué problema querés resolver, y para quién? <span class="contacto__requerido" aria-hidden="true">*</span></label
+        >
+        <textarea id="campo-problema" name="problema" rows="4" required></textarea>
+      </div>
+
+      <div class="contacto__campo">
+        <label for="campo-usuarios"
+          >¿Quiénes serían tus primeros diez usuarios? ¿Ya los conocés? <span
+            class="contacto__requerido"
+            aria-hidden="true">*</span
+          ></label
+        >
+        <textarea id="campo-usuarios" name="usuarios" rows="4" required></textarea>
+      </div>
+
+      <div class="contacto__campo">
+        <label for="campo-plazo">¿Para cuándo necesitás estar en el mercado?</label>
+        <input type="text" id="campo-plazo" name="plazo" />
+      </div>
+
+      <div class="contacto__campo">
+        <label for="campo-presupuesto"
+          >¿Tenés un presupuesto asignado? <span class="contacto__requerido" aria-hidden="true">*</span></label
+        >
+        <select id="campo-presupuesto" name="presupuesto" required>
+          <option value="" disabled selected>Elegí una opción</option>
+          {presupuestos.map((opcion) => <option value={opcion}>{opcion}</option>)}
+        </select>
+      </div>
+
+      <div class="contacto__trampa" aria-hidden="true">
+        <label for="campo-empresa">Empresa</label>
+        <input type="text" id="campo-empresa" name="nombre_empresa" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <input type="hidden" id="campo-ts" name="ts" value="" />
+
+      <div class="contacto__envio">
+        <Cta tipo="submit">Enviar</Cta>
+        <p class="contacto__nota">
+          Te respondemos en menos de 24 horas hábiles. Si vemos que no somos el equipo correcto para
+          tu proyecto, también te lo decimos.
+        </p>
+      </div>
+
+      <div class="contacto__estado" role="status" aria-live="polite">
+        <p class="contacto__mensaje contacto__mensaje--exito" hidden>
+          Listo. Recibimos tu mensaje y te escribimos en menos de 24 horas hábiles.
+        </p>
+        <p class="contacto__mensaje contacto__mensaje--error" hidden>
+          No se pudo enviar. Escribinos por <a href={ENLACE_WHATSAPP}>WhatsApp</a> y lo resolvemos
+          ahí.
+        </p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script is:inline>
+  document.getElementById('campo-ts').value = String(Date.now());
+
+  (function () {
+    var form = document.getElementById('formulario-contacto');
+    var boton = form.querySelector('.cta');
+    var mensajeExito = form.querySelector('.contacto__mensaje--exito');
+    var mensajeError = form.querySelector('.contacto__mensaje--error');
+
+    form.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+
+      mensajeExito.hidden = true;
+      mensajeError.hidden = true;
+      boton.disabled = true;
+
+      var datos = {};
+      new FormData(form).forEach(function (valor, clave) {
+        datos[clave] = valor;
+      });
+
+      fetch('/api/contacto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos),
+      })
+        .then(function (respuesta) {
+          if (!respuesta.ok) throw new Error('respuesta no ok');
+          mensajeExito.hidden = false;
+          form
+            .querySelectorAll('input:not([type="hidden"]), textarea, select')
+            .forEach(function (campo) {
+              campo.disabled = true;
+            });
+        })
+        .catch(function () {
+          mensajeError.hidden = false;
+          boton.disabled = false;
+        });
+    });
+  })();
+</script>
+
+<style>
+  .contacto__cabecera {
+    max-width: 68ch;
+    margin-bottom: var(--e7);
+  }
+
+  .contacto__titulo {
+    font-family: var(--display);
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    margin-bottom: var(--e4);
+  }
+
+  /* Contraste de peso interno: el planteo va liviano, el remate ("nada,
+     hasta que alguien la use.") en 900 -- mismo peso que el h1 del hero
+     (--t-display-xl), un eco tipografico intencional entre la apertura y
+     el cierre de la pagina. display:block en los dos: mismo salto de
+     linea forzado que Problema/Proceso, sin <br> ni parrafos sueltos. */
+  .contacto__titulo-liviano,
+  .contacto__titulo-fuerte {
+    display: block;
+  }
+
+  .contacto__titulo-liviano {
+    font-variation-settings: 'wght' 500, 'wdth' 112;
+  }
+
+  .contacto__titulo-fuerte {
+    font-variation-settings: 'wght' 900, 'wdth' 115;
+  }
+
+  .contacto__intro {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--papel);
+  }
+
+  .contacto__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e4);
+    max-width: 62ch;
+  }
+
+  .contacto__campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e1);
+  }
+
+  .contacto__campo label {
+    font-family: var(--cuerpo);
+    font-weight: 600;
+    font-size: var(--t-cuerpo);
+    color: var(--papel);
+  }
+
+  .contacto__requerido {
+    color: var(--laton);
+  }
+
+  .contacto__campo input,
+  .contacto__campo textarea,
+  .contacto__campo select {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--papel);
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e2);
+  }
+
+  .contacto__campo textarea {
+    resize: vertical;
+    min-height: 6em;
+  }
+
+  .contacto__campo input:focus-visible,
+  .contacto__campo textarea:focus-visible,
+  .contacto__campo select:focus-visible {
+    border-color: var(--laton);
+  }
+
+  /* Honeypot: invisible para personas, presente para bots simples que
+     rellenan cualquier campo de texto que encuentren. Nunca display:none
+     ni visibility:hidden -- algunos bots los detectan y los saltean. */
+  .contacto__trampa {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .contacto__envio {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--e3);
+    margin-top: var(--e2);
+  }
+
+  .contacto__nota {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
+    max-width: 48ch;
+  }
+
+  .contacto__mensaje {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    font-weight: 600;
+    padding: var(--e3);
+    border: var(--borde);
+  }
+
+  .contacto__mensaje--exito {
+    color: var(--verde-luz);
+    border-color: var(--verde);
+  }
+
+  .contacto__mensaje--error {
+    color: var(--papel);
+  }
+
+  .contacto__mensaje--error a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

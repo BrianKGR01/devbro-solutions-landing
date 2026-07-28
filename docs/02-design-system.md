@@ -21,15 +21,15 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
 ```css
 :root {
   /* ---- Base ---- */
-  --tinta:        #080B09;   /* fondo principal. Negro con base verde */
+  --tinta:        #080B09;   /* fondo principal (negro con base verde). Tambien texto primario sobre --papel */
   --tinta-2:      #0F1512;   /* superficies elevadas */
   --tinta-3:      #18201C;   /* tarjetas */
-  --papel:        #EDEFEA;   /* fondo de secciones invertidas */
+  --papel:        #EDEFEA;   /* fondo de secciones invertidas. Tambien texto primario sobre --tinta */
   --humo:         #8A968F;   /* texto secundario sobre oscuro */
   --humo-papel:   #56605A;   /* texto secundario sobre papel */
 
   /* ---- Verde metálico ---- */
-  --verde-noche:  #0C2A1E;   /* superficies teñidas, sombras sólidas */
+  --verde-noche:  #0C2A1E;   /* superficies teñidas (relleno de la placa). NO sombras (D17) */
   --verde-base:   #145239;   /* relleno de botones */
   --verde:        #1D7A52;   /* bordes, íconos, títulos grandes */
   --verde-luz:    #4FA57C;   /* TEXTO de acento sobre oscuro */
@@ -76,6 +76,24 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
   /* ---- Movimiento ---- */
   --salida: cubic-bezier(0.16, 1, 0.3, 1);
   --entrada: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* ---- Escala tipográfica (detalle de uso en §3) ---- */
+  --t-display-xl: clamp(2.25rem, 8.2vw, 6rem); /* hero */
+  --t-display-l:  clamp(2.1rem, 5vw, 3.6rem); /* títulos de sección */
+  --t-titulo:     1.5rem;
+  --t-cuerpo-l:   1.125rem;
+  --t-cuerpo:     1rem;
+  --t-etiqueta:   0.75rem;
+  --t-dato:       clamp(2rem, 4vw, 3.5rem);
+
+  /* ---- Alto real de la Barra sticky (detalle en §8, D15/D21) ---- */
+  --barra-alto: 74px;
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --barra-alto: 83px;
+  }
 }
 ```
 
@@ -86,7 +104,7 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
 | **Máximo 12% de superficie verde** por pantalla | El verde marca acción, estado y dato. El resto es tinta y papel |
 | **`--laton` solo en numerales y filetes** | Si aparece en más de tres lugares por pantalla, sobra |
 | **`--verde-filo` es luz reflejada** | Nunca como relleno plano |
-| **`--metal` solo en tres lugares** | Filo del botón primario, borde de la placa, reglas divisorias |
+| **`--metal` solo en tres lugares** | Filo del botón primario, borde de la placa, filo del botón flotante de WhatsApp |
 | **Nunca `--metal` como fondo de sección** | Es lo que hace ver "SaaS genérico" |
 
 ### Contraste — verificado, respetalo
@@ -98,8 +116,11 @@ Archivo único: `src/styles/tokens.css`. Copiar tal cual.
 | `--papel` sobre `--verde-base` | 7,6:1 | ✅ Texto en botón primario |
 | `--tinta` sobre `--papel` | 15:1 | ✅ Secciones invertidas |
 | `--humo` sobre `--tinta` | 6,9:1 | ✅ Texto secundario |
+| `--laton` sobre `--tinta` | 7,9:1 | ✅ Contraste alto, pero restringido igual a numerales/filetes por la regla de uso de arriba, no por contraste |
 
 > **Regla derivada, importante:** el texto de acento dentro de párrafos usa **`--verde-luz`**, nunca `--verde`.
+
+> **`--verde-noche` no está en esta tabla a propósito:** contra `--tinta` da 1,29:1 (D17, ver `docs/06-decisiones.md`) — casi invisible. Es superficie teñida (relleno de la placa), nunca texto ni sombra.
 
 ---
 
@@ -125,7 +146,7 @@ font-variation-settings: 'wght' 900, 'wdth' 118;
 ### Escala
 
 ```css
---t-display-xl: clamp(3rem, 9vw, 6.5rem);   /* hero */
+--t-display-xl: clamp(2.25rem, 8.2vw, 6rem);   /* hero. Minimo bajado en D11/D12, ver docs/06-decisiones.md */
 --t-display-l:  clamp(2.1rem, 5vw, 3.6rem); /* títulos de sección */
 --t-titulo:     1.5rem;
 --t-cuerpo-l:   1.125rem;
@@ -137,20 +158,22 @@ font-variation-settings: 'wght' 900, 'wdth' 118;
 | Rol | Ajustes |
 |---|---|
 | Display XL | Archivo `wght 900 wdth 118` · `letter-spacing: -0.03em` · `line-height: 0.88` |
-| Display L | Archivo `wght 800 wdth 115` · `letter-spacing: -0.02em` · `line-height: 0.94` |
+| Display L | Archivo `wght 800 wdth 115` · `letter-spacing: -0.02em` · `line-height: 0.94` · `text-wrap: balance` |
 | Título | Archivo `wght 800 wdth 112` · `line-height: 1.1` |
-| Cuerpo | Inter Tight 400 · `line-height: 1.65` · `max-width: 62ch` |
+| Cuerpo | Inter Tight 400 · `line-height: 1.65` · `max-width: 62ch` · color primario (`--papel` sobre `--tinta`, `--tinta` sobre `--papel`) |
 | Etiqueta | JetBrains Mono 700 · `letter-spacing: 0.12em` · MAYÚSCULAS |
 | Dato | JetBrains Mono 700 · `font-variant-numeric: tabular-nums` |
 
 > **Detalle crítico:** los titulares llevan `line-height` por debajo de 1 y tracking negativo. Deben verse **compactados**, como tipos de metal apretados. Es lo que separa neobrutalismo bien hecho de "letra grande y negrita".
+
+> **`text-wrap: balance` en Display L (Fase 3):** verificado en `Problema.astro` — sin esto, "Tenés el problema. Tenés la plata..." cortaba en "Tenés el problema. Tenés / la plata...", separando la primera oración de su continuación. Con `balance` corta en "Tenés el problema. / Tenés la plata...", respetando el límite de oración. Es una mejora progresiva (si el navegador no la soporta, cae a wrap normal sin roturas) — regla base para todo título en Display L, no solo para Problema.
 
 ---
 
 ## 4. Layout
 
 - Contenedor: `max-width: var(--ancho-max)`, centrado, `padding-inline: var(--pad-lateral)`
-- Padding vertical de sección: `clamp(var(--e7), 12vh, var(--e9))`
+- Padding vertical de sección: `clamp(var(--e7), 12vh, var(--e9))`. **Excepción bajo 640px (D15, ver `docs/06-decisiones.md`):** `padding-block: var(--e6)`. El clamp resuelve a su piso (`--e7` = 96px) en móvil, y dos secciones apiladas suman 192px de vacío entre ellas — casi un tercio de una pantalla de 640px de alto. Por debajo de 640px se usa el escalón `--e6` (64px) en su lugar
 - Retícula de fondo: líneas de 1px cada 80px en `--reticula`, fija al fondo. Sutil pero presente. Se oculta en secciones de papel
 
 ```css
@@ -169,7 +192,7 @@ body {
 
 ### Reglas transversales
 - `border-radius: 0` en todo. Única excepción: chaflanes de la placa
-- Sombras sólidas sin desenfoque: `box-shadow: 6px 6px 0 var(--verde-noche)`
+- Sombras sólidas sin desenfoque: `box-shadow: 6px 6px 0 var(--verde)`. **No `var(--verde-noche)`** (D17, ver `docs/06-decisiones.md`): contra `--tinta`, `--verde-noche` da 1,29:1 de contraste — prácticamente invisible, no una sombra dura. `--verde-noche` sigue existiendo para superficies teñidas (relleno de la placa); no es el color de sombra
 - Bordes de 2px. Nunca 1px
 
 ### Botón primario — *filo metálico*
@@ -183,19 +206,32 @@ El degradado metálico va en el **borde**, no en el relleno. Así el texto siemp
   font-family: var(--display);
   font-variation-settings: 'wght' 800, 'wdth' 112;
   font-size: 0.95rem;
+  text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--papel);
+  cursor: pointer;
+  /* Un boton nunca envuelve a una segunda linea, sin importar cuanto lo
+     aprieten sus contenedores flex (D15) */
+  white-space: nowrap;
+  transition: transform 120ms var(--salida), box-shadow 120ms var(--salida);
+}
+.cta--primario {
   background: var(--relleno-cta);
   border: 2px solid transparent;
   border-image: var(--metal) 1;
-  box-shadow: 5px 5px 0 var(--verde-noche);
-  transition: transform 120ms var(--salida), box-shadow 120ms var(--salida);
+  box-shadow: 5px 5px 0 var(--verde);
 }
-.cta:hover  { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--verde-noche); }
-.cta:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--verde-noche); }
-.cta:focus-visible { outline: 3px solid var(--laton); outline-offset: 3px; }
+.cta--secundario {
+  background: transparent;
+  border: 2px solid var(--humo);
+  box-shadow: 5px 5px 0 var(--verde);
+}
+.cta:hover  { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--verde); }
+.cta:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--verde); }
 ```
+
+El foco de teclado no lo pone el componente: lo pone la regla global de `base.css` (D4) — `:focus-visible { outline: 3px solid var(--laton); outline-offset: 3px; }` sobre todo elemento interactivo del sitio, botón incluido.
 
 El botón **se hunde** al presionarse. Es la microinteracción principal del sitio y la única que hace falta.
 
@@ -219,7 +255,7 @@ Transparente, `border: 2px solid var(--humo)`, texto `--papel`. Mismo comportami
 }
 .ficha--destacada {
   border: var(--borde-fuerte);
-  box-shadow: 8px 8px 0 var(--verde-noche);
+  box-shadow: 8px 8px 0 var(--verde);
 }
 ```
 
@@ -231,6 +267,19 @@ Mono, mayúsculas, `border: 2px solid`, fondo transparente, `padding: 4px 10px`.
 
 ### Botón flotante de WhatsApp
 Cuadrado de 56px, esquina inferior derecha, `bottom: 24px; right: 24px`. Fondo `--verde-base`, borde metálico, sombra sólida. Ícono SVG inline, sin librería. Aparece con fade al salir del hero. `aria-label="Escribinos por WhatsApp"`.
+
+### Subrayado en `--laton` — recurso de énfasis acotado (D24)
+
+```css
+.subrayado-laton {
+  text-decoration: underline;
+  text-decoration-color: var(--laton);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+```
+
+**Limitado a dos lugares en toda la página**, no es un estilo de texto de uso libre: el remate de `#experiencia` ("Y por eso también sabemos decir que no.") y, dentro del párrafo de apertura de `#contacto`, **solo la primera oración** ("Una reunión de una hora.") — no el párrafo completo. Subrayar las dos líneas enteras se leía como un hipervínculo justo arriba del formulario, invitando a hacerle clic. Si hiciera falta un tercer lugar, es una señal para volver a esta sección y decidir si la restricción sigue teniendo sentido — no agregarlo en silencio.
 
 ---
 
@@ -295,10 +344,65 @@ Todo bajo `@media (prefers-reduced-motion: reduce)` se desactiva.
 
 | Nombre | Ancho | Cambios principales |
 |---|---|---|
-| Móvil | < 640px | Todo a una columna. Placa arriba del titular, centrada, rotación reducida a `-3deg`. Menú colapsa a solo el CTA |
-| Tableta | 640-1023px | Grillas de 3 columnas pasan a 2. Hero sigue en una columna |
-| Escritorio | ≥ 1024px | Hero en dos columnas (texto izquierda, placa derecha). Grillas completas |
+| Móvil | < 640px | Todo a una columna: antetítulo → titular → placa → párrafo/botones/microcopia. Placa centrada, rotación reducida a `-3deg`. Menú detrás de un botón, en panel de pantalla completa (D21) |
+| Tableta | 640-1023px | Grillas de 3 columnas pasan a 2. Hero sigue en una columna, mismo orden que móvil (placa centrada, `-6deg` desde 640px) |
+| Escritorio | ≥ 1024px | El titular del hero sigue a ancho completo (no comparte fila con la placa — ver Fase 3). La placa pasa a compartir fila con el bloque párrafo + botones + microcopia, no con el titular. Grillas completas |
+
+**Nota sobre el hero (decidido en Fase 3, ver `docs/06-decisiones.md` D12):** el titular (`--t-display-xl`) nunca comparte columna con la placa — la placa mide 428px de ancho rotada y ninguna combinación razonable de columna + tamaño de fuente entra sin sacrificar la jerarquía tipográfica o el tamaño del titular. El titular ocupa siempre el ancho completo del contenedor; la placa se reubica junto al bloque de párrafo/botones/microcopia a partir del breakpoint de escritorio (1024px).
+
+**Orden en móvil/tableta (D13, ver `docs/06-decisiones.md`):** la placa va **después** del titular, no antes. Medido a 360×640 (el "pliegue" de una pantalla de celular típica): con la placa primero, el titular quedaba al filo del pliegue (borde inferior a 532px de 640, sin margen real) y el CTA primario siempre queda fuera (707px) sin importar el orden — la altura total no cambia por reordenar. Con antetítulo → titular → placa, el mensaje completo **y** la placa entran enteros en el primer pantallazo sin scroll; el CTA sigue pidiendo scroll, pero eso es normal en cualquier hero mobile y no vale la pena achicar la placa (habría que bajarla a ~17% de su tamaño actual para evitarlo, lo que la destruye como elemento firma) para evitarlo.
+
+**Barra de navegación (D14, corregido en D15, rediseñado en D21 — ver `docs/06-decisiones.md`):** la Barra tiene sus propios breakpoints, distintos de los de arriba. **Un solo corte, en 1024px:**
+
+- **`< 1024px`: wordmark completo + botón de menú.** El CTA **no** está en la barra: vive al final del panel del menú. Sin el CTA sobra ancho, así que el wordmark va entero (antes iba reducido a "DEVBRO" bajo 640px).
+- **`≥ 1024px`: wordmark + enlaces en línea + CTA**, sin botón ni panel. El CTA alterna entre "compacto" (`--t-etiqueta`, padding 8×14) y "cómodo" (0.8rem, padding 12×20) para garantizar una sola línea:
+  - `1024-1199px`: nav compacta (JetBrains Mono, `--t-etiqueta`, gap `--e2`) **y** CTA compacto, gap del contenedor `--e1`. Medido: 882px de contenido contra 1024px disponibles, ~4,3% de margen — el punto más ajustado de toda la barra.
+  - `≥ 1200px` (= `--ancho-max`): nav completa (Inter Tight, `--t-cuerpo`, gap `--e4`) y CTA cómodo. ~9,9% de margen.
+
+**Panel del menú (`< 1024px`, D21):**
+- Pantalla completa (`position: fixed; inset: 0`), fondo `--tinta`. **No** es un drawer lateral y no tiene esquinas redondeadas.
+- La fila de la barra queda **por encima** del panel, para que el botón de cerrar siga visible.
+- Cada enlace: numeral de dos dígitos en `--mono`/`--laton` a la izquierda + título en Archivo `clamp(1.5rem, 6vw, 2.25rem)`, separados por filetes de `--borde`. Se lee como el índice de una orden de trabajo, no como una lista de navegación.
+- El CTA cierra el panel, a ancho completo, como acción principal.
+- Ícono: tres barras de 3px que se convierten en X (la del medio se apaga, las otras se juntan 6px al centro y rotan ±45°). Transición de 180ms, anulada bajo `prefers-reduced-motion`.
+- **Contrato de accesibilidad, obligatorio:** `aria-expanded` + `aria-controls` en el botón · `Escape` cierra · trampa de foco mientras está abierto · al cerrar, el foco vuelve al botón · scroll del `body` bloqueado · todo hermano del `<header>` con `inert`. Además: si el viewport pasa a `≥ 1024px` con el panel abierto, se cierra por script — sin eso, el `inert` y el scroll bloqueado quedarían puestos y la página entera quedaría inutilizable.
+
+**Alto real de la Barra y `scroll-margin-top` (D15, resimplificado en D21):** la Barra es sticky. Desde el rediseño móvil su alto real tiene **un solo escalón**, no tres: **74px** bajo 1200px (el wordmark + botón de móvil y el CTA compacto de 1024-1199px dan la misma altura) y **83px** desde 1200px, con el CTA cómodo. Vive en `--barra-alto` (`tokens.css`) como variable responsive — nunca un número suelto, porque se desincroniza en cuanto cambia la composición de la barra (que es exactamente lo que pasó al rediseñarla: el valor de 640-1023px quedó 9px de más). Todo destino de ancla (`.seccion` y `#contenido` del skip link) usa `scroll-margin-top: calc(var(--barra-alto) + var(--e2))`; el panel del menú usa el mismo token para su `padding-top`.
+
+**Paquetes (D16, ver `docs/06-decisiones.md`):** `Paquetes.astro` rompe la regla general de grillas de esta sección en dos puntos, decididos antes de construir el componente:
+- Las 3 columnas pasan a **1 sola** por debajo de 1024px, no a 2 — un 2+1 en tableta rompe la comparación entre paquetes y deja uno huérfano solo en su fila. No usa `.grilla-3`.
+- En la columna única, **LANZAMIENTO va primero**, no en el medio (el orden del documento — SONDA, LANZAMIENTO, EXPEDICIÓN — se mantiene en el DOM; solo el orden visual cambia vía `order` CSS por debajo de 1024px).
 
 **Regla base:** mobile-first. Escribí el CSS para 360px y ampliá con `min-width`.
 
 **Verificación obligatoria a 360px:** ningún desbordamiento horizontal, ningún texto cortado, la placa entera visible, todos los CTA alcanzables con el pulgar.
+
+---
+
+## 9. Identidad: favicon y Open Graph (D25)
+
+### Favicon (`public/favicon.svg`)
+
+Cuadrado achaflanado de 32×32 (mismo lenguaje que la placa: `clip-path` vía polígono, nunca `border-radius` — D2), fondo `--tinta`, borde `--verde` de 2px. Adentro, una **D** construida como dos polígonos (silueta + hueco achaflanado), no como texto ni como arco:
+
+- **No es texto:** un favicon standalone no puede cargar la fuente autohospedada Archivo (fuera del documento, no hereda `@font-face` de `base.css`); un `<text>` habría caído a la fuente del sistema.
+- **No es un arco:** el contorno redondeado del vientre de una D clásica se reemplazó por un corte a 45° para que la letra hable el mismo idioma que la placa en vez de introducir una curva que no aparece en ningún otro lado de la marca.
+- **Hex duplicados de `tokens.css`, no nuevos:** un SVG standalone no puede leer custom properties del documento que lo referencia. Los valores (`#080B09`, `#1D7A52`, `#EDEFEA`) son copia literal de `--tinta`/`--verde`/`--papel`, comentado en el archivo.
+- **Verificado a tamaño real:** renderizado con Playwright a 16px y 32px reales (no una versión grande escalada a ojo) — la D se lee con claridad en los dos tamaños, no hizo falta el fallback a silueta sólida.
+
+`public/favicon.ico` (16/32/48px, frames PNG embebidos en un contenedor ICO mínimo escrito a mano — sin librería nueva) y `public/apple-touch-icon.png` (180×180, mismo diseño pero con fondo `--tinta` a sangre completa, sin esquinas transparentes que iOS tendría que rellenar por su cuenta) se derivan del mismo `favicon.svg`.
+
+**Contradice `docs/01-brief.md` §6:** la "versión reducida" documentada ahí (`DEVBRO` sin `SOLUTIONS`) ya no se usa para el favicon — se reemplaza por la D aislada de esta sección. `01-brief.md` §6 se actualiza para reflejarlo.
+
+### Open Graph (`src/pages/og.astro` → `public/og.png`)
+
+Ruta oculta (`noindex`, sin enlace desde la nav, fuera del sitemap) que renderiza un lienzo fijo de 1200×630 — no responsive, se genera una sola vez y se descarta:
+
+- Fondo `--tinta` + retícula (mismos valores que `body`, `docs/02` §4)
+- Wordmark **completo** ("DEVBRO · SOLUTIONS", no la versión reducida — a diferencia del favicon, acá el ancho sobra) arriba a la izquierda
+- Titular del hero ("Tu idea, funcionando, en tres semanas.") en Archivo 900/wdth 118, `4.25rem`
+- La placa a la derecha, en su estado final (numeral `03`, sin transform) — se logra emulando `prefers-reduced-motion: reduce` al capturar, así el script de conteo nunca arranca; el CSS por defecto de `Placa.astro` ya es el estado final, por diseño (Fase 2)
+
+**Verificado:** capturado con Playwright a 1200×630 exactos y también reescalado a ~300px de ancho (miniatura de WhatsApp) — el titular se lee con claridad a ese tamaño; el grabado y "SEMANAS" de la placa no se leen a miniatura, lo cual es aceptable porque son detalle decorativo, no el mensaje.
+
+**Contradice `docs/01-brief.md` §6** en la dirección opuesta al favicon: ahí el wordmark completo es la versión "normal" y la reducida es solo para favicon/OG. Para OG se usa la versión completa a propósito (hay espacio de sobra en un lienzo de 1200px). `01-brief.md` §6 se actualiza.

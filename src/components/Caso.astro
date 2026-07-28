@@ -1,0 +1,144 @@
+---
+// #caso (docs/03-content.md §08, docs/06-decisiones.md D9, D20, D22).
+// Version anonimizada (D20): sin marco de imagen y sin el bloque "Lo que
+// construimos". Compactada en D22: "Tiempo" pasa de fila de ficha a un
+// numeral enorme con --t-dato -- token de la escala tipografica definido
+// para esto (docs/02-design-system.md §3) y que hasta ahora no se usaba
+// en ningun lado. Le da peso real al bloque en escritorio sin inventar
+// una imagen que no existe. Queda un solo {{PENDIENTE}} (el rubro),
+// visible a proposito via .pendiente (utilidades.css).
+---
+
+<section id="caso" class="seccion">
+  <div class="contenedor">
+    <div class="caso revelar">
+      <p class="caso__etiqueta">CASO 001</p>
+
+      <h2 class="caso__titulo">ERP completo, en tres semanas.</h2>
+
+      <div class="caso__cuerpo">
+        <div class="caso__problema">
+          <p class="caso__problema-etiqueta">El problema</p>
+          <p class="caso__problema-texto pendiente">{'{{PENDIENTE: rubro y qué resolvía}}'}</p>
+        </div>
+
+        <div class="caso__estadistica">
+          <p class="caso__estadistica-numero">3</p>
+          <p class="caso__estadistica-etiqueta">Semanas de construcción</p>
+          <p class="caso__estadistica-estado">
+            <span class="caso__estadistica-punto" aria-hidden="true"></span>
+            En validación con usuarios reales
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .caso__etiqueta {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    color: var(--laton);
+    margin-bottom: var(--e2);
+  }
+
+  .caso__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 20ch;
+    margin-bottom: var(--e6);
+    text-wrap: balance;
+  }
+
+  .caso__cuerpo {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e4);
+  }
+
+  @media (min-width: 640px) {
+    .caso__cuerpo {
+      /* El problema toma mas espacio que la estadistica: es texto, no un
+         numeral solo. */
+      grid-template-columns: 1.4fr 1fr;
+      align-items: stretch;
+    }
+  }
+
+  .caso__problema,
+  .caso__estadistica {
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+  }
+
+  .caso__problema-etiqueta {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--laton);
+    margin-bottom: var(--e2);
+  }
+
+  .caso__problema-texto {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.5;
+  }
+
+  /* .pendiente (utilidades.css) ya pone --humo + italica; sin este
+     override quedaria en --papel (heredado de .caso__problema-texto) por
+     especificidad -- Astro le da mas peso al selector con scope propio
+     que a la clase global. */
+  .caso__problema-texto.pendiente {
+    color: var(--humo);
+    font-style: italic;
+  }
+
+  /* Numeral enorme con --t-dato (docs/02-design-system.md §3: "JetBrains
+     Mono 700, tabular-nums" -- definido para esto, no usado en ningun
+     otro lado del sitio todavia). --verde-luz, no --verde-filo: ese es
+     "uso puntual" (Placa.astro) y no corresponde repetirlo aca. */
+  .caso__estadistica-numero {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-dato);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--verde-luz);
+    margin-bottom: var(--e2);
+  }
+
+  .caso__estadistica-etiqueta {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--papel);
+    margin-bottom: var(--e3);
+  }
+
+  .caso__estadistica-estado {
+    display: flex;
+    align-items: center;
+    gap: var(--e2);
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
+  }
+
+  .caso__estadistica-punto {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--verde-luz);
+  }
+</style>

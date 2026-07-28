@@ -1,0 +1,127 @@
+---
+// Pie de pagina (docs/03-content.md §11). Fondo --tinta, no --papel (ver
+// docs/01-brief.md tabla de secciones). Correo y WhatsApp reales desde
+// D24 (docs/06-decisiones.md) -- ya no son {{PENDIENTE}}.
+// Sin "S.A." en ningun lado (regla dura de CLAUDE.md).
+import Wordmark from './Wordmark.astro';
+import { ENLACES_NAV } from '../lib/navegacion';
+import { ENLACE_WHATSAPP } from '../lib/whatsapp';
+---
+
+<footer class="pie">
+  <div class="contenedor">
+    <div class="pie__superior">
+      <div class="pie__marca">
+        <a href="#inicio" class="pie__wordmark-link" aria-label="DevBro Solutions, inicio">
+          <Wordmark />
+        </a>
+        <p class="pie__tagline">Software factory. Santa Cruz de la Sierra, Bolivia.</p>
+      </div>
+
+      <nav class="pie__columna" aria-label="Navegación del pie de página">
+        <p class="pie__columna-titulo">Página</p>
+        <ul class="pie__lista">
+          {
+            ENLACES_NAV.map((enlace) => (
+              <li>
+                <a href={enlace.href}>{enlace.texto}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="pie__columna">
+        <p class="pie__columna-titulo">Contacto</p>
+        <ul class="pie__lista">
+          <li>
+            <a href="mailto:info@devbro.xyz">info@devbro.xyz</a>
+          </li>
+          <li>
+            <a href={ENLACE_WHATSAPP} target="_blank" rel="noopener noreferrer">+591 75020808</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pie__inferior">
+      <p class="pie__copyright">© 2026 DEVBRO SOLUTIONS</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    background-color: var(--tinta);
+    padding-block: var(--e7) var(--e5);
+  }
+
+  .pie__superior {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e6);
+    padding-bottom: var(--e6);
+    border-bottom: var(--borde);
+  }
+
+  @media (min-width: 640px) {
+    .pie__superior {
+      grid-template-columns: 1.5fr 1fr 1fr;
+    }
+  }
+
+  .pie__marca {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e2);
+  }
+
+  .pie__wordmark-link {
+    display: inline-flex;
+    align-self: flex-start;
+  }
+
+  .pie__tagline {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
+    max-width: 32ch;
+  }
+
+  .pie__columna-titulo {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--laton);
+    margin-bottom: var(--e3);
+  }
+
+  .pie__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e2);
+  }
+
+  .pie__lista a {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
+    transition: color 120ms var(--salida);
+  }
+
+  .pie__lista a:hover {
+    color: var(--papel);
+  }
+
+  .pie__inferior {
+    padding-top: var(--e5);
+  }
+
+  .pie__copyright {
+    font-family: var(--mono);
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.06em;
+    color: var(--humo);
+  }
+</style>
