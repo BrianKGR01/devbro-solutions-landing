@@ -1,7 +1,8 @@
 ---
 // Barra de navegación superior, sticky (docs/03-content.md §00, docs/02-design-system.md §8,
-// docs/05-roadmap.md Fase 3). En móvil (<640px) colapsa a solo el CTA: sin wordmark,
-// sin enlaces, sin hamburguesa -- simplificación deliberada, no hay drawer en este proyecto.
+// docs/05-roadmap.md Fase 3). "El menú colapsa a solo el CTA" se refiere a los enlaces de
+// navegación, no a la marca: el wordmark (reducido en móvil) y el CTA están siempre visibles.
+// Sin hamburguesa/drawer -- simplificación deliberada, no existe en este proyecto.
 import Wordmark from './Wordmark.astro';
 import Cta from './Cta.astro';
 
@@ -16,7 +17,8 @@ const enlaces = [
 <header class="barra">
   <div class="contenedor barra__fila">
     <a href="#inicio" class="barra__wordmark" aria-label="DevBro Solutions, inicio">
-      <Wordmark />
+      <span class="barra__wordmark-reducido"><Wordmark reducido /></span>
+      <span class="barra__wordmark-completo"><Wordmark /></span>
     </a>
 
     <nav class="barra__nav" aria-label="Navegación principal">
@@ -56,14 +58,31 @@ const enlaces = [
     padding-block: var(--e2);
   }
 
-  /* Móvil: solo el CTA (docs/05-roadmap.md Fase 3) */
-  .barra__wordmark,
+  /* Wordmark y CTA siempre visibles ("el menu colapsa a solo el CTA" es
+     sobre los enlaces de nav, no sobre la marca). Version reducida (solo
+     DEVBRO) por defecto, completa desde 640px -- misma logica que
+     Wordmark.astro ya prevé para movil/favicon/OG. */
+  .barra__wordmark {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .barra__wordmark-completo {
+    display: none;
+  }
+
   .barra__nav {
     display: none;
   }
 
-  .barra__cta {
-    margin-inline-start: auto;
+  @media (min-width: 640px) {
+    .barra__wordmark-reducido {
+      display: none;
+    }
+
+    .barra__wordmark-completo {
+      display: inline-flex;
+    }
   }
 
   /* El CTA de Barra.astro no necesita ser tan grande como el del hero;
@@ -74,36 +93,34 @@ const enlaces = [
     font-size: 0.8rem;
   }
 
-  /* Wordmark + nav + CTA piden 973px de contenido (medido, no estimado:
-     wordmark 175px + lista de enlaces 511px + cta 239px + 2 gaps de 24px).
-     Con el padding lateral fluido eso recien entra con margen real desde
-     ~1200px de viewport -- no desde los 640px del resto del sitio. A 640px
-     el texto de los enlaces se comprimía y envolvía dentro de su propio
-     item, inflando la barra a 140px y desbordando horizontalmente.
-     1200px = --ancho-max (no se puede usar var() en un media query, se
-     repite el valor literal), da ~9,9% de margen. */
-  @media (min-width: 1200px) {
-    .barra__wordmark {
-      display: inline-flex;
-    }
+  /* Con los enlaces a tamaño --t-cuerpo (nav "completa") wordmark+nav+cta
+     piden 973px de contenido (medido: wordmark 175px + lista 511px + cta
+     239px + 2 gaps de 24px) -- eso recién entra con margen real desde
+     ~1200px (= --ancho-max, no se puede usar var() en un media query, se
+     repite el valor literal; ~9,9% de margen).
 
+     Entre 1024px (el breakpoint de escritorio que ya usa el resto del
+     sitio -- un iPad horizontal) y 1199px NO entra a ese tamaño, pero sí
+     entra una nav "compacta" en mono/--t-etiqueta con gap --e2: medido,
+     922px de contenido contra 1024px disponibles, 10% de margen. Por eso
+     hay dos tratamientos de .barra__enlace en cascada: el compacto nace
+     en 1024px, el completo lo reemplaza en 1200px. */
+  @media (min-width: 1024px) {
     .barra__nav {
       display: block;
-    }
-
-    .barra__cta {
-      margin-inline-start: 0;
     }
 
     .barra__lista {
       display: flex;
       align-items: center;
-      gap: var(--e4);
+      gap: var(--e2);
     }
 
     .barra__enlace {
-      font-family: var(--cuerpo);
-      font-size: var(--t-cuerpo);
+      font-family: var(--mono);
+      font-size: var(--t-etiqueta);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--humo);
       white-space: nowrap;
       transition: color 120ms var(--salida);
@@ -111,6 +128,19 @@ const enlaces = [
 
     .barra__enlace:hover {
       color: var(--papel);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .barra__lista {
+      gap: var(--e4);
+    }
+
+    .barra__enlace {
+      font-family: var(--cuerpo);
+      font-size: var(--t-cuerpo);
+      letter-spacing: normal;
+      text-transform: none;
     }
   }
 </style>
