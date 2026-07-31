@@ -78,11 +78,10 @@ async function avisarPorCorreo(lead: Lead): Promise<boolean> {
 
   try {
     const resend = new Resend(apiKey);
-    // onboarding@resend.dev funciona sin verificar un dominio propio --
-    // cambiar por un remitente del dominio real (docs/06-decisiones.md
-    // D3/D10) en cuanto este verificado en Resend.
+    // devbro.xyz ya esta verificado en Resend (D26, docs/06-decisiones.md):
+    // deja de usar onboarding@resend.dev.
     const { error } = await resend.emails.send({
-      from: 'DevBro Solutions <onboarding@resend.dev>',
+      from: 'DevBro Solutions <info@devbro.xyz>',
       to: destino,
       replyTo: lead.correo,
       subject: `Nuevo lead: ${lead.nombre}`,
