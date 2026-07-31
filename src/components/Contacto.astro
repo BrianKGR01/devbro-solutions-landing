@@ -91,6 +91,10 @@ const presupuestos = [
       </div>
 
       <input type="hidden" id="campo-ts" name="ts" value="" />
+      <!-- Se completa solo si se llego por el CTA de un paquete en Paquetes.astro
+           (data-paquete) -- ver script mas abajo. Vacio si se llego por
+           cualquier otro CTA ("Agendar diagnostico" del hero, la barra, etc.). -->
+      <input type="hidden" id="campo-origen" name="origen" value="" />
 
       <div class="contacto__envio">
         <Cta tipo="submit">Enviar</Cta>
@@ -114,24 +118,47 @@ const presupuestos = [
 </section>
 
 <script is:inline>
-  document.getElementById('campo-ts').value = String(Date.now());
+  function refrescarTs() {
+    document.getElementById('campo-ts').value = String(Date.now());
+  }
+  refrescarTs();
+
+  // Si el clic vino de un CTA con data-paquete (Paquetes.astro), guarda cual
+  // -- delegado en document porque Paquetes.astro no sabe nada del
+  // formulario y no deberia tener que saberlo. Sin closest(), un clic sobre
+  // el texto del boton (no el <a> mismo) no matchearia el selector.
+  document.addEventListener('click', function (evento) {
+    var origenEl = evento.target.closest('[data-paquete]');
+    if (!origenEl) return;
+    var campoOrigen = document.getElementById('campo-origen');
+    if (campoOrigen) campoOrigen.value = origenEl.getAttribute('data-paquete');
+  });
 
   (function () {
     var form = document.getElementById('formulario-contacto');
     var boton = form.querySelector('.cta');
     var mensajeExito = form.querySelector('.contacto__mensaje--exito');
     var mensajeError = form.querySelector('.contacto__mensaje--error');
+    var campos = form.querySelectorAll('input:not([type="hidden"]), textarea, select');
 
     form.addEventListener('submit', function (evento) {
       evento.preventDefault();
 
       mensajeExito.hidden = true;
       mensajeError.hidden = true;
-      boton.disabled = true;
 
+      // FormData tiene que leerse ANTES de deshabilitar los campos: un
+      // input disabled no participa en FormData, asi que deshabilitar
+      // primero manda un payload vacio (bug real, encontrado al verificar
+      // con Playwright -- solo llegaban los dos campos hidden).
       var datos = {};
       new FormData(form).forEach(function (valor, clave) {
         datos[clave] = valor;
+      });
+
+      boton.disabled = true;
+      campos.forEach(function (campo) {
+        campo.disabled = true;
       });
 
       fetch('/api/contacto', {
@@ -142,15 +169,35 @@ const presupuestos = [
         .then(function (respuesta) {
           if (!respuesta.ok) throw new Error('respuesta no ok');
           mensajeExito.hidden = false;
-          form
-            .querySelectorAll('input:not([type="hidden"]), textarea, select')
-            .forEach(function (campo) {
-              campo.disabled = true;
+
+          // Deja el mensaje de exito visible unos segundos antes de limpiar:
+          // un reset instantaneo se siente como si se hubiera perdido lo que
+          // se acababa de enviar. Al limpiar, el formulario vuelve a quedar
+          // habilitado -- por si el visitante quiere mandar una segunda
+          // consulta (otro proyecto, un dato que se le olvido) sin recargar.
+          setTimeout(function () {
+            form.reset();
+            refrescarTs();
+            // form.reset() no alcanza para un input hidden: para type=hidden
+            // el IDL "value" refleja directo el atributo del HTML (a
+            // diferencia de un input de texto, que trackea valor actual y
+            // valor por defecto por separado) -- asignarlo por JS reescribe
+            // tambien el "valor por defecto", asi que reset() lo deja tal
+            // cual quedo, no en "". Se limpia a mano.
+            document.getElementById('campo-origen').value = '';
+            mensajeExito.hidden = true;
+            boton.disabled = false;
+            campos.forEach(function (campo) {
+              campo.disabled = false;
             });
+          }, 4000);
         })
         .catch(function () {
           mensajeError.hidden = false;
           boton.disabled = false;
+          campos.forEach(function (campo) {
+            campo.disabled = false;
+          });
         });
     });
   })();

@@ -5,13 +5,16 @@ export interface Props {
   href?: string;
   variante?: 'primario' | 'secundario';
   tipo?: 'button' | 'submit';
+  /* Atributos extra (ej. data-paquete en Paquetes.astro) pasan directo
+     al elemento -- ver el spread de "resto" mas abajo. */
+  [atributo: `data-${string}`]: string | undefined;
 }
 
-const { href, variante = 'primario', tipo = 'button' } = Astro.props;
+const { href, variante = 'primario', tipo = 'button', ...resto } = Astro.props;
 const Elemento = href ? 'a' : 'button';
 ---
 
-<Elemento class={`cta cta--${variante}`} href={href} type={href ? undefined : tipo}>
+<Elemento class={`cta cta--${variante}`} href={href} type={href ? undefined : tipo} {...resto}>
   <slot />
 </Elemento>
 
