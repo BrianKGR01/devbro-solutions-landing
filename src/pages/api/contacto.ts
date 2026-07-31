@@ -30,6 +30,10 @@ interface Lead {
   usuarios: string;
   plazo: string | null;
   presupuesto: string;
+  // Que paquete (SONDA/LANZAMIENTO/EXPEDICION) origino el envio, si vino del
+  // CTA de una tarjeta de Paquetes.astro en vez de otro CTA de la pagina.
+  // Columna existente en `leads` (docs/04-engineering.md SS6), sin usar hasta ahora.
+  origen: string | null;
 }
 
 function json(body: Record<string, unknown>, status: number): Response {
@@ -78,14 +82,13 @@ async function avisarPorCorreo(lead: Lead): Promise<boolean> {
 
   try {
     const resend = new Resend(apiKey);
-    // onboarding@resend.dev funciona sin verificar un dominio propio --
-    // cambiar por un remitente del dominio real (docs/06-decisiones.md
-    // D3/D10) en cuanto este verificado en Resend.
+    // devbro.xyz ya esta verificado en Resend (D26, docs/06-decisiones.md):
+    // deja de usar onboarding@resend.dev.
     const { error } = await resend.emails.send({
-      from: 'DevBro Solutions <onboarding@resend.dev>',
+      from: 'DevBro Solutions <info@devbro.xyz>',
       to: destino,
       replyTo: lead.correo,
-      subject: `Nuevo lead: ${lead.nombre}`,
+      subject: `Nuevo lead: ${lead.nombre}${lead.origen ? ` (${lead.origen})` : ''}`,
       text: [
         `Nombre: ${lead.nombre}`,
         `Correo: ${lead.correo}`,
@@ -95,6 +98,7 @@ async function avisarPorCorreo(lead: Lead): Promise<boolean> {
         `Primeros usuarios: ${lead.usuarios}`,
         `Plazo: ${lead.plazo ?? '(no indicado)'}`,
         `Presupuesto: ${lead.presupuesto}`,
+        `Paquete de interés: ${lead.origen ?? '(no especificado, no vino de un paquete)'}`,
       ].join('\n'),
     });
     return !error;
@@ -130,6 +134,7 @@ export const POST: APIRoute = async ({ request }) => {
     usuarios: textoPlano(datos.usuarios),
     plazo: textoPlano(datos.plazo) || null,
     presupuesto: textoPlano(datos.presupuesto),
+    origen: textoPlano(datos.origen) || null,
   };
 
   // Degradacion elegante (docs/04-engineering.md §6): las dos escrituras
