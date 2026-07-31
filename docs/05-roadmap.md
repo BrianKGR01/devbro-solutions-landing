@@ -102,15 +102,22 @@ Esta fase se hace antes que el hero a propósito: es el elemento más difícil y
 
 ## Lo que queda pendiente de contenido
 
-No bloquea ninguna fase. Se completa cuando llegue el material:
+Correo de contacto, número de WhatsApp y dominio de producción ya están
+resueltos con datos reales (D24, D25) — se sacan de esta tabla. Lo único
+que sigue genuinamente pendiente:
 
 | Pendiente | Dónde | Quién |
 |---|---|---|
-| Textos del caso 001 | `Caso.astro` | Cliente |
+| Textos del caso 001 | `Caso.astro` (desconectado de `index.astro`, D24) | Cliente |
 | Captura del ERP | `Caso.astro` | Cliente |
-| Correo de contacto | `Pie.astro`, `.env` | Kevin |
-| Número de WhatsApp | `BotonWhatsApp.astro`, `Pie.astro` | Kevin |
-| Dominio de producción | metadatos, `canonical` | Kevin |
-| Enlace de agendamiento (si se usa) | CTA | Kevin |
 
-Todos deben quedar como `{{PENDIENTE: ...}}` visible, nunca inventados ni ocultos.
+No bloquea nada — se reconecta la sección cuando haya un caso con
+tracción real que mostrar. Debe quedar como `{{PENDIENTE: ...}}` visible
+mientras tanto, nunca inventado ni oculto.
+
+**"Enlace de agendamiento"**, que estaba en esta tabla como condicional
+("si se usa"): no se usa — el CTA "Agendar diagnóstico" lleva al
+formulario de `#contacto`, no a un calendario externo tipo Calendly. Es
+una decisión implícita, no un pendiente: si en algún momento se quiere
+agendamiento automático con horario elegible por el lead, es una
+decisión nueva a tomar con el humano, no algo que falte completar.
