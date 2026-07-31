@@ -75,6 +75,144 @@ async function guardarEnSupabase(lead: Lead): Promise<boolean> {
   }
 }
 
+function textoPlanoCorreo(lead: Lead): string {
+  return [
+    `Nombre: ${lead.nombre}`,
+    `Correo: ${lead.correo}`,
+    `WhatsApp: ${lead.whatsapp}`,
+    `Industria: ${lead.industria}`,
+    `Problema: ${lead.problema}`,
+    `Primeros usuarios: ${lead.usuarios}`,
+    `Plazo: ${lead.plazo ?? '(no indicado)'}`,
+    `Presupuesto: ${lead.presupuesto}`,
+    `Paquete de interés: ${lead.origen ?? '(no especificado, no vino de un paquete)'}`,
+  ].join('\n');
+}
+
+// El campo viene de un <textarea> de un visitante cualquiera -- nunca
+// confiar en el, va directo a un contexto HTML. Sin esto, alguien podria
+// mandar <img onerror=...> en "problema" y ejecutarlo en el cliente de
+// correo de Kevin.
+function escaparHtml(valor: string): string {
+  return valor
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/\n/g, '<br>');
+}
+
+// Correo HTML del aviso de lead (D28, docs/06-decisiones.md). Tabla +
+// estilos inline, sin <style>, sin fuente propia: un cliente de correo no
+// carga @font-face de forma confiable (Outlook en particular) y una tabla
+// es lo unico que se comporta igual en todos los clientes -- mismas
+// limitaciones ya documentadas para public/favicon.svg, misma resolucion:
+// hex duplicados de tokens.css en vez de custom properties (un correo no
+// puede leerlas), Arial/Helvetica y Courier New como aproximacion de
+// Archivo/JetBrains Mono. Sin box-shadow ni clip-path (Outlook no los
+// soporta) -- los chaflanes y el desplazamiento de sombra de la placa no
+// se replican aca, solo el resto del lenguaje visual (fondo oscuro, texto
+// en mono/mayuscula para etiquetas, acento en laton, bordes solidos sin
+// redondear).
+function construirCorreoHtml(lead: Lead): string {
+  const filas: Array<[string, string]> = [
+    ['Correo', `<a href="mailto:${escaparHtml(lead.correo)}" style="color:#EDEFEA;">${escaparHtml(lead.correo)}</a>`],
+    ['WhatsApp', escaparHtml(lead.whatsapp)],
+    ['Industria', escaparHtml(lead.industria)],
+    ['Presupuesto', escaparHtml(lead.presupuesto)],
+    ['Plazo', lead.plazo ? escaparHtml(lead.plazo) : '<span style="color:#8A968F;">(no indicado)</span>'],
+  ];
+
+  const filasHtml = filas
+    .map(
+      ([etiqueta, valor]) => `
+        <tr>
+          <td style="padding:0 0 14px 0; width:130px; font-family:'Courier New',Courier,monospace; font-size:11px; letter-spacing:0.08em; color:#8A968F; text-transform:uppercase; vertical-align:top;">${etiqueta}</td>
+          <td style="padding:0 0 14px 0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.5; color:#EDEFEA; vertical-align:top;">${valor}</td>
+        </tr>`
+    )
+    .join('');
+
+  const insigniaPaquete = lead.origen
+    ? `<tr><td style="padding:0 0 20px 0;">
+         <span style="display:inline-block; border:2px solid #1D7A52; color:#4FA57C; font-family:'Courier New',Courier,monospace; font-weight:700; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; padding:6px 12px;">INTERÉS: ${escaparHtml(lead.origen)}</span>
+       </td></tr>`
+    : '';
+
+  return `<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
+    <title>Nuevo lead</title>
+  </head>
+  <body style="margin:0; padding:0; background-color:#080B09;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#080B09;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%;">
+            <tr>
+              <td style="padding:0 0 24px 0; border-bottom:2px solid #1D7A52;">
+                <span style="font-family:Arial,Helvetica,sans-serif; font-weight:800; font-size:20px; letter-spacing:-0.02em; color:#EDEFEA; text-transform:uppercase;">DEVBRO</span>
+                <span style="display:inline-block; width:2px; height:14px; background-color:#B8A26A; margin:0 10px; line-height:14px; font-size:0;">&nbsp;</span>
+                <span style="font-family:'Courier New',Courier,monospace; font-weight:700; font-size:11px; letter-spacing:0.12em; color:#8A968F; text-transform:uppercase;">SOLUTIONS</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 0 4px 0; font-family:'Courier New',Courier,monospace; font-weight:700; font-size:11px; letter-spacing:0.12em; color:#8A968F; text-transform:uppercase;">
+                Nuevo lead
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 0 16px 0; font-family:Arial,Helvetica,sans-serif; font-weight:800; font-size:26px; color:#EDEFEA;">
+                ${escaparHtml(lead.nombre)}
+              </td>
+            </tr>
+            ${insigniaPaquete}
+            <tr>
+              <td style="background-color:#18201C; border:2px solid rgba(237,239,234,0.14); padding:24px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${filasHtml}
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 0 0 0; font-family:'Courier New',Courier,monospace; font-size:11px; letter-spacing:0.08em; color:#8A968F; text-transform:uppercase;">
+                Problema
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0 0 0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.6; color:#EDEFEA;">
+                ${escaparHtml(lead.problema)}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 0 0 0; font-family:'Courier New',Courier,monospace; font-size:11px; letter-spacing:0.08em; color:#8A968F; text-transform:uppercase;">
+                Primeros usuarios
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0 0 0; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.6; color:#EDEFEA;">
+                ${escaparHtml(lead.usuarios)}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:32px 0 0 0; border-top:2px solid rgba(237,239,234,0.14);">
+                <p style="margin:16px 0 0 0; font-family:'Courier New',Courier,monospace; font-size:11px; line-height:1.6; color:#8A968F;">
+                  Respondé directo a este correo: ya va a la casilla del lead. Enviado automáticamente desde el formulario de devbro.xyz.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
 async function avisarPorCorreo(lead: Lead): Promise<boolean> {
   const apiKey = import.meta.env.RESEND_API_KEY;
   const destino = import.meta.env.CORREO_DESTINO;
@@ -89,17 +227,8 @@ async function avisarPorCorreo(lead: Lead): Promise<boolean> {
       to: destino,
       replyTo: lead.correo,
       subject: `Nuevo lead: ${lead.nombre}${lead.origen ? ` (${lead.origen})` : ''}`,
-      text: [
-        `Nombre: ${lead.nombre}`,
-        `Correo: ${lead.correo}`,
-        `WhatsApp: ${lead.whatsapp}`,
-        `Industria: ${lead.industria}`,
-        `Problema: ${lead.problema}`,
-        `Primeros usuarios: ${lead.usuarios}`,
-        `Plazo: ${lead.plazo ?? '(no indicado)'}`,
-        `Presupuesto: ${lead.presupuesto}`,
-        `Paquete de interés: ${lead.origen ?? '(no especificado, no vino de un paquete)'}`,
-      ].join('\n'),
+      text: textoPlanoCorreo(lead),
+      html: construirCorreoHtml(lead),
     });
     return !error;
   } catch {
