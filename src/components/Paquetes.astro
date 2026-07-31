@@ -97,7 +97,11 @@ const paquetes = [
             </ul>
             {paquete.nota && <p class="paquetes__nota">{paquete.nota}</p>}
             <div class="paquetes__cta">
-              <Cta href="#contacto" variante={paquete.destacado ? 'primario' : 'secundario'}>
+              <Cta
+                href="#contacto"
+                variante={paquete.destacado ? 'primario' : 'secundario'}
+                data-paquete={paquete.nombre}
+              >
                 Agendar diagnóstico
               </Cta>
             </div>

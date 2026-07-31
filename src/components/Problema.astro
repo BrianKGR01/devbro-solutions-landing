@@ -81,6 +81,37 @@ const items = [
     padding: var(--e4);
   }
 
+  /* Carrusel solo en movil (<640px, D27): tres fichas apiladas ocupaban
+     demasiado alto en pantallas chicas. De 640px para arriba .grilla-3
+     ya las pone en 2 y 3 columnas -- el problema es especifico del apilado
+     vertical de la version de una sola columna, no de las otras dos.
+     scroll-snap nativo, sin JS ni libreria de animacion (CLAUDE.md). */
+  @media (max-width: 639px) {
+    .problema__lista {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      /* Sangra la lista hasta el borde de la pantalla y repone el padding
+         adentro: asi la ficha activa queda alineada con el resto de la
+         seccion, pero la siguiente asoma como pista de que se puede
+         deslizar, en vez de cortarse justo en el margen del contenedor. */
+      margin-inline: calc(-1 * var(--pad-lateral));
+      padding-inline: var(--pad-lateral);
+      padding-bottom: var(--e2);
+      scrollbar-width: none;
+    }
+
+    .problema__lista::-webkit-scrollbar {
+      display: none;
+    }
+
+    .problema__ficha {
+      flex: 0 0 82%;
+      scroll-snap-align: start;
+    }
+  }
+
   .problema__numero {
     font-family: var(--mono);
     font-weight: 700;

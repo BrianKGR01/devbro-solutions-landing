@@ -524,3 +524,23 @@ El humano compartió accesos reales: un servidor MCP de Supabase (comando `claud
 **`SUPABASE_URL` no es secreta**, así que se completa en `.env.example` con el valor real (`https://wdbzgvjnkykgvctcwnvf.supabase.co`) en vez de dejarla vacía como las claves. `SUPABASE_SERVICE_KEY` y `RESEND_API_KEY` siguen vacías en `.env.example` — son secretas y van solo en `.env` local y en las variables de entorno de Vercel, nunca en el repositorio.
 
 **No confundir con Fase 7:** esta rama no toca identidad/SEO — es la continuación explícita del punto pendiente que las instrucciones de esa fase habían dejado fuera a propósito ("no toques Supabase ni Resend, eso va al final").
+
+---
+
+## D27 · Ajustes de UX tras la primera prueba en producción
+
+Con Supabase y Resend ya conectados (D26) y verificados con un correo real, aparecieron tres pedidos puntuales de UX antes de mandar el sitio a posibles clientes.
+
+**El formulario se limpia solo tras un envío exitoso.** Antes, al enviar, los campos quedaban deshabilitados pero con los datos viejos todavía visibles junto al mensaje de éxito — se leía como que el envío había quedado a medias. Ahora: se deshabilita todo al enviar (evita doble click), se muestra el mensaje de éxito, y a los 4 segundos se limpia el formulario entero (`form.reset()`), se vuelve a habilitar y se rehace el `ts` del anti-spam (D7) — así si alguien quiere mandar una segunda consulta no necesita recargar la página. El delay de 4s es deliberado: un reset instantáneo se siente como si se hubiera perdido lo que se acababa de mandar.
+
+**Carrusel en `#problema` — pero solo bajo 640px.** Las tres fichas ("Nadie te sabe decir cuánto" / "Los plazos se estiran solos" / "Te quedás amarrado") apiladas en una sola columna ocupaban demasiado alto en celular. `docs/02-design-system.md` §8 ya define que `.grilla-3` pasa a 2 columnas en 640px y a 3 en 1024px — el problema era específico del apilado vertical de la variante de una sola columna, no de las otras dos, así que el carrusel se activa **solo** en `max-width: 639px`; de ahí para arriba sigue siendo la grilla de siempre. Implementado con `scroll-snap` nativo (`overflow-x: auto` + `scroll-snap-type: x mandatory` + `scroll-snap-align: start` por ficha) — cero JavaScript, cero librería de animación (CLAUDE.md lo prohíbe explícitamente). Cada ficha ocupa 82% del ancho para que la siguiente asome como pista visual de que se puede deslizar.
+
+**Se rastrea qué paquete originó cada lead.** Los tres CTA "Agendar diagnóstico" de `Paquetes.astro` llevaban a `#contacto` sin dejar ningún rastro de cuál tarjeta se eligió — un dato que sí importa para priorizar seguimiento. Solución, sin `localStorage` ni cookies (regla dura de `CLAUDE.md`):
+
+- `Cta.astro` ahora pasa cualquier atributo extra al elemento final (`...resto` sobre `Astro.props`, con un índice de tipo `` `data-${string}` `` para que TypeScript no se queje) — se mantiene genérico, no se le enseñó nada específico de paquetes.
+- `Paquetes.astro` le agrega `data-paquete={paquete.nombre}` a cada CTA.
+- `Contacto.astro` suma un campo oculto `#campo-origen` y un listener delegado en `document` (`click` + `closest('[data-paquete]')`) que lo completa al detectar el clic — vive en `Contacto.astro`, no en `Paquetes.astro`, porque este último no tiene por qué saber nada del formulario.
+- `contacto.ts` guarda `origen` en la tabla `leads` (columna que ya existía desde `docs/04-engineering.md` §6, pensada originalmente para un `utm_source` que nunca se implementó — se reutiliza para esto) y lo suma al cuerpo *y* al asunto del correo de Resend (`Nuevo lead: Nombre (LANZAMIENTO)`), para que se vea de un vistazo en la bandeja de entrada.
+- Si el visitante llega por cualquier otro CTA ("Agendar diagnóstico" del hero o la barra), `origen` queda vacío — es información opcional, no se agregó a `CAMPOS_REQUERIDOS`.
+
+Verificado con Playwright: el carrusel es deslizable a 360px y vuelve a ser grilla normal a 1440px; un clic en el CTA de LANZAMIENTO completa `#campo-origen` antes de enviar, y el payload real hacia `/api/contacto` lo incluye; tras un envío exitoso, el formulario se limpia y rehabilita a los ~4 segundos.
