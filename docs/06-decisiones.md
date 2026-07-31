@@ -544,3 +544,26 @@ Con Supabase y Resend ya conectados (D26) y verificados con un correo real, apar
 - Si el visitante llega por cualquier otro CTA ("Agendar diagnóstico" del hero o la barra), `origen` queda vacío — es información opcional, no se agregó a `CAMPOS_REQUERIDOS`.
 
 Verificado con Playwright: el carrusel es deslizable a 360px y vuelve a ser grilla normal a 1440px; un clic en el CTA de LANZAMIENTO completa `#campo-origen` antes de enviar, y el payload real hacia `/api/contacto` lo incluye; tras un envío exitoso, el formulario se limpia y rehabilita a los ~4 segundos.
+
+---
+
+## D28 · Formato del correo de aviso de lead
+
+El correo que le llega a Kevin por cada lead era texto plano — funcional, pero sin ninguna intención de formato. Pedido explícito: investigar buenas prácticas reales de correo antes de rediseñarlo, no inventar un formato a ojo.
+
+**Investigación (julio 2026):** [Postmark — 15 transactional email best practices](https://postmarkapp.com/guides/transactional-email-best-practices/), [Mailtrap — 12 transactional email best practices](https://mailtrap.io/blog/transactional-emails-best-practices/), [Moosend — transactional email best practices](https://moosend.com/blog/transactional-email-best-practices/), [Marka Plugin — HTML email best practices 2026](https://markaplugin.com/blog/html-email-best-practices-2026), [Aurora Sendcloud — email template compatibility](https://www.aurorasendcloud.com/blog/email-template-compatibility-design). Puntos que se aplicaron directo:
+
+- **Mandar `text` y `html` juntos**, no solo uno — mejora entrega y es lo que esperan la mayoría de los clientes de correo.
+- **Layout con `<table>`, nunca `<div>`** — es lo único que se comporta igual en todos los clientes; Outlook en particular renderiza con el motor de Word, con soporte de CSS muy limitado.
+- **CSS inline únicamente**, sin `<style>` — mismo motivo.
+- **Ancho fijo de 600px.**
+- **No disfrazarlo de email de marketing** — la info principal (quién es el lead y sus datos) va arriba y clara, sin relleno.
+- Sin `box-shadow` ni `clip-path`: Outlook no los soporta. El desplazamiento de sombra y los chaflanes de la placa no se replican en el correo — solo el resto del lenguaje visual (fondo `--tinta`, acento `--laton`, bordes sólidos sin redondear, etiquetas en mono/mayúscula).
+
+**Fuentes y colores, misma resolución que el favicon (D25).** Un correo no puede cargar Archivo ni JetBrains Mono de forma confiable (Outlook bloquea `@font-face` casi siempre) ni leer las custom properties de `tokens.css`. Se usa `Arial/Helvetica` como aproximación de Archivo y `Courier New` como aproximación de JetBrains Mono, y los hex de `--tinta`/`--papel`/`--verde`/`--verde-luz`/`--laton`/`--humo` se copian literales en el HTML del correo.
+
+**Seguridad: los campos del lead son texto libre de un desconocido.** Antes (texto plano) esto no importaba. Al pasar a HTML, insertar `problema`, `nombre`, etc. sin escapar habría sido una inyección de HTML/JS directa en el cliente de correo de Kevin — cualquiera pudo haber mandado `<img src=x onerror=...>` en cualquier campo del formulario. Se agregó `escaparHtml()` (escapa `&<>"'` y convierte `\n` en `<br>`) y se pasa **todo** campo del lead por ahí antes de interpolarlo. Verificado con un lead malicioso de prueba (`<script>`, `<img onerror>`, comillas rompiendo atributos) renderizado con Playwright: cero ejecución de JS, todo se ve como texto literal, el layout no se rompe.
+
+**Se agrega una insignia con el paquete de interés** (D27) cuando `origen` viene con dato — mismo tratamiento visual que `Etiqueta.astro` en el sitio (borde `--verde`, texto `--verde-luz`, mono/mayúscula).
+
+Verificado: build/check limpios, renderizado real con Playwright (versión normal y versión con input malicioso) y un envío real de extremo a extremo por Resend con el formato nuevo.
