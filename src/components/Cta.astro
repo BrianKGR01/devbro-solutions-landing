@@ -5,6 +5,9 @@ export interface Props {
   href?: string;
   variante?: 'primario' | 'secundario';
   tipo?: 'button' | 'submit';
+  // Enlaces externos (ej. WhatsApp en Postulacion.astro).
+  target?: string;
+  rel?: string;
   /* Atributos extra (ej. data-paquete en Paquetes.astro) pasan directo
      al elemento -- ver el spread de "resto" mas abajo. */
   [atributo: `data-${string}`]: string | undefined;

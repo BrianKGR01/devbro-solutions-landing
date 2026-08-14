@@ -153,7 +153,7 @@ Antes de construir nada, definimos qué se construye y cuánto cuesta.
 
 ### LANZAMIENTO ⭐
 `EL QUE ELIGE EL 80%`
-**Desde USD 5.000** · 3 a 6 semanas
+**Desde USD 3.000** · 3 a 6 semanas
 
 Tu producto en producción, listo para tus primeros usuarios.
 
@@ -172,7 +172,7 @@ Tu producto en producción, listo para tus primeros usuarios.
 
 ### EXPEDICIÓN
 `PRODUCTO COMPLETO`
-**Desde USD 14.000** · 8 a 14 semanas
+**Desde USD 10.000** · 8 a 14 semanas
 
 Cuando el proyecto es más grande que un primer lanzamiento.
 
@@ -192,6 +192,18 @@ Cuando el proyecto es más grande que un primer lanzamiento.
 **Debajo de las tres columnas:**
 
 El precio final depende del alcance. Te lo cerramos por escrito en la primera semana, antes de que pagues el saldo.
+
+---
+
+## 06b · Postulación sin presupuesto — `#postulacion` (D30)
+
+## Si tu idea vale la pena, encontramos la forma.
+
+Sabemos que no todos los equipos fundadores llegan con presupuesto. Si te falta el equipo técnico y tampoco te alcanza para un diagnóstico pago, postulá tu proyecto. Lo evaluamos sin costo y, si vemos que puede ser un buen caso de éxito, te proponemos un precio bastante más bajo para construirlo.
+
+`ESTO NO ES UN FORMULARIO: ESCRIBINOS DIRECTO POR WHATSAPP`
+
+`[ POSTULAR POR WHATSAPP ]` → enlace propio (`ENLACE_WHATSAPP_POSTULACION`, `src/lib/whatsapp.ts`), mensaje precargado distinto al del botón general de WhatsApp — identifica que es una postulación, no un "agendar diagnóstico" común.
 
 ---
 
@@ -264,6 +276,9 @@ Sí. Trabajamos de forma remota y cobramos en dólares.
 
 Una reunión de una hora. Te decimos si es viable, cuánto cuesta y cuánto tarda. Si no nos convence, también te lo decimos.
 
+**Debajo, antes del formulario (D30):**
+Completá el formulario y nos comunicamos para agendar tu diagnóstico. La primera reunión es gratis, sin compromiso — también podés escribirnos directo por WhatsApp.
+
 ### Formulario
 
 | Campo | Tipo | Obligatorio |
@@ -278,7 +293,7 @@ Una reunión de una hora. Te decimos si es viable, cuánto cuesta y cuánto tard
 | ¿Tenés un presupuesto asignado? | selección | Sí |
 
 **Opciones de presupuesto:**
-Menos de USD 5.000 · Entre USD 5.000 y 10.000 · Entre USD 10.000 y 20.000 · Más de USD 20.000 · Todavía no lo definí
+Menos de USD 3.000 · Entre USD 3.000 y 10.000 · Entre USD 10.000 y 20.000 · Más de USD 20.000 · Todavía no lo definí
 
 **Botón:** `[ ENVIAR ]`
 
