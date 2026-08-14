@@ -166,4 +166,37 @@ import Placa from './Placa.astro';
   .hero__microcopia-segmento {
     white-space: nowrap;
   }
+
+  /* Viewport ancho pero bajo (D29, docs/06-decisiones.md): el presupuesto
+     de altura de la Fase 3 solo se midio a 1440x900. Un laptop 1366x768
+     real -- y peor, con cualquier chrome de navegador que reduzca el alto
+     efectivo -- deja el CTA y la microcopia bajo el pliegue: el titulo
+     (--t-display-xl) es puramente funcion del ancho, ya esta en su tope
+     de 6rem desde ~1170px sin importar cuanta altura real haya. Achica
+     titulo, padding y gaps SOLO en este rango; min-width:1024px evita
+     pisar el layout movil, que ya tiene su propio ajuste arriba.
+     Tiene que ir DESPUES de .hero, .hero__titulo, .hero__cuerpo,
+     .hero__contenido y .hero__parrafo en este archivo: misma
+     especificidad para cada selector (una sola clase), asi que el orden
+     de cascada -- no el media query -- decide cual gana (mismo patron ya
+     documentado en Paquetes.astro). Puesta antes, la regla base
+     incondicional ganaba siempre sin importar el alto real. */
+  @media (min-width: 1024px) and (max-height: 820px) {
+    .hero {
+      padding-block: var(--e4);
+    }
+    .hero__titulo {
+      font-size: clamp(2.25rem, 4.4vw, 3.25rem);
+      line-height: 0.94;
+    }
+    .hero__cuerpo {
+      gap: var(--e2);
+    }
+    .hero__contenido {
+      gap: var(--e1);
+    }
+    .hero__parrafo {
+      max-width: 56ch;
+    }
+  }
 </style>
