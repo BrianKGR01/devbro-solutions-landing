@@ -24,7 +24,7 @@ Escribí y diseñá para esa persona. Si una decisión la haría sentir tonta, e
 
 ## 3. Estructura de la página
 
-Diez bloques, en este orden exacto. No agregues, no reordenes.
+Once bloques, en este orden exacto. No agregues, no reordenes.
 
 | # | ID | Bloque | Fondo |
 |---|---|---|---|
@@ -35,12 +35,15 @@ Diez bloques, en este orden exacto. No agregues, no reordenes.
 | 04 | `#experiencia` | Por qué somos rápidos | tinta |
 | 05 | `#proceso` | Cómo trabajamos, E0-E6 | tinta |
 | 06 | `#paquetes` | Tres paquetes | tinta |
-| 07 | `#limites` | Lo que no hacemos | **papel** (invertida) |
-| 08 | `#preguntas` | Preguntas frecuentes | tinta |
-| 09 | `#contacto` | Cierre + formulario | tinta |
-| 10 | — | Pie | tinta |
+| 07 | `#postulacion` | Postulación sin presupuesto (D30) | tinta-2 |
+| 08 | `#limites` | Lo que no hacemos | **papel** (invertida) |
+| 09 | `#preguntas` | Preguntas frecuentes | tinta |
+| 10 | `#contacto` | Cierre + formulario | tinta |
+| 11 | — | Pie | tinta |
 
-Las dos secciones en papel (03 y 07) son deliberadas: rompen la monotonía del oscuro y funcionan como respiro visual. No las conviertas a oscuro.
+Las dos secciones en papel (03 y 08) son deliberadas: rompen la monotonía del oscuro y funcionan como respiro visual. No las conviertas a oscuro.
+
+**`#postulacion` (D30, ver `docs/06-decisiones.md`):** camino alternativo para equipos sin equipo técnico ni presupuesto para SONDA — postulan por WhatsApp, no por el formulario de `#contacto`. Va justo después de Paquetes a propósito: se lee como una cuarta opción inmediatamente después de ver los tres precios. Único bloque en `--tinta-2` ("superficies elevadas", sin usar hasta ahora) — lo distingue del `--tinta` liso de Paquetes a cada lado sin inventar un token nuevo.
 
 **`Caso.astro` (D24, ver `docs/06-decisiones.md`):** construido y con copy real (docs/03-content.md §08), pero desconectado de `index.astro` — no aparece en la página. Se reactiva cuando haya un caso de éxito con tracción real que mostrar. La tabla de arriba ya no lo incluye.
 

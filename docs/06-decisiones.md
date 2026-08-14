@@ -567,3 +567,49 @@ El correo que le llega a Kevin por cada lead era texto plano — funcional, pero
 **Se agrega una insignia con el paquete de interés** (D27) cuando `origen` viene con dato — mismo tratamiento visual que `Etiqueta.astro` en el sitio (borde `--verde`, texto `--verde-luz`, mono/mayúscula).
 
 Verificado: build/check limpios, renderizado real con Playwright (versión normal y versión con input malicioso) y un envío real de extremo a extremo por Resend con el formato nuevo.
+
+---
+
+## D29 · Hero: viewport ancho pero bajo (1366×768 y similares)
+
+El humano comparó capturas propias a 1366×768 y 1920×1080: en la primera, el CTA y la microcopia del hero quedaban fuera de la vista sin hacer scroll. El presupuesto de altura del hero (Fase 3) solo se había medido a 1440×900.
+
+**Medido con Playwright contra `https://www.devbro.xyz/` real, antes de tocar nada:**
+
+| Viewport | Botón visible sin scroll | Microcopia visible sin scroll |
+|---|---|---|
+| 1366×768 | Sí (bottom 694px de 768) | Al filo (bottom 758px de 768) |
+| 1366×640 (con cualquier chrome extra del navegador) | No | No |
+| 1280×720 | Sí | No |
+| 1440×900 | Sí | Sí |
+| 1920×1080 | Sí | Sí |
+
+**Causa raíz:** `--t-display-xl` (`clamp(2.25rem, 8.2vw, 6rem)`) es función pura del *ancho* — desde ~1170px ya está en su tope de 6rem sin importar la altura real. El único ajuste de padding existente en `Hero.astro` (`max-width: 639px`, D21) es por ancho, para el pliegue móvil — no existía ningún mecanismo que reaccionara a un viewport ancho-pero-bajo, que es exactamente el caso de un laptop 1366×768 real.
+
+**Fix: nuevo `@media (min-width: 1024px) and (max-height: 820px)`** que achica `.hero__titulo` (clamp más chico), el padding vertical de `.hero` y los gaps de `.hero__cuerpo`/`.hero__contenido`. Sin JS: es CSS estándar, mismo mecanismo que el resto del sitio — "detectar la dimensión de la pantalla" que pedía el humano se resuelve con `@media`, no con un listener de resize.
+
+**Bug real encontrado al verificar (no al escribir el CSS):** la primera versión del fix no funcionaba pese a verse correcta a simple vista — la nueva regla, con la misma especificidad que `.hero`, `.hero__titulo`, `.hero__cuerpo`, etc. (una sola clase cada selector), estaba puesta *antes* de esas reglas base en el archivo. Con especificidad empatada, gana la regla que aparece *después* en la cascada, sin importar si el media query aplica o no — la regla base ganaba siempre. Mismo patrón que ya está documentado en `Paquetes.astro` ("Tiene que ir DESPUES de las reglas base..."), y que se me pasó por alto al escribir el fix por primera vez. Se movió el bloque nuevo al final del `<style>` de `Hero.astro`, después de todas las reglas que sobreescribe. Verificado computando `getComputedStyle(...).fontSize` antes y después del fix — pasó de estar fijo en 96px (el tope, sin importar el media query) a resolver el clamp nuevo correctamente.
+
+**Resultado verificado (post-fix, contra el dev server real):** los 5 casos de la tabla, incluido el extremo 1366×640, quedan con botón *y* microcopia visibles sin scroll. 1440×900/1920×1080 no cambian — el media query no se activa ahí.
+
+---
+
+## D30 · Precios, postulación sin presupuesto y microcopia de contacto
+
+Lote pedido junto con D29, sin relación técnica entre sí más allá de tocar secciones cercanas de la página.
+
+**Precios de arranque bajan.** LANZAMIENTO de USD 5.000 a USD 3.000; EXPEDICIÓN de USD 14.000 a USD 10.000. SONDA no cambia. Las bandas de presupuesto del `<select>` del formulario (`Contacto.astro`) se actualizan para calzar: "Menos de USD 3.000" / "Entre USD 3.000 y 10.000" reemplazan a las bandas de 5.000/10.000 — el tramo alto (10.000-20.000, más de 20.000) no cambia porque el nuevo techo de EXPEDICIÓN ya era su piso.
+
+**Nueva sección `#postulacion`, entre Paquetes y Límites.** Camino alternativo para equipos fundadores sin equipo técnico *ni* presupuesto para pagar SONDA: postulan directo por WhatsApp (no por el formulario de `#contacto` — decisión explícita del humano), se evalúan sin costo, y si el proyecto puede ser un buen caso de éxito futuro se ofrece un precio bastante más bajo. Ubicación confirmada con el humano antes de implementar (no asumida en silencio): justo después de Paquetes, para que se lea como una cuarta opción inmediatamente después de ver los tres precios, en vez de "al final" de toda la página.
+
+- Enlace propio `ENLACE_WHATSAPP_POSTULACION` en `src/lib/whatsapp.ts`, mismo número, mensaje precargado distinto (identifica que es una postulación, no un "agendar diagnóstico" genérico) — así Kevin sabe de qué se trata antes de abrir el chat.
+- `--tinta-2` ("superficies elevadas", `tokens.css`) como fondo de sección — **primer uso real en todo el sitio**. Encaje semántico directo para un llamado que se quiere distinguir del `--tinta` liso de Paquetes a cada lado, sin inventar un token nuevo.
+- `Cta.astro` suma `target`/`rel` tipados a sus props — hacía falta para el enlace externo de WhatsApp con el estilo de botón primario, y no existía antes un caso de uso así en el sitio (los enlaces de WhatsApp anteriores son `<a>` sueltas, no pasan por `Cta.astro`).
+- **Dos bugs de responsive encontrados y corregidos en la verificación, no en el diseño inicial:** a 360px el título rompía la palabra "encontramos" a la mitad (el `.postulacion__marco` tenía el mismo padding fijo en todos los anchos, dejando muy poco ancho real de columna en móvil) y el botón "POSTULAR POR WHATSAPP" desbordaba el marco (mismo problema ya resuelto antes en `Paquetes.astro`: `white-space:nowrap` de `Cta.astro` más un contenedor angosto). Fix: padding del marco reducido bajo 640px (mismo patrón que el ajuste móvil del hero) y el CTA a `width:100%` solo en ese rango — igual que `.paquetes__cta .cta` en `Paquetes.astro`.
+- Copy del título/cuerpo/nota es una propuesta mía, presentada en el plan antes de implementar y confirmada por el humano al aprobar el plan completo — no es texto que él haya dictado literal, palabra por palabra.
+
+**Microcopia nueva arriba del formulario de `#contacto`.** Entre el párrafo existente ("Una reunión de una hora...") y el `<form>`: aclara que la primera reunión es gratis y sin compromiso, y que WhatsApp es un camino tan válido como el formulario — enlaza al `ENLACE_WHATSAPP` general (no el de postulación, que es un canal distinto para un caso distinto). Tono secundario (`--humo`, `--t-cuerpo`) a propósito, para no competir con `.contacto__intro`.
+
+`docs/01-brief.md` §3 pasa de diez a once bloques (suma `#postulacion`, `--tinta-2`). `docs/03-content.md` suma §06b con el copy de la sección nueva y la línea de microcopia en §10.
+
+Verificado: `npm run check`/`build` limpios; barrido completo 360-1920px sin overflow ni errores de consola; el enlace de postulación abre WhatsApp con el mensaje correcto (comprobado el `href` real, no solo el string en el código); foco de teclado visible en el CTA nuevo (hereda la regla global D4, sin nada especial que agregar).

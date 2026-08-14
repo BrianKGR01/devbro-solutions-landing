@@ -6,9 +6,13 @@
 import Cta from './Cta.astro';
 import { ENLACE_WHATSAPP } from '../lib/whatsapp';
 
+// Bandas alineadas al precio de arranque real de cada paquete (D30,
+// docs/06-decisiones.md): LANZAMIENTO baja a USD 3.000, EXPEDICION a
+// USD 10.000 -- el tramo alto no cambia, el nuevo techo de EXPEDICION
+// ya era el piso del tramo existente de 10.000-20.000.
 const presupuestos = [
-  'Menos de USD 5.000',
-  'Entre USD 5.000 y 10.000',
+  'Menos de USD 3.000',
+  'Entre USD 3.000 y 10.000',
   'Entre USD 10.000 y 20.000',
   'Más de USD 20.000',
   'Todavía no lo definí',
@@ -27,6 +31,11 @@ const presupuestos = [
       <p class="contacto__intro">
         <span class="subrayado-laton">Una reunión de una hora.</span> Te decimos si es viable, cuánto
         cuesta y cuánto tarda. Si no nos convence, también te lo decimos.
+      </p>
+      <p class="contacto__previa">
+        Completá el formulario y nos comunicamos para agendar tu diagnóstico. La primera reunión es
+        gratis, sin compromiso — también podés escribirnos directo por{' '}
+        <a href={ENLACE_WHATSAPP} target="_blank" rel="noopener noreferrer">WhatsApp</a>.
       </p>
     </div>
 
@@ -241,6 +250,25 @@ const presupuestos = [
     font-size: var(--t-cuerpo-l);
     line-height: 1.65;
     color: var(--papel);
+  }
+
+  /* Aclaracion antes del formulario (D30, docs/06-decisiones.md): que la
+     primera reunion es gratis y que el WhatsApp es un camino tan valido
+     como el formulario. Tono secundario (--humo, --t-cuerpo, no
+     --t-cuerpo-l) para no competir con .contacto__intro -- es una
+     aclaracion, no el mensaje principal de la seccion. */
+  .contacto__previa {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.65;
+    color: var(--humo);
+    margin-top: var(--e2);
+  }
+
+  .contacto__previa a {
+    color: var(--papel);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .contacto__formulario {
