@@ -1,0 +1,97 @@
+---
+// #postulacion (docs/03-content.md §06b, D30 docs/06-decisiones.md).
+// Camino alternativo para equipos sin equipo tecnico NI presupuesto para
+// SONDA: postulan por WhatsApp, no por el formulario de #contacto -- se
+// evaluan antes de cobrar nada, y si el proyecto puede ser un buen caso
+// de exito, se les ofrece un precio mas bajo. Va justo despues de
+// Paquetes, antes de Limites: se lee como una cuarta opcion inmediatamente
+// despues de ver los tres precios.
+import Cta from './Cta.astro';
+import { ENLACE_WHATSAPP_POSTULACION } from '../lib/whatsapp';
+---
+
+<section id="postulacion" class="seccion postulacion">
+  <div class="contenedor">
+    <div class="postulacion__marco revelar">
+      <h2 class="postulacion__titulo">Si tu idea vale la pena, encontramos la forma.</h2>
+      <p class="postulacion__cuerpo">
+        Sabemos que no todos los equipos fundadores llegan con presupuesto. Si te falta el equipo
+        técnico y tampoco te alcanza para un diagnóstico pago, postulá tu proyecto. Lo evaluamos
+        sin costo y, si vemos que puede ser un buen caso de éxito, te proponemos un precio bastante
+        más bajo para construirlo.
+      </p>
+      <p class="postulacion__nota">ESTO NO ES UN FORMULARIO: ESCRIBINOS DIRECTO POR WHATSAPP</p>
+      <Cta href={ENLACE_WHATSAPP_POSTULACION} target="_blank" rel="noopener noreferrer">
+        Postular por WhatsApp
+      </Cta>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* --tinta-2 ("superficies elevadas", tokens.css) sin usar hasta ahora en
+     ninguna seccion -- encaje semantico directo: un llamado aparte,
+     ligeramente elevado sobre el --tinta liso de Paquetes a cada lado. */
+  .postulacion {
+    background: var(--tinta-2);
+  }
+
+  .postulacion__marco {
+    max-width: 68ch;
+    margin-inline: auto;
+    text-align: center;
+    border: var(--borde-fuerte);
+    padding: var(--e4) var(--e3);
+  }
+
+  @media (min-width: 640px) {
+    .postulacion__marco {
+      padding: var(--e6) var(--e5);
+    }
+  }
+
+  /* Boton a ancho completo solo en movil (mismo patron que .paquetes__cta
+     en Paquetes.astro): "POSTULAR POR WHATSAPP" con white-space:nowrap
+     (Cta.astro) desborda el marco angosto a 360px si se deja en su ancho
+     intrinseco. Desde 640px el marco tiene espacio de sobra y el boton
+     vuelve a su tamano natural, centrado. */
+  .postulacion__marco :global(.cta) {
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .postulacion__marco :global(.cta) {
+      width: auto;
+    }
+  }
+
+  .postulacion__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    margin-bottom: var(--e3);
+    text-wrap: balance;
+  }
+
+  .postulacion__cuerpo {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--humo);
+    margin-inline: auto;
+    margin-bottom: var(--e4);
+  }
+
+  .postulacion__nota {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--laton);
+    margin-bottom: var(--e4);
+  }
+</style>
