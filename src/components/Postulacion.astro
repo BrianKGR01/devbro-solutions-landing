@@ -13,16 +13,16 @@ import { ENLACE_WHATSAPP_POSTULACION } from '../lib/whatsapp';
 <section id="postulacion" class="seccion postulacion">
   <div class="contenedor">
     <div class="postulacion__marco revelar">
-      <h2 class="postulacion__titulo">Si tu idea vale la pena, encontramos la forma.</h2>
+      <h2 class="postulacion__titulo">Programa de Postulación.</h2>
       <p class="postulacion__cuerpo">
         Sabemos que no todos los equipos fundadores llegan con presupuesto. Si te falta el equipo
         técnico y tampoco te alcanza para un diagnóstico pago, postulá tu proyecto. Lo evaluamos
-        sin costo y, si vemos que puede ser un buen caso de éxito, te proponemos un precio bastante
-        más bajo para construirlo.
+        sin costo y, si vemos que puede ser un caso de éxito, te proponemos un precio bastante más
+        bajo para construirlo o negociamos cómo hacerlo realidad.
       </p>
       <p class="postulacion__nota">ESTO NO ES UN FORMULARIO: ESCRIBINOS DIRECTO POR WHATSAPP</p>
       <Cta href={ENLACE_WHATSAPP_POSTULACION} target="_blank" rel="noopener noreferrer">
-        Postular por WhatsApp
+        [ VER OPCIONES DE POSTULACIÓN ]
       </Cta>
     </div>
   </div>
@@ -37,9 +37,9 @@ import { ENLACE_WHATSAPP_POSTULACION } from '../lib/whatsapp';
   }
 
   .postulacion__marco {
-    max-width: 68ch;
-    margin-inline: auto;
-    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
     border: var(--borde-fuerte);
     padding: var(--e4) var(--e3);
   }
@@ -51,10 +51,8 @@ import { ENLACE_WHATSAPP_POSTULACION } from '../lib/whatsapp';
   }
 
   /* Boton a ancho completo solo en movil (mismo patron que .paquetes__cta
-     en Paquetes.astro): "POSTULAR POR WHATSAPP" con white-space:nowrap
-     (Cta.astro) desborda el marco angosto a 360px si se deja en su ancho
-     intrinseco. Desde 640px el marco tiene espacio de sobra y el boton
-     vuelve a su tamano natural, centrado. */
+     en Paquetes.astro): con white-space:nowrap (Cta.astro) desborda a 360px
+     si se deja en su ancho intrinseco. Desde 640px vuelve a su tamano natural. */
   .postulacion__marco :global(.cta) {
     width: 100%;
   }
@@ -81,7 +79,7 @@ import { ENLACE_WHATSAPP_POSTULACION } from '../lib/whatsapp';
     font-size: var(--t-cuerpo-l);
     line-height: 1.65;
     color: var(--humo);
-    margin-inline: auto;
+    max-width: 68ch;
     margin-bottom: var(--e4);
   }
 

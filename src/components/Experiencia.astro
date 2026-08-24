@@ -51,11 +51,13 @@ const fichas = [
       }
     </ul>
 
-    <p class="experiencia__remate">
-      <strong class="subrayado-laton">Y por eso también sabemos decir que no.</strong> Un generador
-      de código escribe lo que le pidas. Nosotros te decimos cuándo lo que pediste te va a costar
-      caro en seis meses.
-    </p>
+    <div class="experiencia__remate-bloque revelar">
+      <h3 class="experiencia__remate-gigante">Y POR ESO TAMBIÉN SABEMOS DECIR QUE NO.</h3>
+      <p class="experiencia__remate-subtexto">
+        Un generador de código escribe lo que le pidas. Nosotros te decimos de frente cuándo lo que
+        pediste te va a costar caro en seis meses.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -92,7 +94,7 @@ const fichas = [
   }
 
   .experiencia__lista {
-    margin-bottom: var(--e7);
+    margin-bottom: 0;
   }
 
   .experiencia__ficha {
@@ -112,15 +114,29 @@ const fichas = [
     color: var(--papel);
   }
 
-  .experiencia__remate {
-    font-family: var(--cuerpo);
-    font-size: var(--t-titulo);
-    line-height: 1.4;
-    color: var(--papel);
-    max-width: 52ch;
+  .experiencia__remate-bloque {
+    margin-top: var(--e7);
+    display: flex;
+    flex-direction: column;
+    gap: var(--e3);
   }
 
-  .experiencia__remate strong {
-    font-weight: 600;
+  .experiencia__remate-gigante {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 900, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  .experiencia__remate-subtexto {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--humo);
+    max-width: 62ch;
   }
 </style>
