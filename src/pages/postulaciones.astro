@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import Barra from '../components/Barra.astro';
+import HeroPostulacion from '../components/postulaciones/HeroPostulacion.astro';
+import ValorActivo from '../components/postulaciones/ValorActivo.astro';
+import CriteriosPostulacion from '../components/postulaciones/CriteriosPostulacion.astro';
+import ModelosAsociacion from '../components/postulaciones/ModelosAsociacion.astro';
+import CaminosPostulacion from '../components/postulaciones/CaminosPostulacion.astro';
+import PreguntasPostulacion from '../components/postulaciones/PreguntasPostulacion.astro';
+import FormularioPostulacion from '../components/postulaciones/FormularioPostulacion.astro';
+import Pie from '../components/Pie.astro';
+import BotonWhatsApp from '../components/BotonWhatsApp.astro';
+import { ENLACES_NAV_POSTULACIONES } from '../lib/navegacion';
+---
+
+<Base
+  title="DevBro Solutions — CTO Fraccional y Co-Inversión para Startups"
+  description="Asumimos el rol de CTO y co-invertimos en tu startup con modelos de Equity, Revenue Share y desarrollo por hitos."
+>
+  <Barra slot="header" enlaces={ENLACES_NAV_POSTULACIONES} />
+
+  <HeroPostulacion />
+  <ValorActivo />
+  <CriteriosPostulacion />
+  <ModelosAsociacion />
+  <CaminosPostulacion />
+  <PreguntasPostulacion />
+  <FormularioPostulacion />
+
+  <Fragment slot="footer">
+    <Pie />
+    <BotonWhatsApp />
+  </Fragment>
+</Base>

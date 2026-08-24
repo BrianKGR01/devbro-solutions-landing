@@ -1,0 +1,95 @@
+---
+// #caminos-postulacion (Layout 50/50 comparativo de resultados de evaluación).
+import Etiqueta from '../Etiqueta.astro';
+---
+
+<section id="caminos" class="seccion caminos">
+  <div class="contenedor">
+    <h2 class="caminos__titulo revelar">¿Qué pasa después de evaluar tu proyecto?</h2>
+
+    <div class="caminos__grilla">
+      <div class="caminos__bloque caminos__bloque--luz-verde revelar">
+        <Etiqueta>CAMINO A · CO-INVERSIÓN</Etiqueta>
+        <h3 class="caminos__bloque-titulo">Luz Verde: Nos asociamos</h3>
+        <p class="caminos__bloque-descripcion">
+          Hay química y compromiso mutuo. Negociamos nuestra participación, tomamos la dirección
+          técnica y construimos tu producto real para salir a romper el mercado juntos.
+        </p>
+      </div>
+
+      <div class="caminos__bloque caminos__bloque--sonda revelar">
+        <Etiqueta>CAMINO B · ACOMPAÑAMIENTO</Etiqueta>
+        <h3 class="caminos__bloque-titulo">El Paquete Sonda</h3>
+        <p class="caminos__bloque-descripcion">
+          Si la idea aún no encaja para nuestra co-inversión, pero vemos que su equipo tiene empuje,
+          no los dejamos a la deriva. Les ofrecemos trabajar en la arquitectura, el diseño de
+          pantallas y el análisis de complejidad. Con esta base técnica sólida, pueden salir a
+          levantar su primer capital o convencer a su incubadora.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .caminos__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 24ch;
+    margin-bottom: var(--e6);
+    text-wrap: balance;
+  }
+
+  .caminos__grilla {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--e4);
+  }
+
+  @media (min-width: 768px) {
+    .caminos__grilla {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .caminos__bloque {
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e5) var(--e4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--e3);
+  }
+
+  .caminos__bloque--luz-verde {
+    border: var(--borde-fuerte);
+    box-shadow: 6px 6px 0 var(--verde);
+  }
+
+  .caminos__bloque--sonda {
+    border: var(--borde-papel);
+  }
+
+  .caminos__bloque :global(.etiqueta) {
+    align-self: start;
+  }
+
+  .caminos__bloque-titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: var(--t-titulo);
+    line-height: 1.1;
+    color: var(--papel);
+  }
+
+  .caminos__bloque-descripcion {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.6;
+    color: var(--humo);
+  }
+</style>

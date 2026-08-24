@@ -4,7 +4,7 @@
 // D24 (docs/06-decisiones.md) -- ya no son {{PENDIENTE}}.
 // Sin "S.A." en ningun lado (regla dura de CLAUDE.md).
 import Wordmark from './Wordmark.astro';
-import { ENLACES_NAV } from '../lib/navegacion';
+import { ENLACES_NAV_PRINCIPAL, ENLACES_NAV_POSTULACIONES } from '../lib/navegacion';
 import { ENLACE_WHATSAPP } from '../lib/whatsapp';
 ---
 
@@ -12,17 +12,30 @@ import { ENLACE_WHATSAPP } from '../lib/whatsapp';
   <div class="contenedor">
     <div class="pie__superior">
       <div class="pie__marca">
-        <a href="#inicio" class="pie__wordmark-link" aria-label="DevBro Solutions, inicio">
+        <a href="/" class="pie__wordmark-link" aria-label="DevBro Solutions, inicio">
           <Wordmark />
         </a>
         <p class="pie__tagline">Software factory. Santa Cruz de la Sierra, Bolivia.</p>
       </div>
 
-      <nav class="pie__columna" aria-label="Navegación del pie de página">
-        <p class="pie__columna-titulo">Página</p>
+      <nav class="pie__columna" aria-label="Navegación principal del pie de página">
+        <p class="pie__columna-titulo">Página Principal</p>
         <ul class="pie__lista">
           {
-            ENLACES_NAV.map((enlace) => (
+            ENLACES_NAV_PRINCIPAL.map((enlace) => (
+              <li>
+                <a href={enlace.href}>{enlace.texto}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav class="pie__columna" aria-label="Navegación de postulaciones del pie de página">
+        <p class="pie__columna-titulo">Postulaciones</p>
+        <ul class="pie__lista">
+          {
+            ENLACES_NAV_POSTULACIONES.map((enlace) => (
               <li>
                 <a href={enlace.href}>{enlace.texto}</a>
               </li>
@@ -64,9 +77,9 @@ import { ENLACE_WHATSAPP } from '../lib/whatsapp';
     border-bottom: var(--borde);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     .pie__superior {
-      grid-template-columns: 1.5fr 1fr 1fr;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
     }
   }
 
