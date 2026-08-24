@@ -7,7 +7,6 @@
 // Paquetes, antes de Limites: se lee como una cuarta opcion inmediatamente
 // despues de ver los tres precios.
 import Cta from './Cta.astro';
-import { ENLACE_WHATSAPP_POSTULACION } from '../lib/whatsapp';
 ---
 
 <section id="postulacion" class="seccion postulacion">
@@ -20,7 +19,7 @@ import { ENLACE_WHATSAPP_POSTULACION } from '../lib/whatsapp';
         sin costo y, si vemos que puede ser un caso de éxito, te proponemos un precio bastante más
         bajo para construirlo o <span class="subrayado-laton">negociamos cómo hacerlo realidad.</span>
       </p>
-      <Cta href={ENLACE_WHATSAPP_POSTULACION} target="_blank" rel="noopener noreferrer">
+      <Cta href="/postulaciones">
         Opciones de postulación
       </Cta>
     </div>
