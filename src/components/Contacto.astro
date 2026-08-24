@@ -94,6 +94,25 @@ const presupuestos = [
         </select>
       </div>
 
+      <div class="contacto__campo">
+        <label for="campo-incubadora"
+          >¿Estás en alguna incubadora, aceleradora o programa de startups actualmente? <span class="contacto__requerido" aria-hidden="true">*</span></label
+        >
+        <select id="campo-incubadora" name="incubadora" required>
+          <option value="" disabled selected>Elegí una opción</option>
+          <option value="No, emprendo por mi cuenta.">No, emprendo por mi cuenta.</option>
+          <option value="Sí, estoy en un programa (Santa Cruz Innova, Incuba UPSA, Pista 8, Aceleratec, etc.).">Sí, estoy en un programa (Santa Cruz Innova, Incuba UPSA, Pista 8, Aceleratec, etc.).</option>
+          <option value="Estoy en proceso de postulación a un programa.">Estoy en proceso de postulación a un programa.</option>
+        </select>
+      </div>
+
+      <div class="contacto__campo" id="contenedor-nombre-incubadora" style="display: none;">
+        <label for="campo-nombre-incubadora"
+          >¿A qué programa o incubadora? <span class="contacto__requerido" aria-hidden="true">*</span></label
+        >
+        <input type="text" id="campo-nombre-incubadora" name="nombre_incubadora" />
+      </div>
+
       <div class="contacto__trampa" aria-hidden="true">
         <label for="campo-empresa">Empresa</label>
         <input type="text" id="campo-empresa" name="nombre_empresa" tabindex="-1" autocomplete="off" />
@@ -132,6 +151,27 @@ const presupuestos = [
   }
   refrescarTs();
 
+  var selectIncubadora = document.getElementById('campo-incubadora');
+  var contenedorNombreIncubadora = document.getElementById('contenedor-nombre-incubadora');
+  var inputNombreIncubadora = document.getElementById('campo-nombre-incubadora');
+
+  function actualizarIncubadora() {
+    if (!selectIncubadora || !contenedorNombreIncubadora || !inputNombreIncubadora) return;
+    var val = selectIncubadora.value;
+    if (val.indexOf('Sí, estoy en un programa') === 0 || val.indexOf('Estoy en proceso') === 0) {
+      contenedorNombreIncubadora.style.display = 'flex';
+      inputNombreIncubadora.required = true;
+    } else {
+      contenedorNombreIncubadora.style.display = 'none';
+      inputNombreIncubadora.required = false;
+      inputNombreIncubadora.value = '';
+    }
+  }
+
+  if (selectIncubadora) {
+    selectIncubadora.addEventListener('change', actualizarIncubadora);
+  }
+
   // Si el clic vino de un CTA con data-paquete (Paquetes.astro), guarda cual
   // -- delegado en document porque Paquetes.astro no sabe nada del
   // formulario y no deberia tener que saberlo. Sin closest(), un clic sobre
@@ -148,7 +188,6 @@ const presupuestos = [
     var boton = form.querySelector('.cta');
     var mensajeExito = form.querySelector('.contacto__mensaje--exito');
     var mensajeError = form.querySelector('.contacto__mensaje--error');
-    var campos = form.querySelectorAll('input:not([type="hidden"]), textarea, select');
 
     form.addEventListener('submit', function (evento) {
       evento.preventDefault();
@@ -165,6 +204,7 @@ const presupuestos = [
         datos[clave] = valor;
       });
 
+      var campos = form.querySelectorAll('input:not([type="hidden"]), textarea, select');
       boton.disabled = true;
       campos.forEach(function (campo) {
         campo.disabled = true;
@@ -179,21 +219,11 @@ const presupuestos = [
           if (!respuesta.ok) throw new Error('respuesta no ok');
           mensajeExito.hidden = false;
 
-          // Deja el mensaje de exito visible unos segundos antes de limpiar:
-          // un reset instantaneo se siente como si se hubiera perdido lo que
-          // se acababa de enviar. Al limpiar, el formulario vuelve a quedar
-          // habilitado -- por si el visitante quiere mandar una segunda
-          // consulta (otro proyecto, un dato que se le olvido) sin recargar.
           setTimeout(function () {
             form.reset();
             refrescarTs();
-            // form.reset() no alcanza para un input hidden: para type=hidden
-            // el IDL "value" refleja directo el atributo del HTML (a
-            // diferencia de un input de texto, que trackea valor actual y
-            // valor por defecto por separado) -- asignarlo por JS reescribe
-            // tambien el "valor por defecto", asi que reset() lo deja tal
-            // cual quedo, no en "". Se limpia a mano.
             document.getElementById('campo-origen').value = '';
+            actualizarIncubadora();
             mensajeExito.hidden = true;
             boton.disabled = false;
             campos.forEach(function (campo) {

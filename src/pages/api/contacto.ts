@@ -19,6 +19,7 @@ const CAMPOS_REQUERIDOS = [
   'problema',
   'usuarios',
   'presupuesto',
+  'incubadora',
 ] as const;
 
 interface Lead {
@@ -30,6 +31,8 @@ interface Lead {
   usuarios: string;
   plazo: string | null;
   presupuesto: string;
+  incubadora: string;
+  nombre_incubadora: string | null;
   // Que paquete (SONDA/LANZAMIENTO/EXPEDICION) origino el envio, si vino del
   // CTA de una tarjeta de Paquetes.astro en vez de otro CTA de la pagina.
   // Columna existente en `leads` (docs/04-engineering.md SS6), sin usar hasta ahora.
@@ -85,6 +88,7 @@ function textoPlanoCorreo(lead: Lead): string {
     `Primeros usuarios: ${lead.usuarios}`,
     `Plazo: ${lead.plazo ?? '(no indicado)'}`,
     `Presupuesto: ${lead.presupuesto}`,
+    `Incubadora/Programa: ${lead.incubadora}${lead.nombre_incubadora ? ` (${lead.nombre_incubadora})` : ''}`,
     `Paquete de interés: ${lead.origen ?? '(no especificado, no vino de un paquete)'}`,
   ].join('\n');
 }
@@ -121,6 +125,7 @@ function construirCorreoHtml(lead: Lead): string {
     ['WhatsApp', escaparHtml(lead.whatsapp)],
     ['Industria', escaparHtml(lead.industria)],
     ['Presupuesto', escaparHtml(lead.presupuesto)],
+    ['Incubadora', lead.nombre_incubadora ? `${escaparHtml(lead.incubadora)} (${escaparHtml(lead.nombre_incubadora)})` : escaparHtml(lead.incubadora)],
     ['Plazo', lead.plazo ? escaparHtml(lead.plazo) : '<span style="color:#8A968F;">(no indicado)</span>'],
   ];
 
@@ -263,6 +268,8 @@ export const POST: APIRoute = async ({ request }) => {
     usuarios: textoPlano(datos.usuarios),
     plazo: textoPlano(datos.plazo) || null,
     presupuesto: textoPlano(datos.presupuesto),
+    incubadora: textoPlano(datos.incubadora),
+    nombre_incubadora: textoPlano(datos.nombre_incubadora) || null,
     origen: textoPlano(datos.origen) || null,
   };
 

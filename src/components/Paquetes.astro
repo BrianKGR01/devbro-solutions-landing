@@ -17,18 +17,17 @@ const paquetes = [
     id: 'sonda',
     nombre: 'SONDA',
     etiqueta: 'VALIDACIÓN TÉCNICA',
-    precio: 'USD 1.200',
+    precio: 'USD 1.000',
     duracion: '5 días',
     intro: 'Antes de construir nada, definimos qué se construye y cuánto cuesta.',
     caracteristicas: [
-      'Sesión de descubrimiento a fondo',
-      'Alcance del producto, por escrito',
-      'Arquitectura y stack recomendado',
-      'Mapa completo de pantallas',
-      'Estimación firme de tiempo y costo',
-      'Veredicto honesto de viabilidad',
+      'Sesión de descubrimiento a fondo.',
+      'Alcance del producto, por escrito.',
+      'Arquitectura y stack recomendado.',
+      'Prototipo visual navegable (todas las pantallas diseñadas y desplegadas para que puedas mostrarlas y validarlas, sin lógica de fondo).',
+      'Estimación firme de tiempo y costo.',
     ],
-    nota: 'SI SEGUÍS CON NOSOTROS, SE DESCUENTA COMPLETO',
+    nota: 'SI CONTINUÁS CON NOSOTROS, SE DESCUENTAN LOS USD 1.000 DE TU PAGO FINAL.',
     destacado: false,
   },
   {
@@ -56,7 +55,7 @@ const paquetes = [
     nombre: 'EXPEDICIÓN',
     etiqueta: 'PRODUCTO COMPLETO',
     precio: 'Desde USD 10.000',
-    duracion: '8 a 14 semanas',
+    duracion: 'A partir de las 8 semanas',
     intro: 'Cuando el proyecto es más grande que un primer lanzamiento.',
     caracteristicas: [
       'Todo lo de LANZAMIENTO',
@@ -77,6 +76,10 @@ const paquetes = [
 <section id="paquetes" class="seccion">
   <div class="contenedor">
     <h2 class="paquetes__titulo revelar">Tres formas de empezar.</h2>
+    <p class="paquetes__bajada revelar">
+      El precio final depende del alcance. Te lo cerramos por escrito en la primera semana, antes
+      de que pagues el saldo.
+    </p>
 
     <ul class="paquetes__grilla">
       {
@@ -87,7 +90,8 @@ const paquetes = [
             <h3 class="paquetes__nombre">{paquete.nombre}</h3>
             <Etiqueta>{paquete.etiqueta}</Etiqueta>
             <p class="paquetes__precio">
-              <strong>{paquete.precio}</strong> · {paquete.duracion}
+              <strong class="paquetes__precio-monto">{paquete.precio}</strong>
+              <span class="paquetes__precio-duracion">{paquete.duracion}</span>
             </p>
             <p class="paquetes__intro">{paquete.intro}</p>
             <ul class="paquetes__caracteristicas">
@@ -109,11 +113,6 @@ const paquetes = [
         ))
       }
     </ul>
-
-    <p class="paquetes__cierre">
-      El precio final depende del alcance. Te lo cerramos por escrito en la primera semana, antes
-      de que pagues el saldo.
-    </p>
   </div>
 </section>
 
@@ -126,8 +125,17 @@ const paquetes = [
     line-height: 0.94;
     color: var(--papel);
     max-width: 20ch;
-    margin-bottom: var(--e6);
+    margin-bottom: var(--e3);
     text-wrap: balance;
+  }
+
+  .paquetes__bajada {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--humo);
+    max-width: 62ch;
+    margin-bottom: var(--e6);
   }
 
   /* Excepcion a .grilla-3 (docs/02-design-system.md §8): 1 columna hasta
@@ -185,14 +193,23 @@ const paquetes = [
   }
 
   .paquetes__precio {
-    font-family: var(--cuerpo);
-    font-size: var(--t-cuerpo-l);
-    color: var(--papel);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     margin-bottom: var(--e3);
   }
 
-  .paquetes__precio strong {
+  .paquetes__precio-monto {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
     font-weight: 600;
+    color: var(--papel);
+  }
+
+  .paquetes__precio-duracion {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
   }
 
   .paquetes__intro {
@@ -262,10 +279,15 @@ const paquetes = [
 
   .paquetes__nota {
     font-family: var(--mono);
+    font-weight: 700;
     font-size: var(--t-etiqueta);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     color: var(--laton);
+    background: rgba(184, 162, 106, 0.08);
+    border: 1px solid var(--laton);
+    padding: var(--e2);
     margin-bottom: var(--e3);
+    line-height: 1.45;
   }
 
   .paquetes__cta {
@@ -284,13 +306,5 @@ const paquetes = [
     padding: 12px 14px;
     font-size: var(--t-etiqueta);
     text-align: center;
-  }
-
-  .paquetes__cierre {
-    font-family: var(--cuerpo);
-    font-size: var(--t-cuerpo);
-    color: var(--humo);
-    max-width: 62ch;
-    margin-top: var(--e6);
   }
 </style>
