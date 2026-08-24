@@ -99,4 +99,26 @@ const criterios = [
     line-height: 1.6;
     color: var(--humo);
   }
+
+  @media (max-width: 639px) {
+    .criterios__lista {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin-inline: calc(-1 * var(--pad-lateral));
+      padding-inline: var(--pad-lateral);
+      padding-bottom: var(--e2);
+      scrollbar-width: none;
+    }
+
+    .criterios__lista::-webkit-scrollbar {
+      display: none;
+    }
+
+    .criterios__ficha {
+      flex: 0 0 82%;
+      scroll-snap-align: start;
+    }
+  }
 </style>
