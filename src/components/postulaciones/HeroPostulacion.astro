@@ -31,8 +31,16 @@ import Cta from '../Cta.astro';
 </section>
 
 <style>
+  .hero-postulacion {
+    min-height: calc(100vh - var(--barra-alto));
+    display: flex;
+    align-items: center;
+    padding-block: var(--e6);
+  }
+
   @media (max-width: 639px) {
     .hero-postulacion {
+      min-height: auto;
       padding-top: var(--e4);
     }
   }
@@ -42,6 +50,7 @@ import Cta from '../Cta.astro';
     flex-direction: column;
     gap: var(--e4);
     max-width: 72ch;
+    width: 100%;
   }
 
   .hero-postulacion__antetitulo {
@@ -57,10 +66,10 @@ import Cta from '../Cta.astro';
   .hero-postulacion__titulo {
     font-family: var(--display);
     font-variation-settings: 'wght' 900, 'wdth' 118;
-    font-size: var(--t-display-l);
-    letter-spacing: -0.03em;
-    line-height: 0.92;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    line-height: 1;
     color: var(--papel);
+    max-width: 18ch;
     overflow-wrap: break-word;
     text-wrap: balance;
   }
@@ -88,10 +97,6 @@ import Cta from '../Cta.astro';
   @media (min-width: 1024px) and (max-height: 820px) {
     .hero-postulacion {
       padding-block: var(--e4);
-    }
-    .hero-postulacion__titulo {
-      font-size: clamp(2rem, 3.8vw, 3rem);
-      line-height: 0.94;
     }
     .hero-postulacion__cuerpo {
       gap: var(--e2);
