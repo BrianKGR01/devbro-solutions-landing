@@ -1,0 +1,102 @@
+---
+// #criterios-postulacion (Grilla de 3 tarjetas de criterios de evaluación).
+import Etiqueta from '../Etiqueta.astro';
+
+const criterios = [
+  {
+    numero: '01',
+    etiqueta: 'DOMINIO DEL PROBLEMA',
+    titulo: 'Conocimiento del rubro',
+    descripcion:
+      'No compramos ideas en el aire. Evaluamos tu dominio del problema, si lo vivís a diario y si conocés a tus usuarios a la perfección.',
+  },
+  {
+    numero: '02',
+    etiqueta: 'EJECUCIÓN Y EMPUJE',
+    titulo: 'El equipo y el compromiso',
+    descripcion:
+      'Las ideas mutan, los equipos quedan. Evaluamos quiénes son, qué hicieron hasta ahora y cuánta sangre, sudor y tiempo le están poniendo al proyecto.',
+  },
+  {
+    numero: '03',
+    etiqueta: 'VALIDACIÓN PREVIA',
+    titulo: 'Tracción e Incubación',
+    descripcion:
+      'Si ya estás validando a mano o fuiste seleccionado por un programa (Santa Cruz Innova / Cainco, Incuba UPSA, Aceleratec, Pista 8, etc.), tenés nuestra atención inmediata.',
+  },
+];
+---
+
+<section id="criterios-postulacion" class="seccion">
+  <div class="contenedor">
+    <h2 class="criterios__titulo revelar">Qué miramos antes de sentarnos a negociar.</h2>
+
+    <ul class="criterios__lista grilla-3">
+      {
+        criterios.map((item) => (
+          <li class="criterios__ficha revelar">
+            <div class="criterios__cabecera-ficha">
+              <span class="criterios__numero">{item.numero}</span>
+              <Etiqueta>{item.etiqueta}</Etiqueta>
+            </div>
+            <h3 class="criterios__ficha-titulo">{item.titulo}</h3>
+            <p class="criterios__ficha-descripcion">{item.descripcion}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .criterios__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 22ch;
+    margin-bottom: var(--e6);
+    text-wrap: balance;
+  }
+
+  .criterios__ficha {
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .criterios__cabecera-ficha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--e3);
+  }
+
+  .criterios__numero {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: var(--t-etiqueta);
+    letter-spacing: 0.12em;
+    color: var(--laton);
+  }
+
+  .criterios__ficha-titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: var(--t-titulo);
+    line-height: 1.1;
+    color: var(--papel);
+    margin-bottom: var(--e2);
+  }
+
+  .criterios__ficha-descripcion {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.6;
+    color: var(--humo);
+  }
+</style>
