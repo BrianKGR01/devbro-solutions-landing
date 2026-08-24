@@ -1,0 +1,196 @@
+---
+// #preguntas-postulacion (Acordeón accesible de preguntas frecuentes para fundadores).
+const preguntas = [
+  {
+    pregunta: '¿Pierdo el control de mi startup o mis decisiones?',
+    respuesta:
+      'En absoluto. Nuestro fin no es invadir ni tomar el control de tu junta directiva. Entramos como socios técnicos para blindar tu tecnología; la visión del negocio sigue siendo tuya.',
+  },
+  {
+    pregunta: '¿Cuánto equity o porcentaje piden?',
+    respuesta:
+      'Depende del riesgo, la etapa de tu startup y el modelo que elijamos. Lo negociamos de frente y con total transparencia, buscando un ganar-ganar.',
+  },
+  {
+    pregunta: '¿Qué pasa si mi idea es rechazada?',
+    respuesta:
+      'Te damos feedback honesto y directo de por qué no entramos. Siempre dejamos la puerta abierta. Si vemos empuje, les ofrecemos acompañamiento inicial (Paquete Sonda) para que no se detengan.',
+  },
+  {
+    pregunta: '¿Qué me piden antes de la primera reunión?',
+    respuesta:
+      'Honestidad brutal. Llená el formulario contándonos en qué punto real están. No necesitamos que infles los números, necesitamos saber qué problema resuelven y quiénes son.',
+  },
+  {
+    pregunta: '¿El código es mío si hacemos Revenue Share?',
+    respuesta:
+      'Sí. Los términos de propiedad intelectual se blindan por contrato. La tecnología es un activo de la empresa, no un rehén nuestro.',
+  },
+];
+---
+
+<section id="preguntas-postulacion" class="seccion">
+  <div class="contenedor">
+    <h2 class="preguntas-p__titulo revelar">Preguntas que nos hacen los fundadores</h2>
+
+    <ul class="preguntas-p__lista">
+      {
+        preguntas.map((item, i) => (
+          <li class="preguntas-p__item revelar" data-abierto="false">
+            <h3 class="preguntas-p__encabezado">
+              <button
+                type="button"
+                class="preguntas-p__boton"
+                id={`preguntas-p-boton-${i}`}
+                aria-expanded="false"
+                aria-controls={`preguntas-p-panel-${i}`}
+              >
+                <span class="preguntas-p__boton-texto">{item.pregunta}</span>
+                <span class="preguntas-p__icono" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" width="16" height="16">
+                    <line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="2" />
+                    <line
+                      class="preguntas-p__icono-v"
+                      x1="8"
+                      y1="2"
+                      x2="8"
+                      y2="14"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </h3>
+            <div
+              class="preguntas-p__panel"
+              id={`preguntas-p-panel-${i}`}
+              role="region"
+              aria-labelledby={`preguntas-p-boton-${i}`}
+              inert
+            >
+              <div class="preguntas-p__panel-interior">
+                <p class="preguntas-p__respuesta">{item.respuesta}</p>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var items = document.querySelectorAll('.preguntas-p__item');
+    items.forEach(function (item) {
+      var boton = item.querySelector('.preguntas-p__boton');
+      var panel = item.querySelector('.preguntas-p__panel');
+      boton.addEventListener('click', function () {
+        var abierto = boton.getAttribute('aria-expanded') === 'true';
+        var nuevoEstado = !abierto;
+        boton.setAttribute('aria-expanded', String(nuevoEstado));
+        item.setAttribute('data-abierto', String(nuevoEstado));
+        if (nuevoEstado) {
+          panel.removeAttribute('inert');
+        } else {
+          panel.setAttribute('inert', '');
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .preguntas-p__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    max-width: 20ch;
+    margin-bottom: var(--e6);
+    text-wrap: balance;
+  }
+
+  .preguntas-p__lista {
+    max-width: 68ch;
+  }
+
+  .preguntas-p__item {
+    border-bottom: var(--borde);
+  }
+
+  .preguntas-p__item:first-child {
+    border-top: var(--borde);
+  }
+
+  .preguntas-p__encabezado {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .preguntas-p__boton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--e3);
+    width: 100%;
+    padding-block: var(--e3);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--cuerpo);
+    font-weight: 600;
+    font-size: var(--t-cuerpo-l);
+    color: var(--papel);
+  }
+
+  .preguntas-p__icono {
+    flex-shrink: 0;
+    display: inline-flex;
+    color: var(--laton);
+  }
+
+  .preguntas-p__icono-v {
+    transform-origin: center;
+    transition: transform 240ms var(--salida);
+  }
+
+  .preguntas-p__boton[aria-expanded='true'] .preguntas-p__icono-v {
+    transform: rotate(90deg);
+  }
+
+  .preguntas-p__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 240ms var(--salida);
+  }
+
+  .preguntas-p__item[data-abierto='true'] .preguntas-p__panel {
+    grid-template-rows: 1fr;
+  }
+
+  .preguntas-p__panel-interior {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .preguntas-p__respuesta {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.65;
+    color: var(--humo);
+    padding-bottom: var(--e3);
+    max-width: 62ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preguntas-p__panel,
+    .preguntas-p__icono-v {
+      transition: none;
+    }
+  }
+</style>

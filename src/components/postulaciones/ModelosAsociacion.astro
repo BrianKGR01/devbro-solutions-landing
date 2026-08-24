@@ -1,0 +1,138 @@
+---
+// #modelos-asociacion (Fichas neobrutalistas dinámicas con sombras destacadas).
+import Etiqueta from '../Etiqueta.astro';
+
+const modelos = [
+  {
+    id: 'equity',
+    etiqueta: 'RIESGO COMPARTIDO',
+    titulo: 'Equity / Sociedad',
+    descripcion:
+      'Entramos a riesgo con vos. Intercambiamos el costo del desarrollo tecnológico por un porcentaje justo de participación en la startup.',
+    colorSombra: 'var(--verde)',
+  },
+  {
+    id: 'revenue-share',
+    etiqueta: 'FINANCIACIÓN CONTRA VENTAS',
+    titulo: 'Revenue Share / Leasing',
+    descripcion:
+      'Financiamos la construcción inicial. Una vez que el producto está en la calle y facturando, cobramos un porcentaje de las ventas hasta saldar la tecnología.',
+    colorSombra: 'var(--laton)',
+  },
+  {
+    id: 'hitos',
+    etiqueta: 'PAGOS FLEXIBLES',
+    titulo: 'Pagos por Hitos',
+    descripcion:
+      'Estructuras de pago extendidas y flexibles, alineadas al levantamiento de tus rondas de inversión o al crecimiento de tus métricas.',
+    colorSombra: 'var(--verde-luz)',
+  },
+];
+---
+
+<section id="modelos-asociacion" class="seccion modelos">
+  <div class="contenedor">
+    <div class="modelos__cabecera revelar">
+      <h2 class="modelos__titulo">Si hay potencial, el capital no es barrera.</h2>
+      <p class="modelos__subtitulo">
+        No te adaptás a nuestros paquetes, nosotros estructuramos un acuerdo a la medida de tu
+        realidad.
+      </p>
+    </div>
+
+    <div class="modelos__grilla grilla-3">
+      {
+        modelos.map((item) => (
+          <div class={`modelos__ficha modelos__ficha--${item.id} revelar`}>
+            <Etiqueta>{item.etiqueta}</Etiqueta>
+            <h3 class="modelos__ficha-titulo">{item.titulo}</h3>
+            <p class="modelos__ficha-descripcion">{item.descripcion}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .modelos__cabecera {
+    max-width: 68ch;
+    margin-bottom: var(--e6);
+  }
+
+  .modelos__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    margin-bottom: var(--e3);
+    text-wrap: balance;
+  }
+
+  .modelos__subtitulo {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--humo);
+  }
+
+  .modelos__ficha {
+    background: var(--tinta-3);
+    border: var(--borde-fuerte);
+    padding: var(--e4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--e2);
+    transition: transform 150ms var(--salida), box-shadow 150ms var(--salida);
+  }
+
+  .modelos__ficha--equity {
+    box-shadow: 8px 8px 0 var(--verde);
+  }
+
+  .modelos__ficha--revenue-share {
+    box-shadow: 8px 8px 0 var(--laton);
+  }
+
+  .modelos__ficha--hitos {
+    box-shadow: 8px 8px 0 var(--verde-luz);
+  }
+
+  .modelos__ficha:hover {
+    transform: translate(-3px, -3px);
+  }
+
+  .modelos__ficha--equity:hover {
+    box-shadow: 11px 11px 0 var(--verde);
+  }
+
+  .modelos__ficha--revenue-share:hover {
+    box-shadow: 11px 11px 0 var(--laton);
+  }
+
+  .modelos__ficha--hitos:hover {
+    box-shadow: 11px 11px 0 var(--verde-luz);
+  }
+
+  .modelos__ficha :global(.etiqueta) {
+    align-self: start;
+    margin-bottom: var(--e2);
+  }
+
+  .modelos__ficha-titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 112;
+    font-size: var(--t-titulo);
+    line-height: 1.1;
+    color: var(--papel);
+  }
+
+  .modelos__ficha-descripcion {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    line-height: 1.6;
+    color: var(--humo);
+  }
+</style>
