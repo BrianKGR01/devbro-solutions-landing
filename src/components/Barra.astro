@@ -13,7 +13,13 @@
 // stacking context del header) para que el botón de cerrar siga visible.
 import Wordmark from './Wordmark.astro';
 import Cta from './Cta.astro';
-import { ENLACES_NAV } from '../lib/navegacion';
+import { ENLACES_NAV_PRINCIPAL } from '../lib/navegacion';
+
+export interface Props {
+  enlaces?: Array<{ href: string; texto: string }>;
+}
+
+const { enlaces = ENLACES_NAV_PRINCIPAL } = Astro.props;
 ---
 
 <header class="barra">
@@ -25,7 +31,7 @@ import { ENLACES_NAV } from '../lib/navegacion';
     <nav class="barra__nav" aria-label="Navegación principal">
       <ul class="barra__lista">
         {
-          ENLACES_NAV.map((enlace) => (
+          enlaces.map((enlace) => (
             <li>
               <a class="barra__enlace" href={enlace.href}>
                 {enlace.texto}
@@ -61,7 +67,7 @@ import { ENLACES_NAV } from '../lib/navegacion';
       <nav class="barra__panel-nav" aria-label="Navegación principal">
         <ul class="barra__panel-lista">
           {
-            ENLACES_NAV.map((enlace, i) => (
+            enlaces.map((enlace, i) => (
               <li>
                 <a class="barra__panel-enlace" href={enlace.href}>
                   <span class="barra__panel-numeral" aria-hidden="true">
