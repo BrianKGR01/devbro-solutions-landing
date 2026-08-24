@@ -96,6 +96,21 @@ import { ENLACE_WHATSAPP_POSTULACION } from '../../lib/whatsapp';
       </div>
 
       <div class="form-postulacion__campo">
+        <label for="campo-postulacion-modelo">
+          ¿Qué modelo de asociación te interesa? <span
+            class="form-postulacion__requerido"
+            aria-hidden="true">*</span
+          >
+        </label>
+        <select id="campo-postulacion-modelo" name="modelo_interes" required>
+          <option value="" disabled selected>Elegí una opción</option>
+          <option value="Equity (Sociedad)">Equity (Sociedad)</option>
+          <option value="Revenue Share (Leasing)">Revenue Share (Leasing)</option>
+          <option value="Pagos por hitos">Pagos por hitos</option>
+        </select>
+      </div>
+
+      <div class="form-postulacion__campo">
         <label for="campo-postulacion-incubadora">
           ¿Estás en alguna incubadora, aceleradora o programa de startups actualmente? <span
             class="form-postulacion__requerido"
