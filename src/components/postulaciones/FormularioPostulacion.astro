@@ -1,0 +1,342 @@
+---
+// #formulario-postulacion (Formulario de postulación ajustado para startups).
+import Cta from '../Cta.astro';
+import { ENLACE_WHATSAPP_POSTULACION } from '../../lib/whatsapp';
+---
+
+<section id="formulario-postulacion" class="seccion form-postulacion">
+  <div class="contenedor">
+    <div class="form-postulacion__cabecera revelar">
+      <h2 class="form-postulacion__titulo">Postulá tu startup</h2>
+      <p class="form-postulacion__intro">
+        Contanos de tu proyecto con honestidad. Evaluamos tu propuesta sin costo y agendamos una
+        sesión para conversar sobre cómo podemos asociarnos.
+      </p>
+    </div>
+
+    <form id="form-postulacion-startup" class="form-postulacion__formulario revelar">
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-nombre">
+          Nombre y apellido <span class="form-postulacion__requerido" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="text"
+          id="campo-postulacion-nombre"
+          name="nombre"
+          required
+          autocomplete="name"
+        />
+      </div>
+
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-correo">
+          Correo electrónico <span class="form-postulacion__requerido" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="email"
+          id="campo-postulacion-correo"
+          name="correo"
+          required
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-whatsapp">
+          WhatsApp <span class="form-postulacion__requerido" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="tel"
+          id="campo-postulacion-whatsapp"
+          name="whatsapp"
+          required
+          autocomplete="tel"
+        />
+      </div>
+
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-industria">
+          ¿En qué industria trabajás y hace cuánto? <span
+            class="form-postulacion__requerido"
+            aria-hidden="true">*</span
+          >
+        </label>
+        <textarea id="campo-postulacion-industria" name="industria" rows="3" required></textarea>
+      </div>
+
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-equipo">
+          ¿Quiénes conforman tu equipo y qué experiencia tienen? <span
+            class="form-postulacion__requerido"
+            aria-hidden="true">*</span
+          >
+        </label>
+        <textarea id="campo-postulacion-equipo" name="equipo" rows="3" required></textarea>
+      </div>
+
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-problema">
+          ¿Qué problema querés resolver y para quién? <span
+            class="form-postulacion__requerido"
+            aria-hidden="true">*</span
+          >
+        </label>
+        <textarea id="campo-postulacion-problema" name="problema" rows="4" required></textarea>
+      </div>
+
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-validacion">
+          ¿Has validado tu idea? (Contanos sobre tus ventas, encuestas, usuarios piloto, etc.) <span
+            class="form-postulacion__requerido"
+            aria-hidden="true">*</span
+          >
+        </label>
+        <textarea id="campo-postulacion-validacion" name="validacion" rows="4" required
+        ></textarea>
+      </div>
+
+      <div class="form-postulacion__campo">
+        <label for="campo-postulacion-incubadora">
+          ¿Estás en alguna incubadora, aceleradora o programa de startups actualmente? <span
+            class="form-postulacion__requerido"
+            aria-hidden="true">*</span
+          >
+        </label>
+        <select id="campo-postulacion-incubadora" name="incubadora" required>
+          <option value="" disabled selected>Elegí una opción</option>
+          <option value="No, emprendo por mi cuenta.">No, emprendo por mi cuenta.</option>
+          <option
+            value="Sí, estoy en un programa (Santa Cruz Innova, Incuba UPSA, Pista 8, Aceleratec, etc.)."
+          >
+            Sí, estoy en un programa (Santa Cruz Innova, Incuba UPSA, Pista 8, Aceleratec, etc.).
+          </option>
+          <option value="Estoy en proceso de postulación a un programa.">
+            Estoy en proceso de postulación a un programa.
+          </option>
+        </select>
+      </div>
+
+      <div
+        class="form-postulacion__campo"
+        id="contenedor-postulacion-nombre-incubadora"
+        style="display: none;"
+      >
+        <label for="campo-postulacion-nombre-incubadora">
+          ¿A qué programa o incubadora? <span
+            class="form-postulacion__requerido"
+            aria-hidden="true">*</span
+          >
+        </label>
+        <input
+          type="text"
+          id="campo-postulacion-nombre-incubadora"
+          name="nombre_incubadora"
+        />
+      </div>
+
+      <div class="form-postulacion__envio">
+        <Cta tipo="submit">[ ENVIAR POSTULACIÓN ]</Cta>
+        <p class="form-postulacion__nota">
+          Evaluamos las postulaciones en 48 horas hábiles. Si preferís consultar antes, escribinos
+          directo por{' '}
+          <a
+            href={ENLACE_WHATSAPP_POSTULACION}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="subrayado-laton">WhatsApp</a
+          >.
+        </p>
+      </div>
+
+      <div class="form-postulacion__estado" role="status" aria-live="polite">
+        <p class="form-postulacion__mensaje form-postulacion__mensaje--exito" hidden>
+          ¡Postulación recibida! Revisaremos tu proyecto y te responderemos en menos de 48 horas
+          hábiles.
+        </p>
+        <p class="form-postulacion__mensaje form-postulacion__mensaje--error" hidden>
+          No se pudo procesar la postulación. Por favor escríbenos directo por <a
+            href={ENLACE_WHATSAPP_POSTULACION}
+            target="_blank"
+            rel="noopener noreferrer">WhatsApp</a
+          >.
+        </p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var selectIncubadora = document.getElementById('campo-postulacion-incubadora');
+    var contenedorNombre = document.getElementById('contenedor-postulacion-nombre-incubadora');
+    var inputNombre = document.getElementById('campo-postulacion-nombre-incubadora');
+
+    function actualizarIncubadora() {
+      if (!selectIncubadora || !contenedorNombre || !inputNombre) return;
+      var val = selectIncubadora.value;
+      if (val.indexOf('Sí, estoy en un programa') === 0 || val.indexOf('Estoy en proceso') === 0) {
+        contenedorNombre.style.display = 'flex';
+        inputNombre.required = true;
+      } else {
+        contenedorNombre.style.display = 'none';
+        inputNombre.required = false;
+        inputNombre.value = '';
+      }
+    }
+
+    if (selectIncubadora) {
+      selectIncubadora.addEventListener('change', actualizarIncubadora);
+    }
+
+    var form = document.getElementById('form-postulacion-startup');
+    if (!form) return;
+
+    var boton = form.querySelector('.cta');
+    var mensajeExito = form.querySelector('.form-postulacion__mensaje--exito');
+    var mensajeError = form.querySelector('.form-postulacion__mensaje--error');
+
+    form.addEventListener('submit', function (evento) {
+      evento.preventDefault();
+      mensajeExito.hidden = true;
+      mensajeError.hidden = true;
+
+      var datos = {};
+      new FormData(form).forEach(function (valor, clave) {
+        datos[clave] = valor;
+      });
+
+      console.log('[DevBro Postulaciones] Datos de postulación recibidos:', datos);
+
+      var campos = form.querySelectorAll('input:not([type="hidden"]), textarea, select');
+      boton.disabled = true;
+      campos.forEach(function (campo) {
+        campo.disabled = true;
+      });
+
+      // Muestra éxito y resetea el formulario tras 3 segundos
+      setTimeout(function () {
+        mensajeExito.hidden = false;
+        setTimeout(function () {
+          form.reset();
+          actualizarIncubadora();
+          mensajeExito.hidden = true;
+          boton.disabled = false;
+          campos.forEach(function (campo) {
+            campo.disabled = false;
+          });
+        }, 3500);
+      }, 300);
+    });
+  })();
+</script>
+
+<style>
+  .form-postulacion__cabecera {
+    max-width: 68ch;
+    margin-bottom: var(--e6);
+  }
+
+  .form-postulacion__titulo {
+    font-family: var(--display);
+    font-variation-settings: 'wght' 800, 'wdth' 115;
+    font-size: var(--t-display-l);
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+    color: var(--papel);
+    margin-bottom: var(--e3);
+    text-wrap: balance;
+  }
+
+  .form-postulacion__intro {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    line-height: 1.65;
+    color: var(--humo);
+  }
+
+  .form-postulacion__formulario {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e4);
+    max-width: 68ch;
+  }
+
+  .form-postulacion__campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e1);
+  }
+
+  .form-postulacion__campo label {
+    font-family: var(--cuerpo);
+    font-weight: 600;
+    font-size: var(--t-cuerpo);
+    color: var(--papel);
+  }
+
+  .form-postulacion__requerido {
+    color: var(--laton);
+  }
+
+  .form-postulacion__campo input,
+  .form-postulacion__campo textarea,
+  .form-postulacion__campo select {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--papel);
+    background: var(--tinta-3);
+    border: var(--borde);
+    padding: var(--e2);
+  }
+
+  .form-postulacion__campo textarea {
+    resize: vertical;
+    min-height: 5em;
+  }
+
+  .form-postulacion__campo input:focus-visible,
+  .form-postulacion__campo textarea:focus-visible,
+  .form-postulacion__campo select:focus-visible {
+    border-color: var(--laton);
+    outline: 3px solid var(--laton);
+    outline-offset: 2px;
+  }
+
+  .form-postulacion__envio {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--e3);
+    margin-top: var(--e2);
+  }
+
+  .form-postulacion__nota {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo);
+    color: var(--humo);
+    max-width: 52ch;
+  }
+
+  .form-postulacion__mensaje {
+    font-family: var(--cuerpo);
+    font-size: var(--t-cuerpo-l);
+    font-weight: 600;
+    padding: var(--e3);
+    border: var(--borde);
+    margin-top: var(--e2);
+  }
+
+  .form-postulacion__mensaje--exito {
+    color: var(--verde-luz);
+    border-color: var(--verde);
+  }
+
+  .form-postulacion__mensaje--error {
+    color: var(--papel);
+  }
+
+  .form-postulacion__mensaje--error a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
